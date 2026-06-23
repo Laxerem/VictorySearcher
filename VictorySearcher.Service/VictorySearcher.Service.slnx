@@ -1,2 +1,3 @@
 <Solution>
+  <Project Path="VictorySearcher.Service.Core\VictorySearcher.Service.Core.csproj" Type="Classic C#" />
 </Solution>
