@@ -6,6 +6,7 @@ using VictorySearcher.Service.Domain.Repositories;
 using VictorySearcher.Service.Infrastructure.Options;
 using VictorySearcher.Service.Infrastructure.Persistence;
 using VictorySearcher.Service.Infrastructure.Repositories;
+using VictorySearcher.Service.Infrastructure.Services;
 
 namespace VictorySearcher.Service.Infrastructure;
 
@@ -25,6 +26,9 @@ public static class DependencyInjection {
         services.Configure<JwtOptions>(configuration.GetSection("Jwt"));
         services.Configure<LlmOptions>(configuration.GetSection("Llm"));
         services.Configure<StorageOptions>(configuration.GetSection("Storage"));
+
+        services.AddScoped<IJwtProvider, JwtProvider>();
+        services.AddScoped<IAuthService, AuthService>();
 
         return services;
     }
