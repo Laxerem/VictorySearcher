@@ -1,3 +1,5 @@
+> Before any changes, read the root `../CLAUDE.md`.
+
 # CLAUDE.md — VictorySearcher.Web
 
 Frontend for VictorySearcher — React + TypeScript + Vite single-page application.

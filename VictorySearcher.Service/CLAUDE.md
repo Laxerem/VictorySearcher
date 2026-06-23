@@ -1,3 +1,5 @@
+> Before any changes, read the root `../CLAUDE.md`.
+
 # CLAUDE.md — VictorySearcher.Service
 
 VictorySearcher is an internal HR automation tool with two features: LLM-powered resume scoring (recruiter uploads CVs against a vacancy, gets a ranked list with explanations) and automated daily labor market analytics collected from HH and SuperJob APIs.
