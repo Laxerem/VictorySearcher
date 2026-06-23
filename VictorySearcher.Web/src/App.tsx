@@ -5,6 +5,7 @@ import { LoginPage } from '@/pages/LoginPage/LoginPage';
 import { NotFoundPage } from '@/pages/NotFoundPage/NotFoundPage';
 import { ScoringPage } from '@/pages/ScoringPage/ScoringPage';
 import { VacancyPage } from '@/pages/VacancyPage/VacancyPage';
+import { ScoringResultsPage } from '@/pages/ScoringResultsPage/ScoringResultsPage';
 
 interface ProtectedRouteProps {
   children: ReactNode;
@@ -34,6 +35,14 @@ export default function App() {
           element={
             <ProtectedRoute>
               <VacancyPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/scoring/vacancies/:id/results"
+          element={
+            <ProtectedRoute>
+              <ScoringResultsPage />
             </ProtectedRoute>
           }
         />

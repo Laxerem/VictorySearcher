@@ -26,30 +26,66 @@
   overflow-y: auto;
 }
 
-.scoringButton {
+.toolbar {
+  display: flex;
+  align-items: center;
+}
+
+.backButton {
+  background: transparent;
+  color: var(--color-text-muted);
+  border: none;
+  padding: var(--space-1) 0;
+  font-size: var(--text-sm);
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.backButton:hover {
+  color: var(--color-text);
+}
+
+.placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-12) var(--space-6);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.placeholderText {
+  margin: 0;
+  font-size: var(--text-base);
+  color: var(--color-text-muted);
+}
+
+.startButton {
   align-self: flex-start;
   background: var(--color-primary);
   color: #fff;
   border: none;
   border-radius: var(--radius-md);
-  padding: var(--space-3) var(--space-6);
+  padding: var(--space-2) var(--space-5);
   font-size: var(--text-sm);
-  font-weight: 600;
+  font-weight: 500;
   cursor: pointer;
   transition: background-color 0.15s ease;
 }
 
-.scoringButton:hover {
+.startButton:hover {
   background: var(--color-primary-hover);
 }
 
-.scoringButton:disabled {
+.startButton:disabled {
   opacity: 0.6;
   cursor: default;
 }
 
 .skeleton {
-  flex: 1;
+  height: 200px;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);

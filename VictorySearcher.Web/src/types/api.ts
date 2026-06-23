@@ -32,3 +32,24 @@ export interface CreateVacancyRequestDto {
   requirements: string;
   extraRequirements?: string;
 }
+
+export type ScoringStatus = 'pending' | 'inProcess' | 'finished' | 'failed';
+
+export interface ScoringStatusDto {
+  status: ScoringStatus;
+  errorMessage: string | null;
+  createdAt: string;
+  finishedAt: string | null;
+}
+
+export interface ScoringResultDto {
+  resumeId: string;
+  fileName: string;
+  overallScore: number;
+  experienceScore: number;
+  skillsScore: number;
+  extraScore: number | null;
+  reasoning: string;
+  incongruity: boolean;
+  scoredAt: string;
+}
