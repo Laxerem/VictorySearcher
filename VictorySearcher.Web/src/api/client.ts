@@ -58,3 +58,16 @@ export function post<T>(path: string, body: unknown): Promise<T> {
     body: JSON.stringify(body),
   });
 }
+
+export async function postForm<T>(path: string, body: FormData): Promise<T> {
+  const token = getToken();
+  const res = await fetch(`/api${path}`, {
+    method: 'POST',
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+    body,
+  });
+  if (res.status === 401) clearToken();
+  if (!res.ok) throw { message: res.statusText, status: res.status };
+  const text = await res.text();
+  return text ? JSON.parse(text) : (undefined as T);
+}

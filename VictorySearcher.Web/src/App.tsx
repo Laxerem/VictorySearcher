@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import { useAuth } from '@/providers/AuthProvider';
 import { LoginPage } from '@/pages/LoginPage/LoginPage';
 import { NotFoundPage } from '@/pages/NotFoundPage/NotFoundPage';
+import { ScoringPage } from '@/pages/ScoringPage/ScoringPage';
 
 interface ProtectedRouteProps {
   children: ReactNode;
@@ -23,9 +24,7 @@ export default function App() {
           path="/scoring"
           element={
             <ProtectedRoute>
-              <div style={{ padding: 'var(--space-8)', color: 'var(--color-text)' }}>
-                Scoring — coming soon
-              </div>
+              <ScoringPage />
             </ProtectedRoute>
           }
         />

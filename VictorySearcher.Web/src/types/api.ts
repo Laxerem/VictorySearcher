@@ -11,3 +11,19 @@ export interface ApiError {
   message: string;
   status: number;
 }
+
+export interface VacancyDto {
+  id: string;
+  title: string;
+  description: string;
+  requirements: string;
+  extraRequirements: string | null;
+  createdAt: string;
+}
+
+export interface CreateVacancyRequestDto {
+  title: string;
+  description: string;
+  requirements: string;
+  extraRequirements?: string;
+}
