@@ -6,7 +6,8 @@
         "date": "2026-06-23",
         "progress": [
           "Реализован слой данных в VictorySearcher.Service: сущности домена, EF Core конфигурации, репозитории, UnitOfWork",
-          "Реализован деплой VictorySearcher.Service: Dockerfile и docker-compose конфигурация"
+          "Реализован деплой VictorySearcher.Service: Dockerfile и docker-compose конфигурация",
+          "Реализована авторизация в VictorySearcher.Service: POST /api/auth/login, JWT-токен, единственный пользователь из seed"
         ]
       }
     ]
