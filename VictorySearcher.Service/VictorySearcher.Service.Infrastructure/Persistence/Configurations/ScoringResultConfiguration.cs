@@ -4,10 +4,8 @@ using VictorySearcher.Service.Domain.Entities;
 
 namespace VictorySearcher.Service.Infrastructure.Persistence.Configurations;
 
-public class ScoringResultConfiguration : IEntityTypeConfiguration<ScoringResult>
-{
-    public void Configure(EntityTypeBuilder<ScoringResult> builder)
-    {
+public class ScoringResultConfiguration : IEntityTypeConfiguration<ScoringResult> {
+    public void Configure(EntityTypeBuilder<ScoringResult> builder) {
         builder.HasKey(r => r.Id);
         builder.Property(r => r.Reasoning).IsRequired();
         builder.Property(r => r.ExtraScore).IsRequired(false);

@@ -4,10 +4,8 @@ using VictorySearcher.Service.Domain.Entities;
 
 namespace VictorySearcher.Service.Infrastructure.Persistence.Configurations;
 
-public class VacancyConfiguration : IEntityTypeConfiguration<Vacancy>
-{
-    public void Configure(EntityTypeBuilder<Vacancy> builder)
-    {
+public class VacancyConfiguration : IEntityTypeConfiguration<Vacancy> {
+    public void Configure(EntityTypeBuilder<Vacancy> builder) {
         builder.HasKey(v => v.Id);
         builder.Property(v => v.Title).HasMaxLength(500).IsRequired();
         builder.Property(v => v.Description).IsRequired();

@@ -1,4 +1,4 @@
-namespace VictorySearcher.Service.Domain.Repositories;
+namespace VictorySearcher.Service.Application.Interfaces;
 
 public interface IUnitOfWork {
     Task<int> SaveChangesAsync(CancellationToken ct = default);

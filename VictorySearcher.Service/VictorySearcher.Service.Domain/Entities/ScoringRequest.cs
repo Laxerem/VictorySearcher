@@ -2,8 +2,7 @@ using VictorySearcher.Service.Domain.Enums;
 
 namespace VictorySearcher.Service.Domain.Entities;
 
-public class ScoringRequest
-{
+public class ScoringRequest {
     public Guid Id { get; set; }
     public Guid VacancyId { get; set; }
     public ScoringStatus Status { get; set; }

@@ -1,7 +1,6 @@
 namespace VictorySearcher.Service.Domain.Enums;
 
-public enum ScoringStatus
-{
+public enum ScoringStatus {
     Pending,
     InProcess,
     Finished,

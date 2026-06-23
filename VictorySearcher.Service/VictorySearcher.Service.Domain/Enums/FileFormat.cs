@@ -1,7 +1,6 @@
 namespace VictorySearcher.Service.Domain.Enums;
 
-public enum FileFormat
-{
+public enum FileFormat {
     PDF,
     DOCX,
     TXT

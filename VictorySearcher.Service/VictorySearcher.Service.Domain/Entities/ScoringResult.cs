@@ -1,7 +1,6 @@
 namespace VictorySearcher.Service.Domain.Entities;
 
-public class ScoringResult
-{
+public class ScoringResult {
     public Guid Id { get; set; }
     public Guid RequestId { get; set; }
     public Guid ResumeId { get; set; }

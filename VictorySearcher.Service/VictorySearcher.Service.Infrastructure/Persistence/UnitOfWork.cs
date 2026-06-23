@@ -1,4 +1,4 @@
-using VictorySearcher.Service.Domain.Repositories;
+using VictorySearcher.Service.Application.Interfaces;
 
 namespace VictorySearcher.Service.Infrastructure.Persistence;
 
