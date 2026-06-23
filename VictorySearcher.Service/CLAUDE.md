@@ -1,12 +1,10 @@
-> Before any changes, read the root `../CLAUDE.md`.
-
 # CLAUDE.md — VictorySearcher.Service
 
 VictorySearcher is an internal HR automation tool with two features: LLM-powered resume scoring (recruiter uploads CVs against a vacancy, gets a ranked list with explanations) and automated daily labor market analytics collected from HH and SuperJob APIs.
 
 ## Key docs
 
-> Before any changes, read the root `../CLAUDE.md`.
+> IMPORTANT! Before any changes, read the root `../CLAUDE.md`.
 
 | File | When to read |
 |------|-------------|
@@ -87,12 +85,6 @@ Every entity has its own `IEntityTypeConfiguration<T>` in `Infrastructure/Persis
 - Do not reference `Infrastructure` from `Application`
 - Do not call `SaveChangesAsync` inside a repository — stage changes only; commit via `IUnitOfWork`
 - Do not hardcode credentials or connection strings — all config goes through the Options pattern
-
----
-
-## Progress tracking
-
-After implementing any user-visible feature or changing business logic, update `progress.json` — see `../.claude/rules/progress-json.md`.
 
 ---
 
