@@ -11,6 +11,7 @@ builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddJwtAuthentication(builder.Configuration);
 builder.Services.AddAuthorization();
 builder.Services.AddControllers();
+builder.Services.AddSwagger();
 
 var app = builder.Build();
 
@@ -19,6 +20,10 @@ using (var scope = app.Services.CreateScope()) {
     var jwtOpts = scope.ServiceProvider.GetRequiredService<IOptions<JwtOptions>>().Value;
     await db.Database.MigrateAsync();
     await AppDbContextSeed.SeedAsync(db, jwtOpts);
+}
+
+if (app.Environment.IsDevelopment()) {
+    app.UseSwaggerWithUi();
 }
 
 app.UseAuthentication();
