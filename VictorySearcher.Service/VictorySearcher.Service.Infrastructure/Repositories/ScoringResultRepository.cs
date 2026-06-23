@@ -13,6 +13,11 @@ public class ScoringResultRepository(AppDbContext db) : IScoringResultRepository
             .OrderByDescending(r => r.OverallScore)
             .ToListAsync(ct);
 
+    public Task AddAsync(ScoringResult result, CancellationToken ct = default) {
+        db.ScoringResults.Add(result);
+        return Task.CompletedTask;
+    }
+
     public Task AddRangeAsync(IEnumerable<ScoringResult> results, CancellationToken ct = default) {
         db.ScoringResults.AddRange(results);
         return Task.CompletedTask;

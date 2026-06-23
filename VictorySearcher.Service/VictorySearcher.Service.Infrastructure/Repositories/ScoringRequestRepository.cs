@@ -19,9 +19,4 @@ public class ScoringRequestRepository(AppDbContext db) : IScoringRequestReposito
         db.ScoringRequests.Add(request);
         return Task.CompletedTask;
     }
-
-    public Task UpdateAsync(ScoringRequest request, CancellationToken ct = default) {
-        db.ScoringRequests.Update(request);
-        return Task.CompletedTask;
-    }
 }

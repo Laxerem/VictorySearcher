@@ -1,14 +1,19 @@
+using Hangfire;
+using Hangfire.PostgreSql;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using VictorySearcher.Service.Application.Interfaces;
 using VictorySearcher.Service.Application.Resumes;
+using VictorySearcher.Service.Application.Scoring;
 using VictorySearcher.Service.Application.Vacancies;
 using VictorySearcher.Service.Domain.Repositories;
+using VictorySearcher.Service.Infrastructure.Jobs;
 using VictorySearcher.Service.Infrastructure.Options;
 using VictorySearcher.Service.Infrastructure.Persistence;
 using VictorySearcher.Service.Infrastructure.Repositories;
 using VictorySearcher.Service.Infrastructure.Services;
+using VictorySearcher.Service.Infrastructure.Services.Parsers;
 
 namespace VictorySearcher.Service.Infrastructure;
 
@@ -33,6 +38,22 @@ public static class DependencyInjection {
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IVacancyService, VacancyService>();
         services.AddScoped<IResumeService, ResumeService>();
+
+        services.AddScoped<IResumeParser, TxtResumeParser>();
+        services.AddScoped<ResumeParserDispatcher>();
+
+        services.AddScoped<IResumeAnalyserService, ResumeAnalyserService>();
+        services.AddScoped<IScoringService, ScoringService>();
+        services.AddTransient<ResumeScoringJob>();
+
+        services.AddHangfire(cfg => cfg
+            .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+            .UseSimpleAssemblyNameTypeSerializer()
+            .UseRecommendedSerializerSettings()
+            .UsePostgreSqlStorage(c => c.UseNpgsqlConnection(
+                configuration.GetConnectionString("Postgres")!)));
+
+        services.AddHangfireServer();
 
         return services;
     }

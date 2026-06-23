@@ -8,7 +8,8 @@
           "Реализован слой данных в VictorySearcher.Service: сущности домена, EF Core конфигурации, репозитории, UnitOfWork",
           "Реализован деплой VictorySearcher.Service: Dockerfile и docker-compose конфигурация",
           "Реализована авторизация в VictorySearcher.Service: POST /api/auth/login, JWT-токен, единственный пользователь из seed",
-          "Реализованы вакансии в VictorySearcher.Service: POST /api/vacancies (создание), POST /api/vacancies/{id}/resumes (загрузка TXT-резюме с file-first консистентностью)"
+          "Реализованы вакансии в VictorySearcher.Service: POST /api/vacancies (создание), POST /api/vacancies/{id}/resumes (загрузка TXT-резюме с file-first консистентностью)",
+          "Реализован скоринг резюме в VictorySearcher.Service: POST /api/vacancies/{id}/scoring запускает Hangfire-джоб, который поочерёдно парсит резюме и оценивает через LLM (polza.ai); GET /status и /results возвращают статус и результаты по vacancyId"
         ]
       }
     ]
