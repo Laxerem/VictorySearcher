@@ -12,6 +12,11 @@ export interface ApiError {
   status: number;
 }
 
+export interface VacancyListItemDto {
+  id: string;
+  title: string;
+}
+
 export interface VacancyDto {
   id: string;
   title: string;

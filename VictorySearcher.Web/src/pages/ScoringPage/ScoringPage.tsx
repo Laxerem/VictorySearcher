@@ -1,18 +1,10 @@
-import { useState } from 'react';
-import { VacancyForm, VacancyList, ResumeUploadPanel, useVacancies, useResumeUpload } from '@/features/scoring';
+import { useNavigate } from 'react-router-dom';
+import { VacancyForm, VacancyList, useVacancies } from '@/features/scoring';
 import styles from './ScoringPage.module.css';
 
 export function ScoringPage() {
-  const [selectedVacancyId, setSelectedVacancyId] = useState<string | null>(null);
+  const navigate = useNavigate();
   const { vacancies, isLoading, create, isCreating, createError } = useVacancies();
-  const { entries, upload, clear } = useResumeUpload();
-
-  function handleSelectVacancy(id: string) {
-    if (id !== selectedVacancyId) {
-      setSelectedVacancyId(id);
-      clear();
-    }
-  }
 
   return (
     <div className={styles.page}>
@@ -25,22 +17,15 @@ export function ScoringPage() {
         <VacancyList
           vacancies={vacancies}
           isLoading={isLoading}
-          selectedId={selectedVacancyId}
-          onSelect={handleSelectVacancy}
+          selectedId={null}
+          onSelect={(id) => navigate(`/scoring/vacancies/${id}`)}
         />
       </aside>
 
       <main className={styles.main}>
-        {selectedVacancyId ? (
-          <ResumeUploadPanel
-            entries={entries}
-            onUpload={(files) => upload(selectedVacancyId, files)}
-          />
-        ) : (
-          <div className={styles.placeholder}>
-            Выберите вакансию, чтобы загрузить резюме
-          </div>
-        )}
+        <div className={styles.placeholder}>
+          Выберите вакансию, чтобы начать работу
+        </div>
       </main>
     </div>
   );

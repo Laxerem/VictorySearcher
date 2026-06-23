@@ -5,7 +5,7 @@ Two protected sections: **Resume Scoring** and **Market Analytics**. Single JWT 
 
 ## Key docs
 
-> Before any changes, read the root `../CLAUDE.md`.
+> IMPORTANT! Before any changes, read the root `../CLAUDE.md` - stick to these rules
 
 | File | When to read |
 |------|-------------|

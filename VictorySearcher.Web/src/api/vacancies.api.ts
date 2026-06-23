@@ -1,7 +1,9 @@
 import { get, post, postForm } from './client';
-import type { VacancyDto, CreateVacancyRequestDto } from '@/types/api';
+import type { VacancyDto, VacancyListItemDto, CreateVacancyRequestDto } from '@/types/api';
 
-export const getVacancies = () => get<VacancyDto[]>('/vacancies');
+export const getVacancies = () => get<VacancyListItemDto[]>('/vacancies');
+
+export const getVacancy = (id: string) => get<VacancyDto>(`/vacancies/${id}`);
 
 export const createVacancy = (data: CreateVacancyRequestDto) =>
   post<VacancyDto>('/vacancies', data);

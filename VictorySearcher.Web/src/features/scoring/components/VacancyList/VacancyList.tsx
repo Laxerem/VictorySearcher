@@ -1,9 +1,9 @@
-import type { VacancyDto } from '@/types/api';
+import type { VacancyListItemDto } from '@/types/api';
 import { VacancyCard } from '../VacancyCard/VacancyCard';
 import styles from './VacancyList.module.css';
 
 interface Props {
-  vacancies: VacancyDto[];
+  vacancies: VacancyListItemDto[];
   isLoading: boolean;
   selectedId: string | null;
   onSelect: (id: string) => void;

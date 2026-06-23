@@ -4,6 +4,7 @@ import { useAuth } from '@/providers/AuthProvider';
 import { LoginPage } from '@/pages/LoginPage/LoginPage';
 import { NotFoundPage } from '@/pages/NotFoundPage/NotFoundPage';
 import { ScoringPage } from '@/pages/ScoringPage/ScoringPage';
+import { VacancyPage } from '@/pages/VacancyPage/VacancyPage';
 
 interface ProtectedRouteProps {
   children: ReactNode;
@@ -25,6 +26,14 @@ export default function App() {
           element={
             <ProtectedRoute>
               <ScoringPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/scoring/vacancies/:id"
+          element={
+            <ProtectedRoute>
+              <VacancyPage />
             </ProtectedRoute>
           }
         />
