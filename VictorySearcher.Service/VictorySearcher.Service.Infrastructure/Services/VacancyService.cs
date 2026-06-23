@@ -7,12 +7,14 @@ using VictorySearcher.Service.Domain.Repositories;
 
 namespace VictorySearcher.Service.Infrastructure.Services;
 
-public class VacancyService(IVacancyRepository vacancyRepository, IUnitOfWork unitOfWork) : IVacancyService {
-    public async Task<Result<VacancyDto>> CreateAsync(
-        string title,
-        string description,
-        string requirements,
-        string? extraRequirements,
+public class VacancyService : IVacancyService {
+    private readonly IVacancyRepository _vacancyRepository;
+    private readonly IUnitOfWork _unitOfWork;
+    public VacancyService(IVacancyRepository vacancyRepository, IUnitOfWork unitOfWork) {
+        _vacancyRepository = vacancyRepository;
+        _unitOfWork = unitOfWork;
+    }
+    public async Task<Result<VacancyDto>> CreateAsync(string title, string description, string requirements, string? extraRequirements,
         Guid createdById,
         CancellationToken ct = default) {
         var vacancy = new Vacancy {
@@ -25,8 +27,8 @@ public class VacancyService(IVacancyRepository vacancyRepository, IUnitOfWork un
             CreatedAt = DateTime.UtcNow
         };
 
-        await vacancyRepository.AddAsync(vacancy, ct);
-        await unitOfWork.SaveChangesAsync(ct);
+        await _vacancyRepository.AddAsync(vacancy, ct);
+        await _unitOfWork.SaveChangesAsync(ct);
 
         return Result<VacancyDto>.Success(new VacancyDto(
             vacancy.Id,

@@ -1,4 +1,4 @@
-using Microsoft.OpenApi;
+using Microsoft.OpenApi.Models;
 
 namespace VictorySearcher.Service.Api.Extensions;
 
@@ -18,12 +18,17 @@ public static class SwaggerExtensions {
                 Scheme = BearerScheme,
                 BearerFormat = "JWT",
                 In = ParameterLocation.Header,
-                Description = "Введите JWT-токен. Пример: Bearer {token}"
+                Description = "Введите JWT-токен без префикса Bearer"
             });
 
-            opts.AddSecurityRequirement(_ => new OpenApiSecurityRequirement {
+            opts.AddSecurityRequirement(new OpenApiSecurityRequirement {
                 {
-                    new OpenApiSecuritySchemeReference(BearerScheme, null),
+                    new OpenApiSecurityScheme {
+                        Reference = new OpenApiReference {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = BearerScheme
+                        }
+                    },
                     []
                 }
             });
