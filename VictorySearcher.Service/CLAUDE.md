@@ -86,6 +86,12 @@ Every entity has its own `IEntityTypeConfiguration<T>` in `Infrastructure/Persis
 
 ---
 
+## Progress tracking
+
+After implementing any user-visible feature or changing business logic, update `progress.json` — see `../.claude/rules/progress-json.md`.
+
+---
+
 ## Post-change checklist
 
 ```bash

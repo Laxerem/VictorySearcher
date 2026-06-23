@@ -1,0 +1,13 @@
+{
+  "project": "VictorySearcher.Service",
+  "items":
+    [
+      {
+        "date": "2026-06-23",
+        "progress": [
+          "Реализован слой данных в VictorySearcher.Service: сущности домена, EF Core конфигурации, репозитории, UnitOfWork",
+          "Реализован деплой VictorySearcher.Service: Dockerfile и docker-compose конфигурация"
+        ]
+      }
+    ]
+}
