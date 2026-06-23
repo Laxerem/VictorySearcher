@@ -6,6 +6,8 @@ VictorySearcher is an internal HR automation tool with two features: LLM-powered
 
 ## Key docs
 
+> Before any changes, read the root `../CLAUDE.md`.
+
 | File | When to read |
 |------|-------------|
 | `docs/TASK.md` | Understanding what the product must do and the acceptance criteria |

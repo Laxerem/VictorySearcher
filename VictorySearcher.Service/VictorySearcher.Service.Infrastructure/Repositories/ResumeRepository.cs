@@ -15,6 +15,11 @@ public class ResumeRepository(AppDbContext db) : IResumeRepository {
             .OrderBy(r => r.LoadedAt)
             .ToListAsync(ct);
 
+    public Task AddAsync(Resume resume, CancellationToken ct = default) {
+        db.Resumes.Add(resume);
+        return Task.CompletedTask;
+    }
+
     public Task AddRangeAsync(IEnumerable<Resume> resumes, CancellationToken ct = default) {
         db.Resumes.AddRange(resumes);
         return Task.CompletedTask;

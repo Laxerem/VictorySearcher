@@ -2,6 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using VictorySearcher.Service.Application.Interfaces;
+using VictorySearcher.Service.Application.Resumes;
+using VictorySearcher.Service.Application.Vacancies;
 using VictorySearcher.Service.Domain.Repositories;
 using VictorySearcher.Service.Infrastructure.Options;
 using VictorySearcher.Service.Infrastructure.Persistence;
@@ -29,6 +31,8 @@ public static class DependencyInjection {
 
         services.AddScoped<IJwtProvider, JwtProvider>();
         services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<IVacancyService, VacancyService>();
+        services.AddScoped<IResumeService, ResumeService>();
 
         return services;
     }
