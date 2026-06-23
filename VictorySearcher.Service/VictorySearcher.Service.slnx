@@ -1,3 +1,6 @@
 <Solution>
-  <Project Path="VictorySearcher.Service.Core\VictorySearcher.Service.Core.csproj" Type="Classic C#" />
+  <Project Path="VictorySearcher.Service.Api/VictorySearcher.Service.Api.csproj" />
+  <Project Path="VictorySearcher.Service.Application/VictorySearcher.Service.Application.csproj" />
+  <Project Path="VictorySearcher.Service.Domain/VictorySearcher.Service.Domain.csproj" />
+  <Project Path="VictorySearcher.Service.Infrastructure/VictorySearcher.Service.Infrastructure.csproj" />
 </Solution>
