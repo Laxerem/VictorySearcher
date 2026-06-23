@@ -11,4 +11,8 @@ public interface IVacancyService {
         string? extraRequirements,
         Guid createdById,
         CancellationToken ct = default);
+
+    Task<Result<IReadOnlyList<VacancyListItemDto>>> GetAllAsync(CancellationToken ct = default);
+
+    Task<Result<VacancyDto>> GetByIdAsync(Guid id, CancellationToken ct = default);
 }

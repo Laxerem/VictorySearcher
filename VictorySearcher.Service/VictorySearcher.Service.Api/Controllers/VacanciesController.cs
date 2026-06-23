@@ -26,4 +26,25 @@ public class VacanciesController(IVacancyService vacancyService) : ControllerBas
 
         return StatusCode(StatusCodes.Status201Created, result.Value);
     }
+
+    [HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> GetAllAsync(CancellationToken ct) {
+        var result = await vacancyService.GetAllAsync(ct);
+        return Ok(result.Value);
+    }
+
+    [HttpGet("{id:guid}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetByIdAsync(Guid id, CancellationToken ct) {
+        var result = await vacancyService.GetByIdAsync(id, ct);
+
+        return result.Error switch {
+            "not_found" => NotFound(),
+            _ => Ok(result.Value)
+        };
+    }
 }

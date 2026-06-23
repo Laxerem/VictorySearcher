@@ -38,4 +38,24 @@ public class VacancyService : IVacancyService {
             vacancy.ExtraRequirements,
             vacancy.CreatedAt));
     }
+
+    public async Task<Result<IReadOnlyList<VacancyListItemDto>>> GetAllAsync(CancellationToken ct = default) {
+        var vacancies = await _vacancyRepository.GetAllAsync(ct);
+        var dtos = vacancies.Select(v => new VacancyListItemDto(v.Id, v.Title)).ToList();
+        return Result<IReadOnlyList<VacancyListItemDto>>.Success(dtos);
+    }
+
+    public async Task<Result<VacancyDto>> GetByIdAsync(Guid id, CancellationToken ct = default) {
+        var vacancy = await _vacancyRepository.GetByIdAsync(id, ct);
+        if (vacancy is null)
+            return Result<VacancyDto>.Failure("not_found");
+
+        return Result<VacancyDto>.Success(new VacancyDto(
+            vacancy.Id,
+            vacancy.Title,
+            vacancy.Description,
+            vacancy.Requirements,
+            vacancy.ExtraRequirements,
+            vacancy.CreatedAt));
+    }
 }
