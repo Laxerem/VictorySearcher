@@ -9,10 +9,10 @@ export function useScoringResults(vacancyId: string, enabled: boolean) {
   });
 
   const ranked = results
-    .filter((r) => !r.incongruity)
+    .filter((r) => !r.isUncertain)
     .sort((a, b) => b.overallScore - a.overallScore);
 
-  const flagged = results.filter((r) => r.incongruity);
+  const flagged = results.filter((r) => r.isUncertain);
 
   return { ranked, flagged, isLoading };
 }

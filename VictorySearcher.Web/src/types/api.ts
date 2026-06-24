@@ -56,7 +56,6 @@ export interface ScoringResultDto {
   skillsScore: number;
   extraScore: number | null;
   reasoning: string;
-  incongruity: boolean;
   isUncertain: boolean;
   requirementsAnalysis: RequirementCoverageDto[];
   scoredAt: string;
