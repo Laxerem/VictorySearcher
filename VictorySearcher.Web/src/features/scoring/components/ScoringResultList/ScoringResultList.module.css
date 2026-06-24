@@ -17,10 +17,10 @@
   margin: 0;
 }
 
-.sectionTitleFlagged {
+.sectionTitleUncertain {
   font-size: var(--text-lg);
   font-weight: 600;
-  color: var(--color-error);
+  color: var(--color-warning);
   margin: 0;
 }
 

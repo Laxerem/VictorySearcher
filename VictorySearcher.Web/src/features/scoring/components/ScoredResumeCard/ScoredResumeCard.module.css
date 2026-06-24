@@ -9,7 +9,7 @@
 }
 
 .flagged {
-  border-color: var(--color-error);
+  border-color: var(--color-warning);
 }
 
 .header {
@@ -40,13 +40,6 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-.uncertainBadge {
-  font-size: var(--text-sm);
-  font-weight: 500;
-  color: var(--color-warning);
-  flex-shrink: 0;
 }
 
 .overall {

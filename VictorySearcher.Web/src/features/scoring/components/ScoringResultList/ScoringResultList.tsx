@@ -25,7 +25,7 @@ export function ScoringResultList({ ranked, flagged }: Props) {
 
       {flagged.length > 0 && (
         <section className={styles.section}>
-          <h2 className={styles.sectionTitleFlagged}>Несоответствия</h2>
+          <h2 className={styles.sectionTitleUncertain}>Неопределённо</h2>
           <div className={styles.list}>
             {flagged.map((result) => (
               <ScoredResumeCard key={result.resumeId} result={result} flagged />

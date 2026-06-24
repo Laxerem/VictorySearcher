@@ -37,9 +37,6 @@ export function ScoredResumeCard({ result, rank, flagged }: Props) {
         <div className={styles.identity}>
           {rank !== undefined && <span className={styles.rank}>#{rank}</span>}
           <span className={styles.fileName}>{result.fileName}</span>
-          {result.isUncertain && (
-            <span className={styles.uncertainBadge}>? Неопределённо</span>
-          )}
         </div>
         <div className={styles.overall}>
           <span className={styles.overallValue}>{result.overallScore}</span>
