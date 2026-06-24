@@ -75,6 +75,7 @@ Every entity has its own `IEntityTypeConfiguration<T>` in `Infrastructure/Persis
 - Expression-bodied members for single-expression methods and properties
 - `CancellationToken ct = default` as the last parameter in every `async` method
 - `var` for local variables; explicit type only when not obvious from the right-hand side
+- No vertical alignment of `=` or `:` — single space around operators everywhere
 - `= null!` for required navigation properties; `?` suffix for genuinely optional fields
 - No `.Result` or `.Wait()` — always `await`
 - Controllers return `IActionResult`; decorate with `[Authorize]` where authentication is required
