@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using VictorySearcher.Service.Application.Interfaces;
 using VictorySearcher.Service.Application.Scoring;
 using VictorySearcher.Service.Application.Scoring.Dtos;
@@ -15,7 +16,8 @@ public class ResumeScoringJob(
     ResumeParserDispatcher parserDispatcher,
     IResumeAnalyserService analyserService,
     IScoringResultRepository scoringResultRepository,
-    IUnitOfWork unitOfWork) {
+    IUnitOfWork unitOfWork,
+    ILogger<ResumeScoringJob> logger) {
 
     public async Task ExecuteAsync(Guid requestId, CancellationToken ct = default) {
         var request = await scoringRequestRepository.GetByIdAsync(requestId, ct)
@@ -29,6 +31,10 @@ public class ResumeScoringJob(
                 ?? throw new InvalidOperationException($"Vacancy {request.VacancyId} not found.");
 
             var resumes = await resumeRepository.GetByVacancyIdAsync(request.VacancyId, ct);
+
+            logger.LogInformation(
+                "Scoring started: request {RequestId}, vacancy \"{VacancyTitle}\", {ResumeCount} resumes",
+                requestId, vacancy.Title, resumes.Count);
 
             var vacancyContext = new VacancyContextDto(
                 vacancy.Title,
@@ -57,12 +63,21 @@ public class ResumeScoringJob(
                 }, ct);
 
                 await unitOfWork.SaveChangesAsync(ct);
+
+                logger.LogInformation(
+                    "Scored resume \"{FileName}\": overall={OverallScore}, uncertain={IsUncertain}",
+                    resume.FileName, analysis.OverallScore, analysis.IsUncertain);
             }
 
             request.Status = ScoringStatus.Finished;
             request.FinishedAt = DateTime.UtcNow;
             await unitOfWork.SaveChangesAsync(ct);
+
+            logger.LogInformation(
+                "Scoring finished: request {RequestId}, {ResumeCount} resumes processed",
+                requestId, resumes.Count);
         } catch (Exception ex) {
+            logger.LogError(ex, "Scoring failed: request {RequestId}", requestId);
             request.Status = ScoringStatus.Failed;
             request.ErrorMessage = ex.Message;
             await unitOfWork.SaveChangesAsync(ct);

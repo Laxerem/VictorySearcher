@@ -10,6 +10,7 @@ using VictorySearcher.Service.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.AddSerilogLogging();
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddJwtAuthentication(builder.Configuration);
 builder.Services.AddAuthorization();
@@ -17,7 +18,6 @@ builder.Services.AddControllers()
     .AddJsonOptions(o =>
         o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)));
 builder.Services.AddSwagger();
-builder.Services.AddHttpLogging();
 
 var app = builder.Build();
 
@@ -32,6 +32,7 @@ if (app.Environment.IsDevelopment()) {
     app.UseSwaggerWithUi();
 }
 
+app.UseSerilogLogging();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseHangfireDashboard("/hangfire");

@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using VictorySearcher.Service.Application.Scoring;
 using VictorySearcher.Service.Application.Scoring.Dtos;
@@ -8,7 +9,7 @@ using VictorySearcher.Service.Infrastructure.Options;
 namespace VictorySearcher.Service.Infrastructure.Services;
 
 public class ResumeAnalyserService(IAnalyserLlmClient llmClient, AnalyserPromptBuilder promptBuilder,
-    IOptions<ResumeAnalyserOptions> options) : IResumeAnalyserService {
+    IOptions<ResumeAnalyserOptions> options, ILogger<ResumeAnalyserService> logger) : IResumeAnalyserService {
 
     private static readonly JsonSerializerOptions JsonOpts = new() { PropertyNameCaseInsensitive = true };
 
@@ -24,14 +25,19 @@ public class ResumeAnalyserService(IAnalyserLlmClient llmClient, AnalyserPromptB
                     var json = await llmClient.CompleteAsync(messages, ct);
                     var result = JsonSerializer.Deserialize<LlmResponseJson>(json, JsonOpts)
                                  ?? throw new InvalidOperationException("LLM returned null.");
-                    return result with {
+                    var clamped = result with {
                         ExperienceScore = Math.Clamp(result.ExperienceScore, 0, 100),
                         SkillsScore = Math.Clamp(result.SkillsScore, 0, 100),
                         ExtraScore = result.ExtraScore.HasValue
                             ? Math.Clamp(result.ExtraScore.Value, 0, 100)
                             : (int?)null,
                     };
-                } catch (Exception) {
+                    logger.LogInformation(
+                        "LLM run {Run}/{Total}: experience={Experience}, skills={Skills}, extra={Extra}. {Reasoning}",
+                        i + 1, opts.Runs, clamped.ExperienceScore, clamped.SkillsScore, clamped.ExtraScore, clamped.Reasoning);
+                    return clamped;
+                } catch (Exception ex) {
+                    logger.LogWarning(ex, "LLM run {Run}/{Total} failed", i + 1, opts.Runs);
                     return null;
                 }
             });
@@ -43,6 +49,8 @@ public class ResumeAnalyserService(IAnalyserLlmClient llmClient, AnalyserPromptB
             throw new InvalidOperationException("All LLM runs failed.");
 
         var degraded = runs.Length < opts.Runs;
+        if (degraded)
+            logger.LogWarning("Only {Succeeded}/{Total} LLM runs succeeded", runs.Length, opts.Runs);
 
         var perRunOveralls = runs
             .Select(r => (int)Math.Round(
