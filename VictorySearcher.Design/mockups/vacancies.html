@@ -13,11 +13,20 @@
     [hidden] { display: none !important; }
     .btn[disabled] { opacity: 0.5; cursor: not-allowed; }
 
-    /* ---- vacancy list (left column of content) ---- */
+    /* ---- vacancy list ---- */
     .vlist { border-right: 1px solid var(--line); background: var(--ink-850); display: flex; flex-direction: column; min-height: 0; }
     .vlist__head { display: flex; align-items: center; justify-content: space-between; padding: var(--space-4) var(--space-4) var(--space-3); border-bottom: 1px solid var(--line); }
     .vlist__title { font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.03em; font-weight: 700; font-size: 18px; }
-    .vlist__scroll { overflow-y: auto; padding: var(--space-2); display: flex; flex-direction: column; gap: 2px; }
+
+    /* search */
+    .vlist__search { padding: var(--space-2) var(--space-3); border-bottom: 1px solid var(--line-soft); }
+    .search-wrap { display: flex; align-items: center; gap: var(--space-2); background: var(--ink-800); border: 1px solid var(--line); border-radius: var(--r-sm); padding: 6px var(--space-3); transition: border-color var(--dur) var(--ease); }
+    .search-wrap:focus-within { border-color: var(--line-strong); }
+    .search-wrap svg { color: var(--text-700); flex: none; width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+    .search-input { flex: 1; background: none; border: none; outline: none; font-family: var(--font-ui); font-size: 13px; color: var(--text-100); min-width: 0; }
+    .search-input::placeholder { color: var(--text-700); }
+
+    .vlist__scroll { overflow-y: auto; padding: var(--space-2); display: flex; flex-direction: column; gap: 2px; flex: 1; }
     .vcard { text-align: left; width: 100%; background: transparent; border: 1px solid transparent; border-radius: var(--r-sm); padding: var(--space-3); cursor: pointer; display: flex; flex-direction: column; gap: 6px; transition: background var(--dur) var(--ease), border-color var(--dur) var(--ease); color: inherit; }
     .vcard:hover { background: var(--ink-800); }
     .vcard--active { background: var(--ink-800); border-color: var(--line-strong); }
@@ -27,39 +36,82 @@
     .vcard__count { font-family: var(--font-data); font-size: 12px; color: var(--text-500); }
     .vlist__empty { padding: var(--space-6); color: var(--text-500); font-size: 13px; }
 
-    /* ---- main detail ---- */
+    /* ---- main ---- */
     .main { overflow-y: auto; min-height: 0; padding: var(--space-6) var(--space-8); }
     .main__empty { height: 100%; display: grid; place-items: center; color: var(--text-500); font-size: 14px; }
-    .detail { max-width: 760px; display: flex; flex-direction: column; gap: var(--space-6); }
+    .detail { max-width: 760px; display: flex; flex-direction: column; gap: var(--space-5); }
+
     .detail__head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-4); }
     .detail__title { font-size: 22px; line-height: 28px; font-weight: 600; margin: 0; }
     .detail__sub { display: flex; align-items: center; gap: var(--space-3); margin-top: var(--space-2); }
     .detail__date { font-family: var(--font-data); font-size: 12px; color: var(--text-500); }
     .detail__actions { display: flex; gap: var(--space-2); flex: none; }
 
-    .section { display: flex; flex-direction: column; gap: var(--space-3); }
-    .section__title { font-size: 12px; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-500); margin: 0; }
-    .section__text { margin: 0; color: var(--text-300); font-size: 14px; line-height: 22px; max-width: 70ch; white-space: pre-wrap; }
-    .chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
-    .divider { height: 1px; background: var(--line); }
+    /* ---- tab system ---- */
+    .tabs-root { display: flex; flex-direction: column; gap: 0; }
+    .tabs-list {
+      display: flex; gap: 0;
+      border-bottom: 1px solid var(--line);
+    }
+    .tab-trigger {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 9px 14px; font-size: 13px; font-weight: 500;
+      color: var(--text-500); background: none; border: none;
+      border-bottom: 2px solid transparent; margin-bottom: -1px;
+      cursor: pointer; transition: color var(--dur) var(--ease);
+      white-space: nowrap;
+    }
+    .tab-trigger:hover { color: var(--text-300); }
+    .tab-trigger--active { color: var(--signal-300); border-bottom-color: var(--signal-500); }
+    .tab-badge {
+      font-family: var(--font-data); font-size: 11px;
+      background: var(--ink-700); border: 1px solid var(--line-strong);
+      border-radius: 999px; padding: 1px 7px; color: var(--text-500);
+    }
+    .tab-badge--warn { background: var(--warn-bg); border-color: transparent; color: var(--warn); }
+    .tab-content { padding-top: var(--space-4); }
 
-    /* ---- resume upload ---- */
+    /* ---- drop zone ---- */
     .drop { border: 1px dashed var(--line-strong); border-radius: var(--r-md); background: var(--ink-850); padding: var(--space-8); display: flex; flex-direction: column; align-items: center; gap: var(--space-2); text-align: center; cursor: pointer; transition: border-color var(--dur) var(--ease), background var(--dur) var(--ease); }
     .drop:hover, .drop--over { border-color: var(--signal-700); background: var(--signal-900); }
     .drop__hint { color: var(--text-300); font-size: 14px; }
     .drop__sub { color: var(--text-500); font-size: 12px; }
 
-    .files { display: flex; flex-direction: column; gap: var(--space-1); margin-top: var(--space-3); }
-    .file { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3); background: var(--ink-800); border: 1px solid var(--line); border-radius: var(--r-sm); }
-    .file__icon { color: var(--text-500); flex: none; }
-    .file__name { font-size: 13px; color: var(--text-100); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .file__size { font-family: var(--font-data); font-size: 12px; color: var(--text-500); flex: none; }
+    /* ---- file list table ---- */
+    .file-table { width: 100%; border-collapse: collapse; }
+    .file-table thead th { padding: 5px 10px; text-align: left; font-size: 11px; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-700); border-bottom: 1px solid var(--line); }
+    .file-table tbody tr { border-bottom: 1px solid var(--line-soft); }
+    .file-table tbody tr:last-child { border-bottom: none; }
+    .file-table tbody tr:hover { background: var(--ink-750); }
+    .file-table td { padding: 9px 10px; font-size: 13px; vertical-align: middle; }
+    .ft-fmt { font-family: var(--font-data); font-size: 11px; color: var(--text-700); width: 36px; }
+    .ft-name { color: var(--text-100); font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 260px; }
+    .ft-date { font-family: var(--font-data); font-size: 12px; color: var(--text-500); white-space: nowrap; }
+    .ft-status { white-space: nowrap; }
+    .ft-actions { display: flex; gap: 6px; justify-content: flex-end; }
+    .act {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 4px 10px; border-radius: var(--r-sm);
+      background: var(--ink-700); border: 1px solid var(--line-strong);
+      color: var(--text-300); font-size: 12px; font-family: var(--font-ui);
+      cursor: pointer; transition: background 120ms, color 120ms; white-space: nowrap;
+    }
+    .act:hover { background: var(--ink-750); color: var(--text-100); }
+    .act svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 
-    .runbar { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); padding-top: var(--space-2); }
+    /* ---- upload queue (below drop) ---- */
+    .upload-queue { display: flex; flex-direction: column; gap: var(--space-1); margin-top: var(--space-3); }
+    .upload-item { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3); background: var(--ink-800); border: 1px solid var(--line); border-radius: var(--r-sm); }
+    .upload-item__icon { color: var(--text-500); flex: none; }
+    .upload-item__name { font-size: 13px; color: var(--text-100); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .upload-item__size { font-family: var(--font-data); font-size: 12px; color: var(--text-500); flex: none; }
+
+    /* ---- run bar ---- */
+    .runbar { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); padding-top: var(--space-4); }
     .runbar__note { font-size: 13px; color: var(--text-500); }
     .runbar__note b { color: var(--text-300); font-weight: 600; font-family: var(--font-data); }
 
-    /* ---- scoring status bar ---- */
+    /* ---- scoring status ---- */
     .statusbar { display: flex; flex-direction: column; gap: var(--space-3); padding: var(--space-5); border-radius: var(--r-md); }
     .statusbar__row { display: flex; align-items: center; justify-content: space-between; }
     .statusbar__label { font-size: 13px; color: var(--text-300); display: flex; align-items: center; gap: var(--space-2); }
@@ -67,11 +119,66 @@
     .progress { height: 6px; background: var(--ink-700); border-radius: 999px; overflow: hidden; }
     .progress__fill { height: 100%; width: 0%; background: var(--signal-500); border-radius: 999px; transition: width 220ms linear; }
 
-    /* ---- finished summary ---- */
-    .summary { display: flex; gap: var(--space-3); flex-wrap: wrap; }
-    .stat { flex: 1; min-width: 120px; padding: var(--space-4); border-radius: var(--r-md); }
-    .stat__num { font-family: var(--font-data); font-size: 22px; line-height: 1; color: var(--text-100); }
-    .stat__label { font-size: 12px; color: var(--text-500); margin-top: 6px; }
+    /* ---- variant B: ring cards ---- */
+    .scored-list { display: flex; flex-direction: column; gap: 8px; }
+    .scored-empty { font-size: 13px; color: var(--text-500); padding: var(--space-4) 0; }
+
+    .ring-card {
+      display: flex; align-items: flex-start; gap: 14px;
+      padding: 12px 14px;
+      background: var(--ink-750); border: 1px solid var(--line);
+      border-radius: var(--r-md); transition: border-color 120ms;
+    }
+    .ring-card:hover { border-color: var(--line-strong); }
+    .ring-card--uncertain { border-color: var(--warn); background: var(--warn-bg); }
+
+    .ring-wrap { flex-shrink: 0; position: relative; width: 52px; height: 52px; }
+    .ring-wrap svg { display: block; transform: rotate(-90deg); }
+    .ring-track { fill: none; stroke: var(--ink-700); stroke-width: 5; }
+    .ring-fill  { fill: none; stroke-width: 5; stroke-linecap: round; }
+    .ring-num {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-data); font-size: 14px; font-weight: 500;
+    }
+    .ring-hi  .ring-fill { stroke: var(--ok); }
+    .ring-hi  .ring-num  { color: var(--ok); }
+    .ring-mid .ring-fill { stroke: var(--signal-300); }
+    .ring-mid .ring-num  { color: var(--signal-300); }
+    .ring-low .ring-fill { stroke: var(--warn); }
+    .ring-low .ring-num  { color: var(--warn); }
+    .ring-bad .ring-fill { stroke: var(--alert); }
+    .ring-bad .ring-num  { color: var(--alert); }
+    .ring-unc .ring-fill { stroke: var(--warn); opacity: 0.5; }
+    .ring-unc .ring-num  { color: var(--warn); }
+
+    .rc-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+    .rc-row1 { display: flex; align-items: center; gap: 8px; }
+    .rc-rank { font-family: var(--font-data); font-size: 11px; color: var(--text-700); flex-shrink: 0; }
+    .rc-name { font-size: 13px; font-weight: 600; color: var(--text-100); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; min-width: 0; }
+    .rc-actions { display: flex; gap: 6px; flex-shrink: 0; }
+
+    .rc-metrics { display: flex; gap: 12px; flex-wrap: wrap; }
+    .rc-metric { display: flex; flex-direction: column; gap: 2px; }
+    .rc-metric__bar-wrap { height: 3px; border-radius: 2px; overflow: hidden; background: var(--ink-700); }
+    .rc-metric__bar { height: 100%; border-radius: 2px; }
+    .rc-metric__footer { display: flex; justify-content: space-between; gap: 8px; }
+    .rc-metric__label { font-size: 10px; color: var(--text-700); }
+    .rc-metric__val   { font-family: var(--font-data); font-size: 11px; }
+    .rc-val-hi  { color: var(--ok); }
+    .rc-val-mid { color: var(--signal-300); }
+    .rc-val-low { color: var(--warn); }
+    .rc-val-bad { color: var(--alert); }
+
+    .rc-reasoning { font-size: 12px; color: var(--text-500); line-height: 17px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; }
+
+    /* ---- vacancy description (below tabs) ---- */
+    .vd-sections { display: flex; flex-direction: column; gap: var(--space-4); }
+    .section { display: flex; flex-direction: column; gap: var(--space-3); }
+    .section__title { font-size: 12px; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-500); margin: 0; }
+    .section__text { margin: 0; color: var(--text-300); font-size: 14px; line-height: 22px; max-width: 70ch; white-space: pre-wrap; }
+    .chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+    .divider { height: 1px; background: var(--line); }
 
     /* ---- modal ---- */
     .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: grid; place-items: center; z-index: 1000; padding: var(--space-4); }
@@ -87,7 +194,7 @@
 </head>
 <body>
   <div class="shell">
-    <!-- ===== top bar ===== -->
+    <!-- topbar -->
     <header class="topbar">
       <span class="brand">
         <span class="brand__mark" aria-hidden="true">
@@ -106,7 +213,7 @@
     </header>
 
     <div class="body">
-      <!-- ===== left rail ===== -->
+      <!-- left rail -->
       <nav class="rail" aria-label="Разделы">
         <p class="eyebrow" style="padding:0 10px var(--space-2)">Скоринг</p>
         <a class="rail__item rail__item--active">
@@ -126,12 +233,18 @@
         </div>
       </nav>
 
-      <!-- ===== content ===== -->
+      <!-- content -->
       <div class="content">
         <aside class="vlist" aria-label="Список вакансий">
           <div class="vlist__head">
             <span class="vlist__title">Вакансии</span>
             <button class="btn btn--secondary" id="newVacancyBtn" style="height:30px;padding:0 10px">+ Новая</button>
+          </div>
+          <div class="vlist__search">
+            <div class="search-wrap">
+              <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+              <input class="search-input" id="searchInput" placeholder="Поиск вакансий…" autocomplete="off" />
+            </div>
           </div>
           <div class="vlist__scroll" id="vacancyList"></div>
         </aside>
@@ -140,7 +253,6 @@
     </div>
   </div>
 
-  <!-- hidden file input -->
   <input type="file" id="fileInput" multiple accept=".txt" hidden />
 
   <!-- new vacancy modal -->
@@ -176,53 +288,96 @@
   <div class="toast-wrap" id="toastWrap"></div>
 
   <script>
-  // =====================================================================
-  //  Заглушка данных и логики. Никаких реальных запросов к API.
-  //  Зеркалит функционал VictorySearcher.Web (выбор/создание вакансии,
-  //  загрузка резюме со статусами, запуск скоринга), но на моках.
-  // =====================================================================
-
-  // accept-форматы — как в Web (features/scoring/config.ts: ['.txt']).
   const ACCEPTED = ['.txt'];
+  const FILE_ICON = '<svg style="width:14px;height:14px;flex:none;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round" viewBox="0 0 24 24"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/></svg>';
+  const ICO_EYE = '<svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
+  const ICO_DL  = '<svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>';
 
-  const FILE_ICON = '<svg class="ic file__icon" viewBox="0 0 24 24"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/></svg>';
+  let selectedId = 'v3';
+  let selectedTab = {}; // vacancyId -> 'files'|'scored'|'uncertain'
+  let searchQuery = '';
 
-  // status: 'draft' | 'inProcess' | 'finished'  (зеркало ScoringStatus)
+  const uploads = {}; // vacancyId -> [{ id, name, size, status, loadedAt, errorMessage }]
+
   let vacancies = [
     { id: 'v1', title: 'Senior Python Developer',
-      description: 'Команда платформы ищет сильного backend-инженера для развития сервисов скоринга и интеграций с внешними источниками данных. Работа в продуктовой команде из шести человек с прямым влиянием на архитектуру и приоритеты.',
+      description: 'Команда платформы ищет сильного backend-инженера для развития сервисов скоринга и интеграций с внешними источниками данных.',
       requirements: 'Python 3.11+, FastAPI или Django, PostgreSQL, проектирование REST API от четырёх лет, уверенная асинхронность, Docker.',
       extra: 'Опыт с LLM-пайплайнами, очередями (RabbitMQ или Kafka), английский B2+.',
-      skills: ['Python','FastAPI','PostgreSQL','REST API','async','Docker'],
+      skills: ['Python','FastAPI','PostgreSQL','async','Docker'],
       createdAt: '24.06.2026', status: 'draft', flags: 0 },
+
     { id: 'v2', title: 'HR Business Partner',
-      description: 'Партнёр для бизнес-юнита из 40 человек: подбор, адаптация, развитие, удержание. Тесная работа с руководителями направлений.',
+      description: 'Партнёр для бизнес-юнита из 40 человек: подбор, адаптация, развитие, удержание.',
       requirements: 'Опыт HR BP от трёх лет, навыки оценки и развития, английский, работа с метриками текучести.',
       extra: 'Опыт в IT-компании, знание грейдинга.',
       skills: ['HR BP','Подбор','Адаптация','Оценка'],
       createdAt: '23.06.2026', status: 'inProcess', flags: 0, resumeCount: 8, scored: 5 },
+
     { id: 'v3', title: 'DevOps Engineer',
       description: 'Развитие и поддержка инфраструктуры: CI/CD, наблюдаемость, отказоустойчивость сервисов скоринга и сбора данных.',
       requirements: 'Kubernetes, Docker, Terraform, CI/CD, Linux, опыт от трёх лет.',
       extra: 'Опыт с облаками (Yandex Cloud / AWS), мониторинг (Prometheus, Grafana).',
       skills: ['Kubernetes','Docker','Terraform','CI/CD','Linux'],
-      createdAt: '22.06.2026', status: 'finished', flags: 3, resumeCount: 12, top: 84 },
+      createdAt: '22.06.2026', status: 'finished', flags: 3, resumeCount: 12,
+      scored: [
+        { id: 'r1', name: 'Громов_Никита_DevOps.txt', score: 89, exp: 44, skills: 36, extra: 9, reasoning: 'Сильный кандидат: 5 лет Kubernetes + Terraform, глубокий опыт с Yandex Cloud, настроенные Prometheus/Grafana в проде.' },
+        { id: 'r2', name: 'Семёнова_Алина.txt',       score: 74, exp: 38, skills: 29, extra: 7, reasoning: 'Хороший опыт с Docker и CI/CD, Kubernetes — на уровне пользователя, Terraform только базовый.' },
+        { id: 'r3', name: 'Захаров_Илья_CV.txt',      score: 68, exp: 34, skills: 28, extra: 6, reasoning: 'Уверенный Linux-администратор, CI/CD выстраивал с нуля, облачного опыта мало.' },
+        { id: 'r4', name: 'Миронова_Татьяна.txt',     score: 61, exp: 30, skills: 26, extra: 5, reasoning: 'Опыт с Docker и базовым Kubernetes, Terraform не использовал, нет опыта с мониторингом.' },
+        { id: 'r5', name: 'Белов_Константин.txt',     score: 55, exp: 26, skills: 22, extra: 7, reasoning: 'Опыт 2 года, больше SRE-практики чем DevOps, слабая часть по IaC.' },
+        { id: 'r6', name: 'Ковалёв_Пётр_resume.txt',  score: 47, exp: 22, skills: 18, extra: 7, reasoning: 'Базовый уровень Docker, CI/CD только на GitLab, опыта с Kubernetes нет.' },
+      ],
+      uncertain: [
+        { id: 'u1', name: 'Яковлев_Юрий.txt',         score: null, reasoning: 'Резюме содержит противоречивые данные об опыте с Kubernetes, требуется дополнительная проверка.' },
+        { id: 'u2', name: 'Дроздова_Светлана.txt',    score: null, reasoning: 'Нестандартный формат резюме, возможно неполный. Навыки частично соответствуют требованиям.' },
+        { id: 'u3', name: 'Тихонов_Роман_old.txt',    score: null, reasoning: 'Резюме датировано 2023 годом, актуальность стека неизвестна. Опыт формально подходит.' },
+      ],
+      files: [
+        { id: 'f1', name: 'Громов_Никита_DevOps.txt',  fmt: 'TXT', date: '20.06.2026', scored: true },
+        { id: 'f2', name: 'Семёнова_Алина.txt',        fmt: 'TXT', date: '20.06.2026', scored: true },
+        { id: 'f3', name: 'Захаров_Илья_CV.txt',       fmt: 'TXT', date: '21.06.2026', scored: true },
+        { id: 'f4', name: 'Миронова_Татьяна.txt',      fmt: 'TXT', date: '21.06.2026', scored: true },
+        { id: 'f5', name: 'Белов_Константин.txt',      fmt: 'TXT', date: '21.06.2026', scored: true },
+        { id: 'f6', name: 'Ковалёв_Пётр_resume.txt',   fmt: 'TXT', date: '21.06.2026', scored: true },
+        { id: 'f7', name: 'Яковлев_Юрий.txt',          fmt: 'TXT', date: '22.06.2026', scored: false },
+        { id: 'f8', name: 'Дроздова_Светлана.txt',     fmt: 'TXT', date: '22.06.2026', scored: false },
+        { id: 'f9', name: 'Тихонов_Роман_old.txt',     fmt: 'TXT', date: '22.06.2026', scored: false },
+      ],
+    },
+
     { id: 'v4', title: 'QA Automation Lead',
       description: 'Построение процессов автоматизации тестирования с нуля, наставничество команды QA.',
       requirements: 'Python/JS автотесты, Selenium/Playwright, API-тестирование, опыт лида.',
       extra: 'Опыт построения test-стратегии, нагрузочное тестирование.',
       skills: ['Playwright','API tests','Python','Leadership'],
       createdAt: '21.06.2026', status: 'draft', flags: 0 },
+
     { id: 'v5', title: 'Frontend Developer (React)',
       description: 'Разработка интерфейсов внутренних инструментов на React + TypeScript.',
       requirements: 'React, TypeScript, современный CSS, REST/GraphQL, опыт от двух лет.',
       extra: 'Опыт с дизайн-системами, доступность (a11y).',
       skills: ['React','TypeScript','CSS','REST'],
-      createdAt: '20.06.2026', status: 'finished', flags: 0, resumeCount: 5, top: 79 },
+      createdAt: '20.06.2026', status: 'finished', flags: 0,
+      scored: [
+        { id: 'r1', name: 'Орлова_Надежда.txt',      score: 82, exp: 40, skills: 33, extra: 9,  reasoning: 'Отличный опыт с React + TypeScript, делала дизайн-систему, знает a11y на практике.' },
+        { id: 'r2', name: 'Зайцев_Михаил_CV.txt',    score: 71, exp: 36, skills: 29, extra: 6,  reasoning: 'Хороший React-разработчик, CSS модульный, REST API, дизайн-систем не делал.' },
+        { id: 'r3', name: 'Фёдорова_Вера.txt',       score: 60, exp: 30, skills: 24, extra: 6,  reasoning: 'Уровень Middle, TypeScript базовый, GraphQL не использовала.' },
+        { id: 'r4', name: 'Кузнецов_Сергей.txt',     score: 44, exp: 22, skills: 16, extra: 6,  reasoning: 'Начинающий, опыт 1 год, только базовый React без TypeScript.' },
+      ],
+      uncertain: [
+        { id: 'u1', name: 'Волков_Андрей_web.txt',   score: null, reasoning: 'Резюме смешивает backend и frontend опыт, сложно оценить уровень frontend без дополнительной информации.' },
+      ],
+      files: [
+        { id: 'f1', name: 'Орлова_Надежда.txt',      fmt: 'TXT', date: '19.06.2026', scored: true },
+        { id: 'f2', name: 'Зайцев_Михаил_CV.txt',    fmt: 'TXT', date: '19.06.2026', scored: true },
+        { id: 'f3', name: 'Фёдорова_Вера.txt',       fmt: 'TXT', date: '19.06.2026', scored: true },
+        { id: 'f4', name: 'Кузнецов_Сергей.txt',     fmt: 'TXT', date: '20.06.2026', scored: true },
+        { id: 'f5', name: 'Волков_Андрей_web.txt',   fmt: 'TXT', date: '20.06.2026', scored: false },
+      ],
+      resumeCount: 5,
+    },
   ];
-
-  let selectedId = 'v1';
-  const uploads = {}; // vacancyId -> [{ id, name, size, status, loadedAt, errorMessage }]
 
   // ---- helpers ----
   function fmtBytes(b) {
@@ -253,33 +408,208 @@
     setTimeout(() => el.remove(), 2600);
   }
 
+  // ---- ring SVG ----
+  // r=21 → circumference = 2π×21 ≈ 132
+  function scoreTier(score) {
+    if (score === null) return 'ring-unc';
+    if (score >= 80) return 'ring-hi';
+    if (score >= 60) return 'ring-mid';
+    if (score >= 40) return 'ring-low';
+    return 'ring-bad';
+  }
+  function metricTier(val, max) {
+    const pct = val / max;
+    if (pct >= 0.8) return 'rc-val-hi';
+    if (pct >= 0.6) return 'rc-val-mid';
+    if (pct >= 0.4) return 'rc-val-low';
+    return 'rc-val-bad';
+  }
+  function barColor(val, max) {
+    const pct = val / max;
+    if (pct >= 0.8) return 'var(--ok)';
+    if (pct >= 0.6) return 'var(--signal-500)';
+    if (pct >= 0.4) return 'var(--warn)';
+    return 'var(--alert)';
+  }
+  function ringHTML(score, tier) {
+    const fill = score === null ? 0 : Math.round((score / 100) * 132);
+    const label = score === null ? '?' : score;
+    return `<div class="ring-wrap ${tier}">
+      <svg width="52" height="52" viewBox="0 0 52 52">
+        <circle class="ring-track" cx="26" cy="26" r="21"/>
+        <circle class="ring-fill" cx="26" cy="26" r="21"
+          stroke-dasharray="${fill} 132" transform="rotate(-90 26 26)"/>
+      </svg>
+      <div class="ring-num">${label}</div>
+    </div>`;
+  }
+
+  function metricBarHTML(val, max, label, width) {
+    const pct = Math.round((val / max) * 100);
+    const tier = metricTier(val, max);
+    return `<div class="rc-metric" style="width:${width}px">
+      <div class="rc-metric__bar-wrap" style="width:${width}px">
+        <div class="rc-metric__bar" style="width:${pct}%;background:${barColor(val,max)}"></div>
+      </div>
+      <div class="rc-metric__footer">
+        <span class="rc-metric__label">${label}</span>
+        <span class="rc-metric__val ${tier}">${val}/${max}</span>
+      </div>
+    </div>`;
+  }
+
+  function ringCardHTML(item, rank, uncertain) {
+    const tier = scoreTier(item.score);
+    const rankLabel = uncertain ? '<span class="rc-rank">⚑ неопределённо</span>' : `<span class="rc-rank">#${rank}</span>`;
+    const metrics = uncertain ? '' :
+      `<div class="rc-metrics">
+        ${metricBarHTML(item.exp,    50, 'Опыт',    88)}
+        ${metricBarHTML(item.skills, 40, 'Навыки',  88)}
+        ${metricBarHTML(item.extra,  10, 'Доп.',    60)}
+      </div>`;
+    return `<div class="ring-card ${uncertain ? 'ring-card--uncertain' : ''}">
+      ${ringHTML(item.score, tier)}
+      <div class="rc-body">
+        <div class="rc-row1">
+          ${rankLabel}
+          <span class="rc-name">${item.name}</span>
+          <div class="rc-actions">
+            <button class="act" data-stub="Просмотр резюме">${ICO_EYE}Просмотр</button>
+            <button class="act" data-stub="Скачать резюме">${ICO_DL}Скачать</button>
+          </div>
+        </div>
+        ${metrics}
+        <div class="rc-reasoning">${item.reasoning}</div>
+      </div>
+    </div>`;
+  }
+
+  // ---- file table row ----
+  function fileRowHTML(f) {
+    const statusChipHtml = f.scored
+      ? '<span class="chip chip--ok" style="font-size:11px;padding:2px 8px">Проверен</span>'
+      : '<span class="chip" style="font-size:11px;padding:2px 8px">Загружен</span>';
+    return `<tr>
+      <td class="ft-fmt">${f.fmt}</td>
+      <td><span class="ft-name">${f.name}</span></td>
+      <td class="ft-date">${f.date}</td>
+      <td class="ft-status">${statusChipHtml}</td>
+      <td><div class="ft-actions">
+        <button class="act" data-stub="Просмотр резюме">${ICO_EYE}Просмотр</button>
+        <button class="act" data-stub="Скачать резюме">${ICO_DL}Скачать</button>
+      </div></td>
+    </tr>`;
+  }
+
   // ---- render: vacancy list ----
   function renderList() {
     const root = document.getElementById('vacancyList');
-    if (!vacancies.length) { root.innerHTML = '<div class="vlist__empty">Нет вакансий. Создайте первую.</div>'; return; }
-    root.innerHTML = vacancies.map(v => {
-      const count = (v.resumeCount || loadedCount(v.id));
-      const countHtml = count ? '<span class="vcard__count">' + count + ' резюме</span>' : '';
-      return '<button class="vcard ' + (v.id === selectedId ? 'vcard--active' : '') + '" data-id="' + v.id + '">' +
-        '<span class="vcard__name">' + v.title + '</span>' +
-        '<span class="vcard__meta">' + countHtml + statusChip(v) + '</span></button>';
+    const q = searchQuery.trim().toLowerCase();
+    const filtered = q ? vacancies.filter(v => v.title.toLowerCase().includes(q)) : vacancies;
+    if (!filtered.length) {
+      root.innerHTML = '<div class="vlist__empty">' + (q ? 'Нет вакансий по запросу.' : 'Нет вакансий. Создайте первую.') + '</div>';
+      return;
+    }
+    root.innerHTML = filtered.map(v => {
+      const count = v.resumeCount || loadedCount(v.id);
+      const countHtml = count ? `<span class="vcard__count">${count} резюме</span>` : '';
+      return `<button class="vcard ${v.id === selectedId ? 'vcard--active' : ''}" data-id="${v.id}">
+        <span class="vcard__name">${v.title}</span>
+        <span class="vcard__meta">${countHtml}${statusChip(v)}</span>
+      </button>`;
     }).join('');
     root.querySelectorAll('.vcard').forEach(c => c.addEventListener('click', () => selectVacancy(c.dataset.id)));
   }
 
-  // ---- render: file rows ----
-  function renderFiles(id) {
-    const list = uploads[id] || [];
-    if (!list.length) return '';
-    return '<div class="files">' + list.map(e => {
-      let chip;
-      if (e.status === 'loading') chip = '<span class="chip chip--signal"><span class="dot dot--signal"></span>обработка</span>';
-      else if (e.status === 'loaded') chip = '<span class="chip chip--ok">✓ ' + fmtTime(e.loadedAt) + '</span>';
-      else chip = '<span class="chip chip--alert">' + e.errorMessage + '</span>';
-      return '<div class="file">' + FILE_ICON +
-        '<span class="file__name">' + e.name + '</span>' +
-        '<span class="file__size">' + fmtBytes(e.size) + '</span>' + chip + '</div>';
-    }).join('') + '</div>';
+  // ---- render: tab content ----
+  function getTab(v) {
+    if (selectedTab[v.id]) return selectedTab[v.id];
+    if (v.status === 'finished') return 'scored';
+    return 'description';
+  }
+
+  function renderTabDescription(v) {
+    const extraSection = v.extra
+      ? `<section class="section"><h2 class="section__title">Дополнительные требования</h2><p class="section__text">${v.extra}</p></section>`
+      : '';
+    const skillChips = (v.skills || []).map(s => `<span class="chip">${s}</span>`).join('');
+
+    let uploadBlock = '';
+
+    if (v.status === 'draft') {
+      const queue  = uploads[v.id] || [];
+      const loaded = loadedCount(v.id);
+      const total  = queue.length;
+      const queueRows = queue.length
+        ? '<div class="upload-queue">' + queue.map(e => {
+            let chip;
+            if (e.status === 'loading') chip = '<span class="chip chip--signal"><span class="dot dot--signal"></span>обработка</span>';
+            else if (e.status === 'loaded') chip = '<span class="chip chip--ok">✓ ' + fmtTime(e.loadedAt) + '</span>';
+            else chip = '<span class="chip chip--alert">' + e.errorMessage + '</span>';
+            return `<div class="upload-item">${FILE_ICON}<span class="upload-item__name">${e.name}</span><span class="upload-item__size">${fmtBytes(e.size)}</span>${chip}</div>`;
+          }).join('') + '</div>'
+        : '';
+      uploadBlock = `<div class="divider"></div>
+        <div class="drop" id="dropZone">
+          <svg style="width:22px;height:22px;fill:none;stroke:var(--text-500);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round" viewBox="0 0 24 24"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+          <span class="drop__hint">Перетащите резюме или <span style="color:var(--signal-300)">выберите файлы</span></span>
+          <span class="drop__sub">TXT · несколько за раз</span>
+        </div>
+        ${queueRows}
+        <div class="runbar">
+          <span class="runbar__note">Готово к скорингу: <b>${loaded}</b> из <b>${total}</b> файлов</span>
+          <button class="btn btn--primary btn--lg" id="runBtn" ${loaded ? '' : 'disabled'}>Запустить скоринг</button>
+        </div>`;
+    } else if (v.status === 'inProcess') {
+      const total = v.resumeCount || 0;
+      const pct   = total ? (v.scored || 0) / total * 100 : 0;
+      uploadBlock = `<div class="divider"></div>
+        <div class="statusbar panel panel--inset">
+          <div class="statusbar__row">
+            <span class="statusbar__label"><span class="dot dot--signal"></span>Идёт скоринг резюме</span>
+            <span class="statusbar__count" id="scCount">${v.scored || 0} из ${total}</span>
+          </div>
+          <div class="progress"><div class="progress__fill" id="scFill" style="width:${pct}%"></div></div>
+          <span style="font-size:13px;color:var(--text-500)">Процесс идёт в фоне — можно переключиться на другую вакансию.</span>
+        </div>`;
+    }
+
+    return `<div class="vd-sections">
+      <section class="section">
+        <h2 class="section__title">Описание</h2>
+        <p class="section__text">${v.description}</p>
+      </section>
+      <section class="section">
+        <h2 class="section__title">Требования</h2>
+        <p class="section__text">${v.requirements}</p>
+        ${skillChips ? `<div class="chips">${skillChips}</div>` : ''}
+      </section>
+      ${extraSection}
+    </div>
+    ${uploadBlock}`;
+  }
+
+  function renderTabFiles(v) {
+    const files = v.files || [];
+    if (!files.length) return '<div class="scored-empty">Нет загруженных файлов.</div>';
+    return `<table class="file-table">
+      <thead><tr>
+        <th>Формат</th><th>Файл</th><th>Загружен</th><th>Статус</th><th style="text-align:right">Действия</th>
+      </tr></thead>
+      <tbody>${files.map(fileRowHTML).join('')}</tbody>
+    </table>`;
+  }
+
+  function renderTabScored(v) {
+    const scored = v.scored || [];
+    if (!scored.length) return '<div class="scored-empty">Нет проверенных резюме.</div>';
+    return '<div class="scored-list">' + scored.map((r, i) => ringCardHTML(r, i + 1, false)).join('') + '</div>';
+  }
+
+  function renderTabUncertain(v) {
+    const uncertain = v.uncertain || [];
+    if (!uncertain.length) return '<div class="scored-empty">Неопределённых резюме нет.</div>';
+    return '<div class="scored-list">' + uncertain.map(r => ringCardHTML(r, 0, true)).join('') + '</div>';
   }
 
   // ---- render: detail ----
@@ -288,100 +618,97 @@
     const v = vacancies.find(x => x.id === selectedId);
     if (!v) { root.innerHTML = '<div class="main__empty">Выберите вакансию, чтобы начать работу</div>'; return; }
 
-    const extraSection = v.extra
-      ? '<section class="section"><h2 class="section__title">Дополнительные требования</h2><p class="section__text">' + v.extra + '</p></section>'
-      : '';
-    const skillChips = (v.skills || []).map(s => '<span class="chip">' + s + '</span>').join('');
+    const tab = getTab(v);
 
-    // блок по статусу
-    let actionBlock = '';
-    if (v.status === 'draft') {
-      const loaded = loadedCount(v.id);
-      const total = (uploads[v.id] || []).length;
-      actionBlock =
-        '<div class="divider"></div>' +
-        '<section class="section"><h2 class="section__title">Резюме</h2>' +
-          '<div class="drop" id="dropZone">' +
-            '<svg class="ic" style="width:22px;height:22px;color:var(--text-500)" viewBox="0 0 24 24"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>' +
-            '<span class="drop__hint">Перетащите резюме или <span style="color:var(--signal-300)">выберите файлы</span></span>' +
-            '<span class="drop__sub">TXT · несколько за раз</span>' +
-          '</div>' + renderFiles(v.id) +
-        '</section>' +
-        '<div class="runbar">' +
-          '<span class="runbar__note">Готово к скорингу: <b>' + loaded + '</b> из <b>' + total + '</b> файлов</span>' +
-          '<button class="btn btn--primary btn--lg" id="runBtn" ' + (loaded ? '' : 'disabled') + '>Запустить скоринг</button>' +
-        '</div>';
-    } else if (v.status === 'inProcess') {
-      const total = v.resumeCount || 0;
-      const pct = total ? (v.scored || 0) / total * 100 : 0;
-      actionBlock =
-        '<div class="divider"></div>' +
-        '<div class="statusbar panel panel--inset">' +
-          '<div class="statusbar__row">' +
-            '<span class="statusbar__label"><span class="dot dot--signal"></span>Идёт скоринг резюме</span>' +
-            '<span class="statusbar__count" id="scCount">' + (v.scored || 0) + ' из ' + total + '</span>' +
-          '</div>' +
-          '<div class="progress"><div class="progress__fill" id="scFill" style="width:' + pct + '%"></div></div>' +
-          '<span class="runbar__note">Процесс идёт в фоне — можно переключиться на другую вакансию.</span>' +
-        '</div>';
-    } else { // finished
-      actionBlock =
-        '<div class="divider"></div>' +
-        '<section class="section"><h2 class="section__title">Результат скоринга</h2>' +
-          '<div class="summary">' +
-            '<div class="stat panel"><div class="stat__num">' + (v.resumeCount || 0) + '</div><div class="stat__label">резюме оценено</div></div>' +
-            '<div class="stat panel"><div class="stat__num" style="color:var(--warn)">' + (v.flags || 0) + '</div><div class="stat__label">красных флагов</div></div>' +
-            '<div class="stat panel"><div class="stat__num" style="color:var(--signal-300)">' + (v.top || 84) + '</div><div class="stat__label">лучший балл</div></div>' +
-          '</div>' +
-          '<div class="runbar"><span class="runbar__note">Ранжированный список готов.</span>' +
-          '<button class="btn btn--primary btn--lg" data-stub="Ранжированный список резюме">Открыть результаты</button></div>' +
-        '</section>';
-    }
+    const totalFiles = (v.files || []).length + (uploads[v.id] || []).length;
+    const scoredCount = (v.scored || []).length;
+    const uncertainCount = (v.uncertain || []).length;
 
-    root.innerHTML =
-      '<article class="detail">' +
-        '<div class="detail__head"><div>' +
-          '<h1 class="detail__title">' + v.title + '</h1>' +
-          '<div class="detail__sub"><span class="detail__date">создано ' + v.createdAt + '</span>' + statusChip(v) + '</div>' +
-        '</div><div class="detail__actions"><button class="btn btn--ghost" data-stub="Редактирование вакансии">Редактировать</button></div></div>' +
-        '<section class="section"><h2 class="section__title">Описание</h2><p class="section__text">' + v.description + '</p></section>' +
-        '<section class="section"><h2 class="section__title">Требования</h2><p class="section__text">' + v.requirements + '</p>' +
-          (skillChips ? '<div class="chips">' + skillChips + '</div>' : '') + '</section>' +
-        extraSection + actionBlock +
-      '</article>';
+    const fileBadge    = totalFiles     ? `<span class="tab-badge">${totalFiles}</span>` : '';
+    const scoredBadge  = scoredCount    ? `<span class="tab-badge">${scoredCount}</span>` : '';
+    const uncBadge     = uncertainCount ? `<span class="tab-badge tab-badge--warn">${uncertainCount}</span>` : '';
+
+    let tabContent = '';
+    if (tab === 'description') tabContent = renderTabDescription(v);
+    if (tab === 'files')       tabContent = renderTabFiles(v);
+    if (tab === 'scored')      tabContent = renderTabScored(v);
+    if (tab === 'uncertain')   tabContent = renderTabUncertain(v);
+
+    root.innerHTML = `
+      <article class="detail">
+        <div class="detail__head">
+          <div>
+            <h1 class="detail__title">${v.title}</h1>
+            <div class="detail__sub"><span class="detail__date">создано ${v.createdAt}</span>${statusChip(v)}</div>
+          </div>
+          <div class="detail__actions">
+            <button class="btn btn--ghost" data-stub="Редактирование вакансии">Редактировать</button>
+          </div>
+        </div>
+
+        <div class="tabs-root">
+          <div class="tabs-list" id="tabList">
+            <button class="tab-trigger ${tab === 'description' ? 'tab-trigger--active' : ''}" data-tab="description">
+              Описание
+            </button>
+            <button class="tab-trigger ${tab === 'files' ? 'tab-trigger--active' : ''}" data-tab="files">
+              Загруженные резюме${fileBadge}
+            </button>
+            <button class="tab-trigger ${tab === 'scored' ? 'tab-trigger--active' : ''}" data-tab="scored">
+              Проверенные резюме${scoredBadge}
+            </button>
+            <button class="tab-trigger ${tab === 'uncertain' ? 'tab-trigger--active' : ''}" data-tab="uncertain">
+              Неопределённые${uncBadge}
+            </button>
+          </div>
+          <div class="tab-content" id="tabContent">
+            ${tabContent}
+          </div>
+        </div>
+      </article>`;
 
     bindDetail(v);
   }
 
-  // ---- bind dynamic detail controls ----
   function bindDetail(v) {
+    // tabs
+    document.querySelectorAll('#tabList .tab-trigger').forEach(btn => {
+      btn.addEventListener('click', () => {
+        selectedTab[v.id] = btn.dataset.tab;
+        renderDetail();
+      });
+    });
+
+    // drop zone
     const drop = document.getElementById('dropZone');
     if (drop) {
       drop.addEventListener('click', () => {
         const input = document.getElementById('fileInput');
-        input.onchange = (e) => { handleFiles(v.id, Array.from(e.target.files || [])); input.value = ''; };
+        input.onchange = e => { handleFiles(v.id, Array.from(e.target.files || [])); input.value = ''; };
         input.click();
       });
-      drop.addEventListener('dragover', (e) => { e.preventDefault(); drop.classList.add('drop--over'); });
+      drop.addEventListener('dragover', e => { e.preventDefault(); drop.classList.add('drop--over'); });
       drop.addEventListener('dragleave', () => drop.classList.remove('drop--over'));
-      drop.addEventListener('drop', (e) => {
+      drop.addEventListener('drop', e => {
         e.preventDefault(); drop.classList.remove('drop--over');
         handleFiles(v.id, Array.from(e.dataTransfer.files || []));
       });
     }
+
+    // run button
     const runBtn = document.getElementById('runBtn');
     if (runBtn) runBtn.addEventListener('click', () => startScoring(v.id));
+
     bindStubs(document.getElementById('detailRoot'));
   }
 
-  // ---- upload stub: mirrors useResumeUpload ----
+  // ---- upload stub ----
   function handleFiles(id, files) {
     if (!files.length) return;
     if (!uploads[id]) uploads[id] = [];
     files.forEach((file, i) => {
       const entry = { id: Date.now() + '-' + i, name: file.name, size: file.size || 0, status: 'loading' };
       uploads[id].push(entry);
-      // имитация загрузки: через ~700мс — loaded или error по формату
       setTimeout(() => {
         if (!ACCEPTED.includes(ext(entry.name))) {
           entry.status = 'error'; entry.errorMessage = 'Неподдерживаемый формат';
@@ -395,24 +722,37 @@
     renderDetail();
   }
 
-  // ---- scoring stub: mirrors useScoring (async фоновый процесс) ----
+  // ---- scoring stub ----
   function startScoring(id) {
     const v = vacancies.find(x => x.id === id);
     const total = loadedCount(id);
     if (!total) return;
     v.status = 'inProcess'; v.resumeCount = total; v.scored = 0;
+    selectedTab[id] = 'description';
     renderList(); renderDetail();
     const timer = setInterval(() => {
       v.scored++;
       const fill = document.getElementById('scFill');
-      const cnt = document.getElementById('scCount');
+      const cnt  = document.getElementById('scCount');
       if (fill) fill.style.width = (v.scored / total * 100) + '%';
-      if (cnt) cnt.textContent = v.scored + ' из ' + total;
+      if (cnt)  cnt.textContent  = v.scored + ' из ' + total;
       if (v.scored >= total) {
         clearInterval(timer);
         v.status = 'finished';
-        v.flags = Math.floor(Math.random() * 3);
-        v.top = 70 + Math.floor(Math.random() * 25);
+        v.flags  = Math.floor(Math.random() * 3);
+        // generate stub results
+        const names = (uploads[id] || []).filter(e => e.status === 'loaded').map(e => e.name);
+        v.scored  = names.map((name, i) => ({
+          id: 'r' + i, name,
+          score: 55 + Math.floor(Math.random() * 35),
+          exp:   20 + Math.floor(Math.random() * 25),
+          skills: 15 + Math.floor(Math.random() * 20),
+          extra: 3 + Math.floor(Math.random() * 7),
+          reasoning: 'Автоматически сгенерированный результат для демонстрации.',
+        })).sort((a, b) => b.score - a.score);
+        v.uncertain = [];
+        v.files = names.map((name, i) => ({ id: 'f' + i, name, fmt: 'TXT', date: '24.06.2026', scored: true }));
+        selectedTab[id] = 'scored';
         renderList(); renderDetail();
         toast('Скоринг завершён: оценено ' + total + ' резюме');
       }
@@ -425,6 +765,12 @@
     renderList(); renderDetail();
   }
 
+  // ---- search ----
+  document.getElementById('searchInput').addEventListener('input', e => {
+    searchQuery = e.target.value;
+    renderList();
+  });
+
   // ---- new vacancy modal ----
   const modal = document.getElementById('newVacancyModal');
   function openModal() { modal.hidden = false; document.getElementById('vfTitle').focus(); }
@@ -435,12 +781,12 @@
   }
   document.getElementById('newVacancyBtn').addEventListener('click', openModal);
   document.getElementById('vacancyCancel').addEventListener('click', closeModal);
-  modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
-  document.getElementById('vacancyForm').addEventListener('submit', (e) => {
+  modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+  document.getElementById('vacancyForm').addEventListener('submit', e => {
     e.preventDefault();
     const title = document.getElementById('vfTitle').value.trim();
     if (!title) { document.getElementById('vfError').hidden = false; return; }
-    const req = document.getElementById('vfReq').value.trim();
+    const req    = document.getElementById('vfReq').value.trim();
     const skills = req.split(/[,;]/).map(s => s.trim()).filter(Boolean).slice(0, 6);
     const v = {
       id: 'v' + Date.now(), title,
@@ -456,7 +802,6 @@
     toast('Вакансия создана');
   });
 
-  // ---- stub links (в разработке) ----
   function bindStubs(scope) {
     (scope || document).querySelectorAll('[data-stub]').forEach(el => {
       if (el.dataset.bound) return;
@@ -465,7 +810,6 @@
     });
   }
 
-  // ---- init ----
   renderList();
   renderDetail();
   bindStubs(document);
