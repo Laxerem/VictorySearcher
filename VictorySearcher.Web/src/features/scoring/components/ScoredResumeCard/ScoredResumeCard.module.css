@@ -42,6 +42,13 @@
   white-space: nowrap;
 }
 
+.uncertainBadge {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--color-warning);
+  flex-shrink: 0;
+}
+
 .overall {
   display: flex;
   align-items: baseline;

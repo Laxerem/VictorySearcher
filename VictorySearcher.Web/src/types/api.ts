@@ -42,6 +42,12 @@ export interface ScoringStatusDto {
   finishedAt: string | null;
 }
 
+export interface RequirementCoverageDto {
+  requirement: string;
+  covered: boolean;
+  evidence: string;
+}
+
 export interface ScoringResultDto {
   resumeId: string;
   fileName: string;
@@ -51,5 +57,7 @@ export interface ScoringResultDto {
   extraScore: number | null;
   reasoning: string;
   incongruity: boolean;
+  isUncertain: boolean;
+  requirementsAnalysis: RequirementCoverageDto[];
   scoredAt: string;
 }

@@ -8,6 +8,8 @@
   --color-text: #e8eaf0;
   --color-text-muted: #7b849a;
   --color-error: #e05c5c;
+  --color-success: #4caf89;
+  --color-warning: #e0a85c;
 
   /* Spacing (4px step) */
   --space-1: 4px;

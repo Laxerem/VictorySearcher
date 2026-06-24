@@ -1,5 +1,6 @@
 import type { ScoringResultDto } from '@/types/api';
 import { cn } from '@/utils/cn';
+import { RequirementsAnalysisList } from '../RequirementsAnalysisList/RequirementsAnalysisList';
 import styles from './ScoredResumeCard.module.css';
 
 interface Props {
@@ -36,6 +37,9 @@ export function ScoredResumeCard({ result, rank, flagged }: Props) {
         <div className={styles.identity}>
           {rank !== undefined && <span className={styles.rank}>#{rank}</span>}
           <span className={styles.fileName}>{result.fileName}</span>
+          {result.isUncertain && (
+            <span className={styles.uncertainBadge}>? Неопределённо</span>
+          )}
         </div>
         <div className={styles.overall}>
           <span className={styles.overallValue}>{result.overallScore}</span>
@@ -50,6 +54,10 @@ export function ScoredResumeCard({ result, rank, flagged }: Props) {
       </div>
 
       <p className={styles.reasoning}>{result.reasoning}</p>
+
+      {result.requirementsAnalysis.length > 0 && (
+        <RequirementsAnalysisList items={result.requirementsAnalysis} />
+      )}
     </div>
   );
 }
