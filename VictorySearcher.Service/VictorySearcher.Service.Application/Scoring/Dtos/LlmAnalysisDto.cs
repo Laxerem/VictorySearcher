@@ -6,4 +6,6 @@ public record LlmAnalysisDto(
     int SkillsScore,
     int? ExtraScore,
     string Reasoning,
-    bool Incongruity);
+    bool Incongruity,
+    bool IsUncertain,
+    IReadOnlyList<RequirementCoverageDto> RequirementsAnalysis);

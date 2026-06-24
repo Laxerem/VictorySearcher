@@ -21,7 +21,7 @@ public class OpenAiAnalyserLlmClient(IOptions<LlmOptions> llmOptions) : IAnalyse
 
         var response = await _chatClient.CompleteChatAsync(
             chatMessages,
-            new ChatCompletionOptions { ResponseFormat = ChatResponseFormat.CreateJsonObjectFormat() },
+            new ChatCompletionOptions { ResponseFormat = ChatResponseFormat.CreateJsonObjectFormat(), Temperature = 0.2f },
             ct);
 
         return response.Value.Content[0].Text;

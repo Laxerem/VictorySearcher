@@ -21,5 +21,8 @@ public class ScoringResultConfiguration : IEntityTypeConfiguration<ScoringResult
             .WithMany(res => res.ScoringResults)
             .HasForeignKey(r => r.ResumeId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Property(r => r.IsUncertain).HasColumnName("is_uncertain");
+        builder.OwnsMany(r => r.RequirementsAnalysis, b => b.ToJson("requirements_analysis"));
     }
 }

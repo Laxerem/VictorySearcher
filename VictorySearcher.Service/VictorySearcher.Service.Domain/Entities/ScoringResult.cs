@@ -10,6 +10,8 @@ public class ScoringResult {
     public int SkillsScore { get; set; }
     public int? ExtraScore { get; set; }
     public string Reasoning { get; set; } = string.Empty;
+    public bool IsUncertain { get; set; }
+    public List<RequirementCoverage> RequirementsAnalysis { get; set; } = [];
     public DateTime ScoredAt { get; set; }
 
     public ScoringRequest Request { get; set; } = null!;

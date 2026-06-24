@@ -50,6 +50,10 @@ public class ResumeScoringJob(
                     ExtraScore = analysis.ExtraScore,
                     Reasoning = analysis.Reasoning,
                     Incongruity = analysis.Incongruity,
+                    IsUncertain = analysis.IsUncertain,
+                    RequirementsAnalysis = analysis.RequirementsAnalysis
+                        .Select(r => new RequirementCoverage(r.Requirement, r.Covered, r.Evidence))
+                        .ToList(),
                     ScoredAt = DateTime.UtcNow
                 }, ct);
 
