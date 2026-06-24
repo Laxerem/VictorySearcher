@@ -32,6 +32,7 @@ public static class DependencyInjection {
 
         services.Configure<JwtOptions>(configuration.GetSection("Jwt"));
         services.Configure<LlmOptions>(configuration.GetSection("Llm"));
+        services.Configure<ResumeAnalyserOptions>(configuration.GetSection("ResumeAnalyser"));
         services.Configure<StorageOptions>(configuration.GetSection("Storage"));
 
         services.AddScoped<IJwtProvider, JwtProvider>();
@@ -42,6 +43,8 @@ public static class DependencyInjection {
         services.AddScoped<IResumeParser, TxtResumeParser>();
         services.AddScoped<ResumeParserDispatcher>();
 
+        services.AddSingleton<IAnalyserLlmClient, OpenAiAnalyserLlmClient>();
+        services.AddSingleton<AnalyserPromptBuilder>();
         services.AddScoped<IResumeAnalyserService, ResumeAnalyserService>();
         services.AddScoped<IScoringService, ScoringService>();
         services.AddTransient<ResumeScoringJob>();
