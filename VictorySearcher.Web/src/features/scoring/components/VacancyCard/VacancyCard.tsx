@@ -11,11 +11,11 @@ interface Props {
 export function VacancyCard({ vacancy, isSelected, onClick }: Props) {
   return (
     <button
-      className={cn(styles.card, isSelected && styles.selected)}
-      onClick={onClick}
       type="button"
+      className={cn(styles.card, isSelected && styles.active)}
+      onClick={onClick}
     >
-      <span className={styles.title}>{vacancy.title}</span>
+      <span className={styles.name}>{vacancy.title}</span>
     </button>
   );
 }

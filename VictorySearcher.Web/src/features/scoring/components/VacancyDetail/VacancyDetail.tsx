@@ -14,24 +14,28 @@ export function VacancyDetail({ vacancy }: Props) {
 
   return (
     <div className={styles.detail}>
-      <div className={styles.header}>
-        <h2 className={styles.title}>{vacancy.title}</h2>
-        <span className={styles.date}>{createdAt}</span>
+      <div className={styles.head}>
+        <div>
+          <h1 className={styles.title}>{vacancy.title}</h1>
+          <div className={styles.sub}>
+            <span className={styles.date}>создано {createdAt}</span>
+          </div>
+        </div>
       </div>
 
       <section className={styles.section}>
-        <h3 className={styles.sectionTitle}>Описание</h3>
+        <h2 className={styles.sectionTitle}>Описание</h2>
         <p className={styles.text}>{vacancy.description}</p>
       </section>
 
       <section className={styles.section}>
-        <h3 className={styles.sectionTitle}>Требования</h3>
+        <h2 className={styles.sectionTitle}>Требования</h2>
         <p className={styles.text}>{vacancy.requirements}</p>
       </section>
 
       {vacancy.extraRequirements && (
         <section className={styles.section}>
-          <h3 className={styles.sectionTitle}>Дополнительные требования</h3>
+          <h2 className={styles.sectionTitle}>Дополнительные требования</h2>
           <p className={styles.text}>{vacancy.extraRequirements}</p>
         </section>
       )}

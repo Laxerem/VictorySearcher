@@ -1,37 +1,36 @@
 .card {
+  text-align: left;
+  width: 100%;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--r-sm);
+  padding: var(--space-3);
+  cursor: pointer;
   display: flex;
   flex-direction: column;
-  gap: var(--space-1);
-  width: 100%;
-  padding: var(--space-3) var(--space-4);
-  background: var(--color-bg);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  text-align: left;
-  transition: border-color 0.15s ease, background-color 0.15s ease;
+  gap: 6px;
+  transition: background var(--dur) var(--ease), border-color var(--dur) var(--ease);
+  color: inherit;
 }
 
 .card:hover {
-  border-color: var(--color-primary);
-  background: var(--color-surface);
+  background: var(--ink-800);
 }
 
-.selected {
-  border-color: var(--color-primary);
-  background: var(--color-surface);
+.active {
+  background: var(--ink-800);
+  border-color: var(--line-strong);
 }
 
-.title {
-  font-size: var(--text-sm);
-  font-weight: 500;
-  color: var(--color-text);
+.active .name {
+  color: var(--text-100);
+}
+
+.name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-300);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-
-.date {
-  font-size: var(--text-sm);
-  color: var(--color-text-muted);
 }

@@ -7,6 +7,7 @@ export { FileStatusItem } from './components/FileStatusItem/FileStatusItem';
 export { ScoringStatusBar } from './components/ScoringStatusBar/ScoringStatusBar';
 export { ScoredResumeCard } from './components/ScoredResumeCard/ScoredResumeCard';
 export { ScoringResultList } from './components/ScoringResultList/ScoringResultList';
+export { NewVacancyDialog } from './components/NewVacancyDialog/NewVacancyDialog';
 export { useVacancies } from './hooks/useVacancies';
 export { useVacancy } from './hooks/useVacancy';
 export { useResumeUpload } from './hooks/useResumeUpload';

@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import type { ReactNode } from 'react';
 import { useAuth } from '@/providers/AuthProvider';
+import { AppLayout } from '@/components/layout/AppLayout/AppLayout';
 import { LoginPage } from '@/pages/LoginPage/LoginPage';
 import { NotFoundPage } from '@/pages/NotFoundPage/NotFoundPage';
 import { ScoringPage } from '@/pages/ScoringPage/ScoringPage';
@@ -26,7 +27,9 @@ export default function App() {
           path="/scoring"
           element={
             <ProtectedRoute>
-              <ScoringPage />
+              <AppLayout context="Вакансии">
+                <ScoringPage />
+              </AppLayout>
             </ProtectedRoute>
           }
         />
@@ -34,7 +37,9 @@ export default function App() {
           path="/scoring/vacancies/:id"
           element={
             <ProtectedRoute>
-              <VacancyPage />
+              <AppLayout context="Вакансии">
+                <VacancyPage />
+              </AppLayout>
             </ProtectedRoute>
           }
         />
@@ -42,7 +47,9 @@ export default function App() {
           path="/scoring/vacancies/:id/results"
           element={
             <ProtectedRoute>
-              <ScoringResultsPage />
+              <AppLayout context="Результаты">
+                <ScoringResultsPage />
+              </AppLayout>
             </ProtectedRoute>
           }
         />
@@ -50,9 +57,11 @@ export default function App() {
           path="/market"
           element={
             <ProtectedRoute>
-              <div style={{ padding: 'var(--space-8)', color: 'var(--color-text)' }}>
-                Market Analytics — coming soon
-              </div>
+              <AppLayout context="Дашборд ролей">
+                <div style={{ padding: 'var(--space-8)', color: 'var(--text-500)' }}>
+                  Market Analytics — coming soon
+                </div>
+              </AppLayout>
             </ProtectedRoute>
           }
         />

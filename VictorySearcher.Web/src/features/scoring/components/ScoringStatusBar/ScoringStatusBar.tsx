@@ -7,24 +7,36 @@ interface Props {
   errorMessage?: string | null;
 }
 
-const LABELS: Record<ScoringStatus, string> = {
-  pending: 'В очереди',
-  inProcess: 'Идёт оценка',
-  finished: 'Завершено',
-  failed: 'Ошибка',
-};
-
 export function ScoringStatusBar({ status, errorMessage }: Props) {
   const isActive = status === 'pending' || status === 'inProcess';
+  const isFinished = status === 'finished';
+  const isFailed = status === 'failed';
 
   return (
-    <div className={cn(styles.bar, styles[status])}>
-      <span className={styles.badge}>
-        {isActive && <span className={styles.spinner} />}
-        {LABELS[status]}
-      </span>
-      {status === 'failed' && errorMessage && (
-        <span className={styles.error}>{errorMessage}</span>
+    <div className={cn(styles.bar, isFinished && styles.barOk, isFailed && styles.barAlert)}>
+      <div className={styles.row}>
+        <span className={styles.label}>
+          {isActive && <span className={styles.dot} />}
+          {isActive && 'Идёт скоринг резюме'}
+          {isFinished && 'Скоринг завершён'}
+          {isFailed && 'Ошибка скоринга'}
+        </span>
+      </div>
+
+      {isActive && (
+        <div className={styles.progress}>
+          <div className={styles.progressFill} />
+        </div>
+      )}
+
+      {isActive && (
+        <span className={styles.note}>
+          Процесс идёт в фоне — можно переключиться на другую вакансию.
+        </span>
+      )}
+
+      {isFailed && errorMessage && (
+        <span className={styles.errorText}>{errorMessage}</span>
       )}
     </div>
   );

@@ -1,50 +1,73 @@
-.item {
+.file {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: var(--space-3);
-  padding: var(--space-3) var(--space-4);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--color-border);
-  background: var(--color-bg);
-  font-size: var(--text-sm);
+  padding: var(--space-3);
+  background: var(--ink-800);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
 }
 
-.name {
-  color: var(--color-text);
+.fileIcon {
+  width: 16px;
+  height: 16px;
+  stroke: var(--text-500);
+  fill: none;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex-shrink: 0;
+}
+
+.fileName {
+  font-size: 13px;
+  color: var(--text-100);
+  flex: 1;
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  flex: 1;
-  min-width: 0;
 }
 
-.status {
+.chip {
   flex-shrink: 0;
-  display: flex;
+}
+
+.badge {
+  display: inline-flex;
   align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 3px 8px;
+  border-radius: var(--r-sm);
 }
 
-.spinner {
-  display: inline-block;
-  width: 14px;
-  height: 14px;
-  border: 2px solid var(--color-border);
-  border-top-color: var(--color-primary);
+.badgeSignal {
+  color: var(--signal-100);
+  background: var(--signal-900);
+}
+
+.badgeOk {
+  color: var(--ok);
+  background: var(--ok-bg);
+}
+
+.badgeAlert {
+  color: var(--alert);
+  background: var(--alert-bg);
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
-  animation: spin 0.7s linear infinite;
+  background: var(--signal-500);
+  display: inline-block;
+  animation: pulse 1.4s ease-in-out infinite;
 }
 
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-.loadedText {
-  color: #4caf78;
-  font-size: var(--text-sm);
-}
-
-.errorText {
-  color: var(--color-error);
-  font-size: var(--text-sm);
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
 }

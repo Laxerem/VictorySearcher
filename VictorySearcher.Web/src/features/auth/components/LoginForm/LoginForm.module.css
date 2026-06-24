@@ -1,7 +1,7 @@
 .form {
   display: flex;
   flex-direction: column;
-  gap: var(--space-5);
+  gap: var(--space-4);
 }
 
 .field {
@@ -11,57 +11,61 @@
 }
 
 .label {
-  font-size: var(--text-sm);
-  color: var(--color-text-muted);
+  font-size: 12px;
+  line-height: 16px;
   font-weight: 500;
+  color: var(--text-300);
 }
 
 .input {
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  padding: var(--space-3) var(--space-4);
-  background: var(--color-bg);
-  color: var(--color-text);
-  font-size: var(--text-base);
-  outline: none;
-  transition: border-color 0.15s ease;
+  font-family: var(--font-ui);
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--text-100);
+  background: var(--ink-700);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  padding: 9px var(--space-3);
   width: 100%;
+  outline: none;
+  transition: border-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
 }
 
 .input:focus {
-  border-color: var(--color-primary);
+  border-color: var(--line-strong);
+  box-shadow: 0 0 0 2px var(--signal-900);
 }
 
 .input::placeholder {
-  color: var(--color-text-muted);
-  opacity: 0.5;
+  color: var(--text-700);
+}
+
+.errorText {
+  color: var(--alert);
+  font-size: 13px;
+  line-height: 18px;
 }
 
 .submitButton {
-  width: 100%;
-  background: var(--color-primary);
-  color: #fff;
-  border: none;
-  border-radius: var(--radius-md);
-  padding: var(--space-3) var(--space-4);
-  font-size: var(--text-base);
+  font-family: var(--font-ui);
+  font-size: 14px;
   font-weight: 500;
+  height: 40px;
+  width: 100%;
+  background: var(--signal-700);
+  color: var(--text-100);
+  border: 1px solid transparent;
+  border-radius: var(--r-md);
   cursor: pointer;
-  transition: background-color 0.15s ease;
+  transition: background var(--dur) var(--ease);
   margin-top: var(--space-2);
 }
 
 .submitButton:hover:not(:disabled) {
-  background: var(--color-primary-hover);
+  background: var(--signal-500);
 }
 
 .submitButton:disabled {
-  opacity: 0.6;
+  opacity: 0.5;
   cursor: not-allowed;
-}
-
-.errorText {
-  font-size: var(--text-sm);
-  color: var(--color-error);
-  text-align: center;
 }

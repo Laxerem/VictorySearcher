@@ -1,5 +1,5 @@
 .details {
-  border-top: 1px solid var(--color-border);
+  border-top: 1px solid var(--line);
   padding-top: var(--space-3);
 }
 
@@ -7,8 +7,8 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  font-size: var(--text-sm);
-  color: var(--color-text-muted);
+  font-size: 12px;
+  color: var(--text-500);
   cursor: pointer;
   list-style: none;
 }
@@ -38,28 +38,28 @@
 }
 
 .dot {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   flex-shrink: 0;
 }
 
 .dotCovered {
-  background: var(--color-success);
+  background: var(--ok);
 }
 
 .dotMissed {
-  background: var(--color-error);
+  background: var(--alert);
 }
 
 .requirement {
-  font-size: var(--text-sm);
+  font-size: 13px;
   font-weight: 500;
-  color: var(--color-text);
+  color: var(--text-300);
 }
 
 .evidence {
-  font-size: var(--text-sm);
-  color: var(--color-text-muted);
-  padding-left: calc(8px + var(--space-2));
+  font-size: 12px;
+  color: var(--text-500);
+  padding-left: calc(7px + var(--space-2));
 }

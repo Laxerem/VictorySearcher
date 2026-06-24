@@ -1,0 +1,29 @@
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: grid;
+  place-items: center;
+  z-index: 1000;
+  padding: var(--space-4);
+}
+
+.modal {
+  width: 540px;
+  max-width: 100%;
+  padding: var(--space-6);
+  border-radius: var(--r-lg);
+  background: var(--ink-800);
+  border: 1px solid var(--line);
+  box-shadow: inset 0 1px 0 var(--edge-highlight), var(--elev-2);
+}
+
+.title {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  font-weight: 700;
+  font-size: 22px;
+  color: var(--text-100);
+  margin: 0;
+}
