@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VictorySearcher — Вакансии</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Saira+Condensed:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="tokens.css" />
+  <link rel="stylesheet" href="app.css" />
+  <style>
+    [hidden] { display: none !important; }
+    .btn[disabled] { opacity: 0.5; cursor: not-allowed; }
+
+    /* ---- vacancy list (left column of content) ---- */
+    .vlist { border-right: 1px solid var(--line); background: var(--ink-850); display: flex; flex-direction: column; min-height: 0; }
+    .vlist__head { display: flex; align-items: center; justify-content: space-between; padding: var(--space-4) var(--space-4) var(--space-3); border-bottom: 1px solid var(--line); }
+    .vlist__title { font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.03em; font-weight: 700; font-size: 18px; }
+    .vlist__scroll { overflow-y: auto; padding: var(--space-2); display: flex; flex-direction: column; gap: 2px; }
+    .vcard { text-align: left; width: 100%; background: transparent; border: 1px solid transparent; border-radius: var(--r-sm); padding: var(--space-3); cursor: pointer; display: flex; flex-direction: column; gap: 6px; transition: background var(--dur) var(--ease), border-color var(--dur) var(--ease); color: inherit; }
+    .vcard:hover { background: var(--ink-800); }
+    .vcard--active { background: var(--ink-800); border-color: var(--line-strong); }
+    .vcard--active .vcard__name { color: var(--text-100); }
+    .vcard__name { font-size: 14px; font-weight: 600; color: var(--text-300); }
+    .vcard__meta { display: flex; align-items: center; gap: var(--space-2); flex-wrap: wrap; }
+    .vcard__count { font-family: var(--font-data); font-size: 12px; color: var(--text-500); }
+    .vlist__empty { padding: var(--space-6); color: var(--text-500); font-size: 13px; }
+
+    /* ---- main detail ---- */
+    .main { overflow-y: auto; min-height: 0; padding: var(--space-6) var(--space-8); }
+    .main__empty { height: 100%; display: grid; place-items: center; color: var(--text-500); font-size: 14px; }
+    .detail { max-width: 760px; display: flex; flex-direction: column; gap: var(--space-6); }
+    .detail__head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-4); }
+    .detail__title { font-size: 22px; line-height: 28px; font-weight: 600; margin: 0; }
+    .detail__sub { display: flex; align-items: center; gap: var(--space-3); margin-top: var(--space-2); }
+    .detail__date { font-family: var(--font-data); font-size: 12px; color: var(--text-500); }
+    .detail__actions { display: flex; gap: var(--space-2); flex: none; }
+
+    .section { display: flex; flex-direction: column; gap: var(--space-3); }
+    .section__title { font-size: 12px; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-500); margin: 0; }
+    .section__text { margin: 0; color: var(--text-300); font-size: 14px; line-height: 22px; max-width: 70ch; white-space: pre-wrap; }
+    .chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+    .divider { height: 1px; background: var(--line); }
+
+    /* ---- resume upload ---- */
+    .drop { border: 1px dashed var(--line-strong); border-radius: var(--r-md); background: var(--ink-850); padding: var(--space-8); display: flex; flex-direction: column; align-items: center; gap: var(--space-2); text-align: center; cursor: pointer; transition: border-color var(--dur) var(--ease), background var(--dur) var(--ease); }
+    .drop:hover, .drop--over { border-color: var(--signal-700); background: var(--signal-900); }
+    .drop__hint { color: var(--text-300); font-size: 14px; }
+    .drop__sub { color: var(--text-500); font-size: 12px; }
+
+    .files { display: flex; flex-direction: column; gap: var(--space-1); margin-top: var(--space-3); }
+    .file { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3); background: var(--ink-800); border: 1px solid var(--line); border-radius: var(--r-sm); }
+    .file__icon { color: var(--text-500); flex: none; }
+    .file__name { font-size: 13px; color: var(--text-100); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .file__size { font-family: var(--font-data); font-size: 12px; color: var(--text-500); flex: none; }
+
+    .runbar { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); padding-top: var(--space-2); }
+    .runbar__note { font-size: 13px; color: var(--text-500); }
+    .runbar__note b { color: var(--text-300); font-weight: 600; font-family: var(--font-data); }
+
+    /* ---- scoring status bar ---- */
+    .statusbar { display: flex; flex-direction: column; gap: var(--space-3); padding: var(--space-5); border-radius: var(--r-md); }
+    .statusbar__row { display: flex; align-items: center; justify-content: space-between; }
+    .statusbar__label { font-size: 13px; color: var(--text-300); display: flex; align-items: center; gap: var(--space-2); }
+    .statusbar__count { font-family: var(--font-data); font-size: 13px; color: var(--text-100); }
+    .progress { height: 6px; background: var(--ink-700); border-radius: 999px; overflow: hidden; }
+    .progress__fill { height: 100%; width: 0%; background: var(--signal-500); border-radius: 999px; transition: width 220ms linear; }
+
+    /* ---- finished summary ---- */
+    .summary { display: flex; gap: var(--space-3); flex-wrap: wrap; }
+    .stat { flex: 1; min-width: 120px; padding: var(--space-4); border-radius: var(--r-md); }
+    .stat__num { font-family: var(--font-data); font-size: 22px; line-height: 1; color: var(--text-100); }
+    .stat__label { font-size: 12px; color: var(--text-500); margin-top: 6px; }
+
+    /* ---- modal ---- */
+    .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: grid; place-items: center; z-index: 1000; padding: var(--space-4); }
+    .modal { width: 540px; max-width: 100%; padding: var(--space-6); border-radius: var(--r-lg); box-shadow: var(--elev-2); }
+    .modal__title { font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.03em; font-weight: 700; font-size: 22px; margin: 0; }
+    .modal__form { display: flex; flex-direction: column; gap: var(--space-4); margin-top: var(--space-5); }
+    .modal__actions { display: flex; justify-content: flex-end; gap: var(--space-2); margin-top: var(--space-2); }
+
+    /* ---- toast ---- */
+    .toast-wrap { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 1100; display: flex; flex-direction: column; gap: 8px; align-items: center; }
+    .toast { background: var(--ink-750); border: 1px solid var(--line-strong); border-radius: var(--r-md); padding: 10px 14px; box-shadow: var(--elev-2); font-size: 13px; color: var(--text-100); display: flex; gap: 8px; align-items: center; }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <!-- ===== top bar ===== -->
+    <header class="topbar">
+      <span class="brand">
+        <span class="brand__mark" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 32 32" fill="none">
+            <path d="M5 9 L16 23 L27 9" stroke="#F3F5F8" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M11 9 L16 16" stroke="#46A6C4" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </span>
+        <span class="brand__name"><b>Victory</b><span>Searcher</span></span>
+      </span>
+      <span class="topbar__context">
+        <span>Скоринг</span><span class="topbar__sep">/</span><span style="color:var(--text-100)">Вакансии</span>
+      </span>
+      <span class="topbar__spacer"></span>
+      <span class="topbar__account"><span class="avatar">RC</span><span>recruiter</span></span>
+    </header>
+
+    <div class="body">
+      <!-- ===== left rail ===== -->
+      <nav class="rail" aria-label="Разделы">
+        <p class="eyebrow" style="padding:0 10px var(--space-2)">Скоринг</p>
+        <a class="rail__item rail__item--active">
+          <svg class="ic" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Вакансии
+        </a>
+        <a class="rail__item" data-stub="Результаты скоринга">
+          <svg class="ic" viewBox="0 0 24 24"><path d="M4 18V9M9 18V5M14 18v-6M19 18v-9"/></svg>Результаты
+        </a>
+        <div class="rail__group">
+          <p class="eyebrow" style="padding:0 10px var(--space-2)">Аналитика</p>
+          <a class="rail__item" data-stub="Дашборд ролей">
+            <svg class="ic" viewBox="0 0 24 24"><path d="M4 19V5M4 19h16M8 16v-4M13 16V8M18 16v-6"/></svg>Дашборд ролей
+          </a>
+          <a class="rail__item" data-stub="Источники данных">
+            <svg class="ic" viewBox="0 0 24 24"><path d="M12 3v18M3 12h18"/><circle cx="12" cy="12" r="8"/></svg>Источники
+          </a>
+        </div>
+      </nav>
+
+      <!-- ===== content ===== -->
+      <div class="content">
+        <aside class="vlist" aria-label="Список вакансий">
+          <div class="vlist__head">
+            <span class="vlist__title">Вакансии</span>
+            <button class="btn btn--secondary" id="newVacancyBtn" style="height:30px;padding:0 10px">+ Новая</button>
+          </div>
+          <div class="vlist__scroll" id="vacancyList"></div>
+        </aside>
+        <main class="main" id="detailRoot"></main>
+      </div>
+    </div>
+  </div>
+
+  <!-- hidden file input -->
+  <input type="file" id="fileInput" multiple accept=".txt" hidden />
+
+  <!-- new vacancy modal -->
+  <div class="modal-backdrop" id="newVacancyModal" hidden>
+    <div class="modal panel panel--inset" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <h2 class="modal__title" id="modalTitle">Новая вакансия</h2>
+      <form class="modal__form" id="vacancyForm" novalidate>
+        <div class="field">
+          <label class="label" for="vfTitle">Название</label>
+          <input class="input" id="vfTitle" placeholder="Senior Frontend Developer" />
+        </div>
+        <div class="field">
+          <label class="label" for="vfDesc">Описание</label>
+          <textarea class="textarea" id="vfDesc" rows="3" placeholder="О вакансии…"></textarea>
+        </div>
+        <div class="field">
+          <label class="label" for="vfReq">Требования</label>
+          <textarea class="textarea" id="vfReq" rows="3" placeholder="Обязательные требования…"></textarea>
+        </div>
+        <div class="field">
+          <label class="label" for="vfExtra">Дополнительные требования <span class="field__optional">(необязательно)</span></label>
+          <textarea class="textarea" id="vfExtra" rows="2" placeholder="Желательные навыки…"></textarea>
+        </div>
+        <p class="error-text" id="vfError" hidden>Заполните название вакансии</p>
+        <div class="modal__actions">
+          <button type="button" class="btn btn--ghost" id="vacancyCancel">Отмена</button>
+          <button type="submit" class="btn btn--primary">Создать вакансию</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="toast-wrap" id="toastWrap"></div>
+
+  <script>
+  // =====================================================================
+  //  Заглушка данных и логики. Никаких реальных запросов к API.
+  //  Зеркалит функционал VictorySearcher.Web (выбор/создание вакансии,
+  //  загрузка резюме со статусами, запуск скоринга), но на моках.
+  // =====================================================================
+
+  // accept-форматы — как в Web (features/scoring/config.ts: ['.txt']).
+  const ACCEPTED = ['.txt'];
+
+  const FILE_ICON = '<svg class="ic file__icon" viewBox="0 0 24 24"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/></svg>';
+
+  // status: 'draft' | 'inProcess' | 'finished'  (зеркало ScoringStatus)
+  let vacancies = [
+    { id: 'v1', title: 'Senior Python Developer',
+      description: 'Команда платформы ищет сильного backend-инженера для развития сервисов скоринга и интеграций с внешними источниками данных. Работа в продуктовой команде из шести человек с прямым влиянием на архитектуру и приоритеты.',
+      requirements: 'Python 3.11+, FastAPI или Django, PostgreSQL, проектирование REST API от четырёх лет, уверенная асинхронность, Docker.',
+      extra: 'Опыт с LLM-пайплайнами, очередями (RabbitMQ или Kafka), английский B2+.',
+      skills: ['Python','FastAPI','PostgreSQL','REST API','async','Docker'],
+      createdAt: '24.06.2026', status: 'draft', flags: 0 },
+    { id: 'v2', title: 'HR Business Partner',
+      description: 'Партнёр для бизнес-юнита из 40 человек: подбор, адаптация, развитие, удержание. Тесная работа с руководителями направлений.',
+      requirements: 'Опыт HR BP от трёх лет, навыки оценки и развития, английский, работа с метриками текучести.',
+      extra: 'Опыт в IT-компании, знание грейдинга.',
+      skills: ['HR BP','Подбор','Адаптация','Оценка'],
+      createdAt: '23.06.2026', status: 'inProcess', flags: 0, resumeCount: 8, scored: 5 },
+    { id: 'v3', title: 'DevOps Engineer',
+      description: 'Развитие и поддержка инфраструктуры: CI/CD, наблюдаемость, отказоустойчивость сервисов скоринга и сбора данных.',
+      requirements: 'Kubernetes, Docker, Terraform, CI/CD, Linux, опыт от трёх лет.',
+      extra: 'Опыт с облаками (Yandex Cloud / AWS), мониторинг (Prometheus, Grafana).',
+      skills: ['Kubernetes','Docker','Terraform','CI/CD','Linux'],
+      createdAt: '22.06.2026', status: 'finished', flags: 3, resumeCount: 12, top: 84 },
+    { id: 'v4', title: 'QA Automation Lead',
+      description: 'Построение процессов автоматизации тестирования с нуля, наставничество команды QA.',
+      requirements: 'Python/JS автотесты, Selenium/Playwright, API-тестирование, опыт лида.',
+      extra: 'Опыт построения test-стратегии, нагрузочное тестирование.',
+      skills: ['Playwright','API tests','Python','Leadership'],
+      createdAt: '21.06.2026', status: 'draft', flags: 0 },
+    { id: 'v5', title: 'Frontend Developer (React)',
+      description: 'Разработка интерфейсов внутренних инструментов на React + TypeScript.',
+      requirements: 'React, TypeScript, современный CSS, REST/GraphQL, опыт от двух лет.',
+      extra: 'Опыт с дизайн-системами, доступность (a11y).',
+      skills: ['React','TypeScript','CSS','REST'],
+      createdAt: '20.06.2026', status: 'finished', flags: 0, resumeCount: 5, top: 79 },
+  ];
+
+  let selectedId = 'v1';
+  const uploads = {}; // vacancyId -> [{ id, name, size, status, loadedAt, errorMessage }]
+
+  // ---- helpers ----
+  function fmtBytes(b) {
+    if (b >= 1024 * 1024) return (b / 1024 / 1024).toFixed(1) + ' МБ';
+    if (b >= 1024) return Math.round(b / 1024) + ' КБ';
+    return b + ' Б';
+  }
+  function fmtTime(d) {
+    return d.getHours().toString().padStart(2,'0') + ':' + d.getMinutes().toString().padStart(2,'0');
+  }
+  function ext(name) { return '.' + (name.split('.').pop() || '').toLowerCase(); }
+  function loadedCount(id) { return (uploads[id] || []).filter(e => e.status === 'loaded').length; }
+
+  function statusChip(v) {
+    if (v.status === 'inProcess') return '<span class="chip chip--signal"><span class="dot dot--signal"></span>идёт скоринг</span>';
+    if (v.status === 'finished') {
+      const flags = v.flags ? '<span class="chip chip--warn">⚑ ' + v.flags + '</span>' : '';
+      return '<span class="chip chip--ok">готово</span>' + flags;
+    }
+    return '<span class="chip"><span class="dot dot--muted"></span>черновик</span>';
+  }
+
+  function toast(text) {
+    const el = document.createElement('div');
+    el.className = 'toast';
+    el.innerHTML = '<span class="dot dot--signal"></span>' + text;
+    document.getElementById('toastWrap').appendChild(el);
+    setTimeout(() => el.remove(), 2600);
+  }
+
+  // ---- render: vacancy list ----
+  function renderList() {
+    const root = document.getElementById('vacancyList');
+    if (!vacancies.length) { root.innerHTML = '<div class="vlist__empty">Нет вакансий. Создайте первую.</div>'; return; }
+    root.innerHTML = vacancies.map(v => {
+      const count = (v.resumeCount || loadedCount(v.id));
+      const countHtml = count ? '<span class="vcard__count">' + count + ' резюме</span>' : '';
+      return '<button class="vcard ' + (v.id === selectedId ? 'vcard--active' : '') + '" data-id="' + v.id + '">' +
+        '<span class="vcard__name">' + v.title + '</span>' +
+        '<span class="vcard__meta">' + countHtml + statusChip(v) + '</span></button>';
+    }).join('');
+    root.querySelectorAll('.vcard').forEach(c => c.addEventListener('click', () => selectVacancy(c.dataset.id)));
+  }
+
+  // ---- render: file rows ----
+  function renderFiles(id) {
+    const list = uploads[id] || [];
+    if (!list.length) return '';
+    return '<div class="files">' + list.map(e => {
+      let chip;
+      if (e.status === 'loading') chip = '<span class="chip chip--signal"><span class="dot dot--signal"></span>обработка</span>';
+      else if (e.status === 'loaded') chip = '<span class="chip chip--ok">✓ ' + fmtTime(e.loadedAt) + '</span>';
+      else chip = '<span class="chip chip--alert">' + e.errorMessage + '</span>';
+      return '<div class="file">' + FILE_ICON +
+        '<span class="file__name">' + e.name + '</span>' +
+        '<span class="file__size">' + fmtBytes(e.size) + '</span>' + chip + '</div>';
+    }).join('') + '</div>';
+  }
+
+  // ---- render: detail ----
+  function renderDetail() {
+    const root = document.getElementById('detailRoot');
+    const v = vacancies.find(x => x.id === selectedId);
+    if (!v) { root.innerHTML = '<div class="main__empty">Выберите вакансию, чтобы начать работу</div>'; return; }
+
+    const extraSection = v.extra
+      ? '<section class="section"><h2 class="section__title">Дополнительные требования</h2><p class="section__text">' + v.extra + '</p></section>'
+      : '';
+    const skillChips = (v.skills || []).map(s => '<span class="chip">' + s + '</span>').join('');
+
+    // блок по статусу
+    let actionBlock = '';
+    if (v.status === 'draft') {
+      const loaded = loadedCount(v.id);
+      const total = (uploads[v.id] || []).length;
+      actionBlock =
+        '<div class="divider"></div>' +
+        '<section class="section"><h2 class="section__title">Резюме</h2>' +
+          '<div class="drop" id="dropZone">' +
+            '<svg class="ic" style="width:22px;height:22px;color:var(--text-500)" viewBox="0 0 24 24"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>' +
+            '<span class="drop__hint">Перетащите резюме или <span style="color:var(--signal-300)">выберите файлы</span></span>' +
+            '<span class="drop__sub">TXT · несколько за раз</span>' +
+          '</div>' + renderFiles(v.id) +
+        '</section>' +
+        '<div class="runbar">' +
+          '<span class="runbar__note">Готово к скорингу: <b>' + loaded + '</b> из <b>' + total + '</b> файлов</span>' +
+          '<button class="btn btn--primary btn--lg" id="runBtn" ' + (loaded ? '' : 'disabled') + '>Запустить скоринг</button>' +
+        '</div>';
+    } else if (v.status === 'inProcess') {
+      const total = v.resumeCount || 0;
+      const pct = total ? (v.scored || 0) / total * 100 : 0;
+      actionBlock =
+        '<div class="divider"></div>' +
+        '<div class="statusbar panel panel--inset">' +
+          '<div class="statusbar__row">' +
+            '<span class="statusbar__label"><span class="dot dot--signal"></span>Идёт скоринг резюме</span>' +
+            '<span class="statusbar__count" id="scCount">' + (v.scored || 0) + ' из ' + total + '</span>' +
+          '</div>' +
+          '<div class="progress"><div class="progress__fill" id="scFill" style="width:' + pct + '%"></div></div>' +
+          '<span class="runbar__note">Процесс идёт в фоне — можно переключиться на другую вакансию.</span>' +
+        '</div>';
+    } else { // finished
+      actionBlock =
+        '<div class="divider"></div>' +
+        '<section class="section"><h2 class="section__title">Результат скоринга</h2>' +
+          '<div class="summary">' +
+            '<div class="stat panel"><div class="stat__num">' + (v.resumeCount || 0) + '</div><div class="stat__label">резюме оценено</div></div>' +
+            '<div class="stat panel"><div class="stat__num" style="color:var(--warn)">' + (v.flags || 0) + '</div><div class="stat__label">красных флагов</div></div>' +
+            '<div class="stat panel"><div class="stat__num" style="color:var(--signal-300)">' + (v.top || 84) + '</div><div class="stat__label">лучший балл</div></div>' +
+          '</div>' +
+          '<div class="runbar"><span class="runbar__note">Ранжированный список готов.</span>' +
+          '<button class="btn btn--primary btn--lg" data-stub="Ранжированный список резюме">Открыть результаты</button></div>' +
+        '</section>';
+    }
+
+    root.innerHTML =
+      '<article class="detail">' +
+        '<div class="detail__head"><div>' +
+          '<h1 class="detail__title">' + v.title + '</h1>' +
+          '<div class="detail__sub"><span class="detail__date">создано ' + v.createdAt + '</span>' + statusChip(v) + '</div>' +
+        '</div><div class="detail__actions"><button class="btn btn--ghost" data-stub="Редактирование вакансии">Редактировать</button></div></div>' +
+        '<section class="section"><h2 class="section__title">Описание</h2><p class="section__text">' + v.description + '</p></section>' +
+        '<section class="section"><h2 class="section__title">Требования</h2><p class="section__text">' + v.requirements + '</p>' +
+          (skillChips ? '<div class="chips">' + skillChips + '</div>' : '') + '</section>' +
+        extraSection + actionBlock +
+      '</article>';
+
+    bindDetail(v);
+  }
+
+  // ---- bind dynamic detail controls ----
+  function bindDetail(v) {
+    const drop = document.getElementById('dropZone');
+    if (drop) {
+      drop.addEventListener('click', () => {
+        const input = document.getElementById('fileInput');
+        input.onchange = (e) => { handleFiles(v.id, Array.from(e.target.files || [])); input.value = ''; };
+        input.click();
+      });
+      drop.addEventListener('dragover', (e) => { e.preventDefault(); drop.classList.add('drop--over'); });
+      drop.addEventListener('dragleave', () => drop.classList.remove('drop--over'));
+      drop.addEventListener('drop', (e) => {
+        e.preventDefault(); drop.classList.remove('drop--over');
+        handleFiles(v.id, Array.from(e.dataTransfer.files || []));
+      });
+    }
+    const runBtn = document.getElementById('runBtn');
+    if (runBtn) runBtn.addEventListener('click', () => startScoring(v.id));
+    bindStubs(document.getElementById('detailRoot'));
+  }
+
+  // ---- upload stub: mirrors useResumeUpload ----
+  function handleFiles(id, files) {
+    if (!files.length) return;
+    if (!uploads[id]) uploads[id] = [];
+    files.forEach((file, i) => {
+      const entry = { id: Date.now() + '-' + i, name: file.name, size: file.size || 0, status: 'loading' };
+      uploads[id].push(entry);
+      // имитация загрузки: через ~700мс — loaded или error по формату
+      setTimeout(() => {
+        if (!ACCEPTED.includes(ext(entry.name))) {
+          entry.status = 'error'; entry.errorMessage = 'Неподдерживаемый формат';
+        } else {
+          entry.status = 'loaded'; entry.loadedAt = new Date();
+        }
+        if (selectedId === id) renderDetail();
+        renderList();
+      }, 700);
+    });
+    renderDetail();
+  }
+
+  // ---- scoring stub: mirrors useScoring (async фоновый процесс) ----
+  function startScoring(id) {
+    const v = vacancies.find(x => x.id === id);
+    const total = loadedCount(id);
+    if (!total) return;
+    v.status = 'inProcess'; v.resumeCount = total; v.scored = 0;
+    renderList(); renderDetail();
+    const timer = setInterval(() => {
+      v.scored++;
+      const fill = document.getElementById('scFill');
+      const cnt = document.getElementById('scCount');
+      if (fill) fill.style.width = (v.scored / total * 100) + '%';
+      if (cnt) cnt.textContent = v.scored + ' из ' + total;
+      if (v.scored >= total) {
+        clearInterval(timer);
+        v.status = 'finished';
+        v.flags = Math.floor(Math.random() * 3);
+        v.top = 70 + Math.floor(Math.random() * 25);
+        renderList(); renderDetail();
+        toast('Скоринг завершён: оценено ' + total + ' резюме');
+      }
+    }, 450);
+  }
+
+  function selectVacancy(id) {
+    if (id === selectedId) return;
+    selectedId = id;
+    renderList(); renderDetail();
+  }
+
+  // ---- new vacancy modal ----
+  const modal = document.getElementById('newVacancyModal');
+  function openModal() { modal.hidden = false; document.getElementById('vfTitle').focus(); }
+  function closeModal() {
+    modal.hidden = true;
+    document.getElementById('vacancyForm').reset();
+    document.getElementById('vfError').hidden = true;
+  }
+  document.getElementById('newVacancyBtn').addEventListener('click', openModal);
+  document.getElementById('vacancyCancel').addEventListener('click', closeModal);
+  modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+  document.getElementById('vacancyForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const title = document.getElementById('vfTitle').value.trim();
+    if (!title) { document.getElementById('vfError').hidden = false; return; }
+    const req = document.getElementById('vfReq').value.trim();
+    const skills = req.split(/[,;]/).map(s => s.trim()).filter(Boolean).slice(0, 6);
+    const v = {
+      id: 'v' + Date.now(), title,
+      description: document.getElementById('vfDesc').value.trim() || '—',
+      requirements: req || '—',
+      extra: document.getElementById('vfExtra').value.trim(),
+      skills, createdAt: '24.06.2026', status: 'draft', flags: 0,
+    };
+    vacancies.unshift(v);
+    selectedId = v.id;
+    closeModal();
+    renderList(); renderDetail();
+    toast('Вакансия создана');
+  });
+
+  // ---- stub links (в разработке) ----
+  function bindStubs(scope) {
+    (scope || document).querySelectorAll('[data-stub]').forEach(el => {
+      if (el.dataset.bound) return;
+      el.dataset.bound = '1';
+      el.addEventListener('click', () => toast(el.dataset.stub + ' — в разработке'));
+    });
+  }
+
+  // ---- init ----
+  renderList();
+  renderDetail();
+  bindStubs(document);
+  </script>
+</body>
+</html>
