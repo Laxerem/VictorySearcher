@@ -20,35 +20,57 @@ public class ResumeAnalyserService(IAnalyserLlmClient llmClient, AnalyserPromptB
             .Select(async i => {
                 if (i > 0)
                     await Task.Delay(i * opts.RunDelayMs, ct);
-
-                var json = await llmClient.CompleteAsync(messages, ct);
-                return JsonSerializer.Deserialize<LlmResponseJson>(json, JsonOpts)
-                       ?? throw new InvalidOperationException("LLM returned null.");
+                try {
+                    var json = await llmClient.CompleteAsync(messages, ct);
+                    var result = JsonSerializer.Deserialize<LlmResponseJson>(json, JsonOpts)
+                                 ?? throw new InvalidOperationException("LLM returned null.");
+                    return result with {
+                        ExperienceScore = Math.Clamp(result.ExperienceScore, 0, 100),
+                        SkillsScore = Math.Clamp(result.SkillsScore, 0, 100),
+                        ExtraScore = result.ExtraScore.HasValue
+                            ? Math.Clamp(result.ExtraScore.Value, 0, 100)
+                            : (int?)null,
+                    };
+                } catch (Exception) {
+                    return null;
+                }
             });
 
-        var runs = await Task.WhenAll(tasks);
+        var allResults = await Task.WhenAll(tasks);
+        var runs = allResults.Where(r => r is not null).Select(r => r!).ToArray();
 
-        var expScores = runs.Select(r => r.ExperienceScore).ToArray();
-        var experienceScore = Median(expScores);
+        if (runs.Length == 0)
+            throw new InvalidOperationException("All LLM runs failed.");
+
+        var degraded = runs.Length < opts.Runs;
+
+        var perRunOveralls = runs
+            .Select(r => (int)Math.Round(
+                r.ExperienceScore * opts.ExperienceWeight +
+                r.SkillsScore * opts.SkillsWeight +
+                (r.ExtraScore ?? r.SkillsScore) * opts.ExtraWeight))
+            .ToArray();
+
+        var overallScore = Median(perRunOveralls);
+        var experienceScore = Median(runs.Select(r => r.ExperienceScore));
         var skillsScore = Median(runs.Select(r => r.SkillsScore));
         var extraScore = MedianNullable(runs.Select(r => r.ExtraScore));
-        var incongruity = runs.Count(r => r.Incongruity) > runs.Length / 2;
-        var reasoning = runs[^1].Reasoning;
 
-        var overallScore = (int)Math.Round(
-            experienceScore * opts.ExperienceWeight +
-            skillsScore * opts.SkillsWeight +
-            (extraScore ?? skillsScore) * opts.ExtraWeight);
+        var spread = perRunOveralls.Max() - perRunOveralls.Min();
+        var isUncertain = degraded || spread > opts.UncertaintySpreadThreshold;
 
-        var spread = expScores.Max() - expScores.Min();
-        var isUncertain = spread > opts.UncertaintySpreadThreshold;
+        var bestRun = runs
+            .Select((r, i) => (run: r, overall: perRunOveralls[i]))
+            .OrderBy(x => Math.Abs(x.overall - overallScore))
+            .First()
+            .run;
 
-        var analysis = runs[^1].RequirementsAnalysis
+        var analysis = bestRun.RequirementsAnalysis
             .Select(r => new RequirementCoverageDto(r.Requirement, r.Covered, r.Evidence))
             .ToList();
 
         return new LlmAnalysisDto(overallScore, experienceScore, skillsScore, extraScore,
-            reasoning, incongruity, isUncertain, analysis);
+            bestRun.Reasoning, isUncertain, analysis);
     }
 
     private static int Median(IEnumerable<int> values) {

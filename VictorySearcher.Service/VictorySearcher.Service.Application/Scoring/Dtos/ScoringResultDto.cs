@@ -8,7 +8,6 @@ public record ScoringResultDto(
     int SkillsScore,
     int? ExtraScore,
     string Reasoning,
-    bool Incongruity,
     bool IsUncertain,
     IReadOnlyList<RequirementCoverageDto> RequirementsAnalysis,
     DateTime ScoredAt);

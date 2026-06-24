@@ -5,5 +5,4 @@ public record LlmResponseJson(
     int ExperienceScore,
     int SkillsScore,
     int? ExtraScore,
-    bool Incongruity,
     string Reasoning = "");

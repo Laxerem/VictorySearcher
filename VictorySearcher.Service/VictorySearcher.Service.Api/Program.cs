@@ -17,6 +17,7 @@ builder.Services.AddControllers()
     .AddJsonOptions(o =>
         o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)));
 builder.Services.AddSwagger();
+builder.Services.AddHttpLogging();
 
 var app = builder.Build();
 

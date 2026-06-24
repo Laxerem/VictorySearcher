@@ -58,7 +58,6 @@ public class ScoringService(
                 r.SkillsScore,
                 r.ExtraScore,
                 r.Reasoning,
-                r.Incongruity,
                 r.IsUncertain,
                 r.RequirementsAnalysis
                     .Select(c => new RequirementCoverageDto(c.Requirement, c.Covered, c.Evidence))

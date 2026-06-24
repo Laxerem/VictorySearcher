@@ -4,7 +4,6 @@ public class ScoringResult {
     public Guid Id { get; set; }
     public Guid RequestId { get; set; }
     public Guid ResumeId { get; set; }
-    public bool Incongruity { get; set; }
     public int OverallScore { get; set; }
     public int ExperienceScore { get; set; }
     public int SkillsScore { get; set; }
