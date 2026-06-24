@@ -30,10 +30,18 @@ public class ResumeScoringJob(
             var vacancy = await vacancyRepository.GetByIdAsync(request.VacancyId, ct)
                 ?? throw new InvalidOperationException($"Vacancy {request.VacancyId} not found.");
 
-            var resumes = await resumeRepository.GetByVacancyIdAsync(request.VacancyId, ct);
+            var resumes = await resumeRepository.GetUnscoredByVacancyIdAsync(request.VacancyId, ct);
+
+            if (resumes.Count == 0) {
+                request.Status = ScoringStatus.Finished;
+                request.FinishedAt = DateTime.UtcNow;
+                await unitOfWork.SaveChangesAsync(ct);
+                logger.LogInformation("Scoring finished: no unscored resumes for request {RequestId}", requestId);
+                return;
+            }
 
             logger.LogInformation(
-                "Scoring started: request {RequestId}, vacancy \"{VacancyTitle}\", {ResumeCount} resumes",
+                "Scoring started: request {RequestId}, vacancy \"{VacancyTitle}\", {ResumeCount} unscored resumes",
                 requestId, vacancy.Title, resumes.Count);
 
             var vacancyContext = new VacancyContextDto(

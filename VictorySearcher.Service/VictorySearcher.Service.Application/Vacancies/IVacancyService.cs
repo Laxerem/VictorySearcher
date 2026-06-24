@@ -15,4 +15,6 @@ public interface IVacancyService {
     Task<Result<IReadOnlyList<VacancyListItemDto>>> GetAllAsync(CancellationToken ct = default);
 
     Task<Result<VacancyDto>> GetByIdAsync(Guid id, CancellationToken ct = default);
+
+    Task<Result<bool>> DeleteAsync(Guid id, CancellationToken ct = default);
 }

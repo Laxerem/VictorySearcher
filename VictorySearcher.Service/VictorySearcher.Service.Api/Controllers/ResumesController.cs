@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VictorySearcher.Service.Application.Resumes;
+using VictorySearcher.Service.Domain.Enums;
 
 namespace VictorySearcher.Service.Api.Controllers;
 
@@ -22,5 +23,46 @@ public class ResumesController(IResumeService resumeService) : ControllerBase {
             _ when result.IsSuccess => StatusCode(StatusCodes.Status201Created),
             _ => StatusCode(StatusCodes.Status500InternalServerError)
         };
+    }
+
+    [HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> GetPagedAsync(
+        Guid vacancyId, [FromQuery] int page = 1, [FromQuery] int pageSize = 20, CancellationToken ct = default) {
+        var result = await resumeService.GetPagedAsync(vacancyId, page, pageSize, ct);
+        return Ok(result.Value);
+    }
+
+    [HttpGet("{resumeId:guid}/content")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetContentAsync(Guid vacancyId, Guid resumeId, CancellationToken ct) {
+        var result = await resumeService.GetContentAsync(vacancyId, resumeId, ct);
+
+        return result.Error switch {
+            "not_found" => NotFound(),
+            _ => Ok(result.Value)
+        };
+    }
+
+    [HttpGet("{resumeId:guid}/download")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> DownloadAsync(Guid vacancyId, Guid resumeId, CancellationToken ct) {
+        var result = await resumeService.GetFileAsync(vacancyId, resumeId, ct);
+
+        if (result.Error == "not_found") return NotFound();
+
+        var file = result.Value!;
+        var mimeType = file.Format switch {
+            FileFormat.PDF => "application/pdf",
+            FileFormat.DOCX => "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            _ => "text/plain"
+        };
+
+        return File(file.Data, mimeType, file.FileName);
     }
 }

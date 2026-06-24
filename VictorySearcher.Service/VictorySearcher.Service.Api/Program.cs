@@ -8,7 +8,11 @@ using VictorySearcher.Service.Infrastructure;
 using VictorySearcher.Service.Infrastructure.Options;
 using VictorySearcher.Service.Infrastructure.Persistence;
 
+DotNetEnv.Env.Load();
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Configuration.AddEnvironmentVariables();
 
 builder.AddSerilogLogging();
 builder.Services.AddInfrastructure(builder.Configuration);

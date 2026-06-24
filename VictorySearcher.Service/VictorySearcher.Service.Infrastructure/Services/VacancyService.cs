@@ -58,4 +58,15 @@ public class VacancyService : IVacancyService {
             vacancy.ExtraRequirements,
             vacancy.CreatedAt));
     }
+
+    public async Task<Result<bool>> DeleteAsync(Guid id, CancellationToken ct = default) {
+        var vacancy = await _vacancyRepository.GetByIdAsync(id, ct);
+        if (vacancy is null)
+            return Result<bool>.Failure("not_found");
+
+        await _vacancyRepository.DeleteAsync(vacancy, ct);
+        await _unitOfWork.SaveChangesAsync(ct);
+
+        return Result<bool>.Success(true);
+    }
 }

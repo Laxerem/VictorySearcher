@@ -47,4 +47,17 @@ public class VacanciesController(IVacancyService vacancyService) : ControllerBas
             _ => Ok(result.Value)
         };
     }
+
+    [HttpDelete("{id:guid}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> DeleteAsync(Guid id, CancellationToken ct) {
+        var result = await vacancyService.DeleteAsync(id, ct);
+
+        return result.Error switch {
+            "not_found" => NotFound(),
+            _ => NoContent()
+        };
+    }
 }
