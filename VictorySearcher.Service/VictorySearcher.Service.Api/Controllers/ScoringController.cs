@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VictorySearcher.Service.Application.Scoring;
+using VictorySearcher.Service.Application.Scoring.Dtos;
 
 namespace VictorySearcher.Service.Api.Controllers;
 
@@ -21,7 +22,7 @@ public class ScoringController(IScoringService scoringService) : ControllerBase 
     }
 
     [HttpGet("status")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType<ScoringStatusDto>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> GetStatusAsync(Guid vacancyId, CancellationToken ct) {
@@ -33,7 +34,7 @@ public class ScoringController(IScoringService scoringService) : ControllerBase 
     }
 
     [HttpGet("results")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType<List<ScoringResultDto>>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> GetResultsAsync(Guid vacancyId, CancellationToken ct) {

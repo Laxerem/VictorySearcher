@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VictorySearcher.Service.Application.Resumes;
+using VictorySearcher.Service.Application.Resumes.Dtos;
 using VictorySearcher.Service.Domain.Enums;
 
 namespace VictorySearcher.Service.Api.Controllers;
@@ -26,7 +27,7 @@ public class ResumesController(IResumeService resumeService) : ControllerBase {
     }
 
     [HttpGet]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType<PagedResumesDto>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> GetPagedAsync(
         Guid vacancyId, [FromQuery] int page = 1, [FromQuery] int pageSize = 20, CancellationToken ct = default) {
@@ -35,7 +36,7 @@ public class ResumesController(IResumeService resumeService) : ControllerBase {
     }
 
     [HttpGet("{resumeId:guid}/content")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType<ResumeContentDto>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetContentAsync(Guid vacancyId, Guid resumeId, CancellationToken ct) {

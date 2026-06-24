@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VictorySearcher.Service.Api.Contracts;
 using VictorySearcher.Service.Application.Vacancies;
+using VictorySearcher.Service.Application.Vacancies.Dtos;
 
 namespace VictorySearcher.Service.Api.Controllers;
 
@@ -11,7 +12,7 @@ namespace VictorySearcher.Service.Api.Controllers;
 [Route("api/vacancies")]
 public class VacanciesController(IVacancyService vacancyService) : ControllerBase {
     [HttpPost]
-    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType<VacancyDto>(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> CreateAsync(CreateVacancyRequest request, CancellationToken ct) {
         var createdById = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
@@ -28,7 +29,7 @@ public class VacanciesController(IVacancyService vacancyService) : ControllerBas
     }
 
     [HttpGet]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType<IReadOnlyList<VacancyListItemDto>>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> GetAllAsync(CancellationToken ct) {
         var result = await vacancyService.GetAllAsync(ct);
@@ -36,7 +37,7 @@ public class VacanciesController(IVacancyService vacancyService) : ControllerBas
     }
 
     [HttpGet("{id:guid}")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType<VacancyDto>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetByIdAsync(Guid id, CancellationToken ct) {
