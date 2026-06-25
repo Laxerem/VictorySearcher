@@ -41,6 +41,8 @@ public static class DependencyInjection {
         services.AddScoped<IResumeService, ResumeService>();
 
         services.AddScoped<IResumeParser, TxtResumeParser>();
+        services.AddScoped<IResumeParser, DocxResumeParser>();
+        services.AddScoped<IResumeParser, PdfResumeParser>();
         services.AddScoped<ResumeParserDispatcher>();
 
         services.AddSingleton<IAnalyserLlmClient, OpenAiAnalyserLlmClient>();

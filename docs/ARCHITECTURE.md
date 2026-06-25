@@ -37,7 +37,7 @@ Infrastructure → Application → Domain
 | БД | PostgreSQL + EF Core 9 | Реляционные данные, JSON-столбцы, задачи Hangfire |
 | Фоновые задачи | **Hangfire** | Persistence при рестарте, cron, retry, встроенный dashboard |
 | LLM | polza.ai (OpenAI SDK) | OpenAI-совместимый → смена провайдера без рефакторинга |
-| Парсинг резюме | TxtResumeParser | Только `.txt`; PDF и DOCX запланированы |
+| Парсинг резюме | ResumeParserDispatcher | `.txt`, `.docx`, `.pdf` |
 | Авторизация | JWT из `appsettings.json` | Один внутренний аккаунт, без регистрации |
 
 ### Ключевые сущности (Domain)

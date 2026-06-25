@@ -23,15 +23,18 @@ public class ResumeService(
         string fileName,
         Stream content,
         CancellationToken ct = default) {
-        if (Path.GetExtension(fileName).ToLowerInvariant() != ".txt")
-            return Result<Guid>.Failure(AppError.BadRequest("Only .txt files are allowed."));
+        var detected = DetectFormat(fileName);
+        if (detected is null)
+            return Result<Guid>.Failure(AppError.BadRequest("Only .txt, .docx, and .pdf files are supported."));
+
+        var (format, ext) = detected.Value;
 
         var vacancy = await vacancyRepository.GetByIdAsync(vacancyId, ct);
         if (vacancy is null) return Result<Guid>.Failure(AppError.NotFound());
 
         var fileId = Guid.NewGuid();
         var dir = Path.Combine(storageOptions.Value.UploadsPath, vacancyId.ToString());
-        var filePath = Path.Combine(dir, $"{fileId}.txt");
+        var filePath = Path.Combine(dir, $"{fileId}{ext}");
 
         Directory.CreateDirectory(dir);
 
@@ -44,7 +47,7 @@ public class ResumeService(
             VacancyId = vacancyId,
             FileName = fileName,
             FilePath = filePath,
-            Format = FileFormat.TXT,
+            Format = format,
             LoadedAt = DateTime.UtcNow
         };
 
@@ -59,6 +62,14 @@ public class ResumeService(
 
         return Result<Guid>.Success(resume.Id);
     }
+
+    private static (FileFormat Format, string Ext)? DetectFormat(string fileName) =>
+        Path.GetExtension(fileName).ToLowerInvariant() switch {
+            ".txt" => (FileFormat.TXT, ".txt"),
+            ".docx" => (FileFormat.DOCX, ".docx"),
+            ".pdf" => (FileFormat.PDF, ".pdf"),
+            _ => null
+        };
 
     public async Task<Result<PagedResumesDto>> GetPagedAsync(
         Guid vacancyId, int page, int pageSize, CancellationToken ct = default) {
