@@ -1,0 +1,38 @@
+.root {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding-top: var(--space-4);
+}
+
+.btn {
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 500;
+  height: 32px;
+  padding: 0 var(--space-4);
+  background: transparent;
+  color: var(--text-300);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-md);
+  cursor: pointer;
+  transition: border-color var(--dur) var(--ease), color var(--dur) var(--ease);
+}
+
+.btn:hover:not(:disabled) {
+  border-color: var(--signal-700);
+  color: var(--text-100);
+}
+
+.btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.info {
+  font-family: var(--font-data);
+  font-size: 13px;
+  color: var(--text-500);
+  min-width: 48px;
+  text-align: center;
+}

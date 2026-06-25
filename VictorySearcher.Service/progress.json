@@ -7,7 +7,20 @@
         "progress": [
           "Реализован слой данных в VictorySearcher.Service: сущности домена, EF Core конфигурации, репозитории, UnitOfWork",
           "Реализован деплой VictorySearcher.Service: Dockerfile и docker-compose конфигурация",
-          "Реализована авторизация в VictorySearcher.Service: POST /api/auth/login, JWT-токен, единственный пользователь из seed"
+          "Реализована авторизация в VictorySearcher.Service: POST /api/auth/login, JWT-токен, единственный пользователь из seed",
+          "Реализованы вакансии в VictorySearcher.Service: POST /api/vacancies (создание), POST /api/vacancies/{id}/resumes (загрузка TXT-резюме с file-first консистентностью)",
+          "Реализован скоринг резюме в VictorySearcher.Service: POST /api/vacancies/{id}/scoring запускает Hangfire-джоб, который поочерёдно парсит резюме и оценивает через LLM (polza.ai); GET /status и /results возвращают статус и результаты по vacancyId"
+        ]
+      },
+      {
+        "date": "2026-06-25",
+        "progress": [
+          "Добавлены эндпоинты резюме в VictorySearcher.Service: GET /resumes (пагинация с количеством оценённых), GET /resumes/{id}/content (извлечённый текст), GET /resumes/{id}/download (оригинальный файл)",
+          "Рефакторинг Result<T> в VictorySearcher.Service: строковая ошибка заменена на типизированный AppError со статус-кодом; добавлен глобальный exception middleware",
+          "Улучшен LLM-пайплайн скоринга в VictorySearcher.Service: N параллельных ранов, медиана баллов, флаг IsUncertain при разбросе выше порога; результаты возвращают только последний скоринг на каждое резюме",
+          "Добавлено структурированное логирование в VictorySearcher.Service: Serilog с выводом ключевых событий скоринга и LLM-ранов",
+          "Реализованы парсеры DOCX и PDF в VictorySearcher.Service: DocxResumeParser (DocumentFormat.OpenXml) и PdfResumeParser (PdfPig); ResumeService принимает .txt, .docx и .pdf",
+          "Реализован SSE-стрим прогресса скоринга в VictorySearcher.Service: GET /api/vacancies/{id}/scoring/stream отдаёт события checked/total в реальном времени через System.Threading.Channels; исправлен баг привязки ScoringResult к requestId"
         ]
       }
     ]

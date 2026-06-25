@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(../.claude/**)",
+      "Read(../docs/**)",
+      "Read(../CLAUDE.md)",
+      "Bash(find:../.claude/**)",
+      "Bash(find:../docs/**)",
+      "Bash(grep:../.claude/**)",
+      "Bash(grep:../docs/**)"
+    ]
+  }
+}

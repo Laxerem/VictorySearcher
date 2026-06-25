@@ -1,73 +1,56 @@
-# React + TypeScript + Vite
+# VictorySearcher.Web
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**VictorySearcher.Web** — веб-интерфейс VictorySearcher: клиентская часть монорепозитория, через которую рекрутёр создаёт вакансии, загружает резюме и смотрит результаты скоринга и аналитику рынка. Собственных данных не хранит — работает поверх REST API бэкенда. См. также [корневой README](../README.md).
 
-Currently, two official plugins are available:
+## О проекте 🏗
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+SPA на React: тонкий клиент над [`VictorySearcher.Service`](../VictorySearcher.Service/README.md). Весь доступ под одним входом — две защищённые секции, переключаемые в навигации.
 
-## React Compiler
+### Чем занимается
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Скоринг резюме** (`/scoring`) — создание вакансии, загрузка резюме (TXT, DOCX, PDF), запуск скоринга с прогрессом в реальном времени и ранжированный список кандидатов с разбивкой баллов, обоснованием и разбором по требованиям.
+- **Аналитика рынка** (`/market`) — дашборды по целевым ролям. *Запланировано, пока не реализовано.*
 
-## Expanding the ESLint configuration
+### Доступ
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+Единственный JWT-пользователь: один вход открывает обе секции, неавторизованные маршруты закрыты.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### Структура
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```
+src/
+  api/         # client.ts (fetch + JWT) + *.api.ts по фичам
+  components/  # ui/ (примитивы), layout/ (AppLayout, Header, Sidebar)
+  features/    # auth/, scoring/, market/ — каждая с components/, hooks/, index.ts
+  pages/       # тонкие обёртки над features
+  providers/   # AuthProvider, QueryProvider
+  styles/      # variables.css, global.css, animations.css
+  types/       # api.ts — DTO-контракты, синхронизированы с бэкендом
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Соглашения проекта (публичное API фич, CSS Modules, разделение «компонент = отображение / логика в хуках», работа с auth) — в [`CLAUDE.md`](CLAUDE.md). Визуальный язык и дизайн-токены — в [`VictorySearcher.Design`](../VictorySearcher.Design/design/).
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## ⚙️ Технологический стек
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- **React 19 + TypeScript + Vite** — основа и сборка
+- **React Router** — маршрутизация
+- **TanStack Query** — серверное состояние и кеш запросов
+- **React Hook Form** — формы
+- **Radix UI Primitives** — доступные UI-примитивы
+- **Recharts** — графики для аналитики
+- **clsx** — composition CSS-классов
+
+## 🔗 Сторонние сервисы
+
+- **[`VictorySearcher.Service`](../VictorySearcher.Service/README.md)** — бэкенд-API, источник всех данных. Dev-сервер проксирует `/api` → `http://localhost:5000`; без запущенного бэкенда фронтенд не работает.
+
+## Как запустить
+
+```bash
+npm install
+npm run dev      # Dev-сервер на http://localhost:5173 (проксирует /api → http://localhost:5000)
+npm run build    # Проверка типов + сборка
+npm run lint     # ESLint
 ```
+
+Для работы нужен запущенный бэкенд — см. [`VictorySearcher.Service`](../VictorySearcher.Service/README.md).

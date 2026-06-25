@@ -1,0 +1,42 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 50;
+  animation: fadeIn var(--dur) var(--ease);
+}
+
+.content {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 51;
+  width: min(540px, calc(100vw - var(--space-8)));
+  padding: var(--space-6);
+  border-radius: var(--r-lg);
+  background: var(--ink-800);
+  border: 1px solid var(--line);
+  box-shadow: inset 0 1px 0 var(--edge-highlight), var(--elev-2);
+  animation: slideIn var(--dur) var(--ease);
+}
+
+.title {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  font-weight: 700;
+  font-size: 22px;
+  color: var(--text-100);
+  margin: 0;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translate(-50%, -48%); }
+  to { opacity: 1; transform: translate(-50%, -50%); }
+}

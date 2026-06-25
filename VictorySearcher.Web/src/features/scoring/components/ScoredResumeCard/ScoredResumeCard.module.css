@@ -1,0 +1,114 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  background: var(--ink-800);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+}
+
+.flagged {
+  border-color: var(--warn);
+  background: var(--warn-bg);
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.identity {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.rank {
+  font-family: var(--font-data);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-500);
+  flex-shrink: 0;
+}
+
+.fileName {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-100);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.overall {
+  display: flex;
+  align-items: baseline;
+  gap: 3px;
+  flex-shrink: 0;
+}
+
+.overallValue {
+  font-family: var(--font-data);
+  font-size: 22px;
+  line-height: 1;
+  font-weight: 500;
+  color: var(--signal-300);
+}
+
+.overallMax {
+  font-size: 13px;
+  color: var(--text-500);
+}
+
+.metrics {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.metric {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.metricHead {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+}
+
+.metricLabel {
+  color: var(--text-500);
+}
+
+.metricValue {
+  font-family: var(--font-data);
+  color: var(--text-300);
+}
+
+.track {
+  height: 6px;
+  background: var(--ink-700);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.fill {
+  height: 100%;
+  background: var(--signal-500);
+  border-radius: 999px;
+  transition: width 300ms ease;
+}
+
+.reasoning {
+  margin: 0;
+  font-size: 13px;
+  line-height: 20px;
+  color: var(--text-300);
+  white-space: pre-wrap;
+}

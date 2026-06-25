@@ -1,6 +1,6 @@
-> Before any changes, read the root `../CLAUDE.md`.
-
 # CLAUDE.md — VictorySearcher.Service
+
+> 🚨 **READ FIRST — MANDATORY.** Before doing anything in this service, read the root [`../CLAUDE.md`](../CLAUDE.md). It is the single registry of repo-wide skills and rules that are NOT auto-loaded from this subfolder. Skipping it means working without the project's shared skills and rules. This is not optional.
 
 VictorySearcher is an internal HR automation tool with two features: LLM-powered resume scoring (recruiter uploads CVs against a vacancy, gets a ranked list with explanations) and automated daily labor market analytics collected from HH and SuperJob APIs.
 
@@ -54,8 +54,8 @@ VictorySearcher.Service/
 ### Clean Architecture — strict dependency rule
 Domain has zero external references. Application references Domain only. Infrastructure and Api never reference each other. Each layer self-registers via an `AddX()` extension on `IServiceCollection`; `Program.cs` calls only `AddApplication()` and `AddInfrastructure()`.
 
-### Application — plain service interfaces
-Application exposes `IFeatureService` interfaces with `Result<T>` return types — no MediatR, no CQRS. Implementations live in `Infrastructure/Services/`. DTOs are `record` types placed in `Application/<Feature>/Dtos/` alongside the interface they belong to.
+### Application — service interfaces and implementations
+Application exposes `IFeatureService` interfaces with `Result<T>` return types — no MediatR, no CQRS. Implementations of business services live in `Application/<Feature>/` alongside the interfaces they implement. DTOs are `record` types placed in `Application/<Feature>/Dtos/`. Infrastructure-specific abstractions required by Application services (e.g. `IResumeStorage`, `IScoringJobScheduler`, `IPasswordVerifier`) are defined in Application and implemented in Infrastructure.
 
 ### Result<T> — business error handling
 Service methods return `Result<T>` for expected failures (not found, invalid state) instead of throwing exceptions. Controllers check `result.IsSuccess` and map to appropriate HTTP status codes. Infrastructure-level exceptions (DB, network) propagate normally and are caught by global middleware.
@@ -75,6 +75,7 @@ Every entity has its own `IEntityTypeConfiguration<T>` in `Infrastructure/Persis
 - Expression-bodied members for single-expression methods and properties
 - `CancellationToken ct = default` as the last parameter in every `async` method
 - `var` for local variables; explicit type only when not obvious from the right-hand side
+- No vertical alignment of `=` or `:` — single space around operators everywhere
 - `= null!` for required navigation properties; `?` suffix for genuinely optional fields
 - No `.Result` or `.Wait()` — always `await`
 - Controllers return `IActionResult`; decorate with `[Authorize]` where authentication is required
@@ -85,12 +86,6 @@ Every entity has its own `IEntityTypeConfiguration<T>` in `Infrastructure/Persis
 - Do not reference `Infrastructure` from `Application`
 - Do not call `SaveChangesAsync` inside a repository — stage changes only; commit via `IUnitOfWork`
 - Do not hardcode credentials or connection strings — all config goes through the Options pattern
-
----
-
-## Progress tracking
-
-After implementing any user-visible feature or changing business logic, update `progress.json` — see `../.claude/rules/progress-json.md`.
 
 ---
 

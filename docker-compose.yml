@@ -1,4 +1,20 @@
 services:
+  web:
+    build:
+      context: ./VictorySearcher.Web
+      dockerfile: Dockerfile
+    ports:
+      # host:container — host 3000 avoids clashing with a local `vite dev` on 5173
+      - "3000:5173"
+    environment:
+      # Vite preview proxies /api to the backend container over the shared network.
+      - VITE_API_PROXY_TARGET=http://api:8080
+    depends_on:
+      - api
+    networks:
+      - victory-net
+    restart: unless-stopped
+
   api:
     build:
       context: ./VictorySearcher.Service
@@ -19,6 +35,8 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    networks:
+      - victory-net
     restart: unless-stopped
 
   db:
@@ -36,7 +54,13 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
+    networks:
+      - victory-net
     restart: unless-stopped
+
+networks:
+  victory-net:
+    driver: bridge
 
 volumes:
   postgres_data:

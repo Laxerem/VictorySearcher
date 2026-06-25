@@ -14,9 +14,9 @@ public static class AuthenticationExtensions {
                 opts.TokenValidationParameters = new TokenValidationParameters {
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret)),
-                    ValidateIssuer   = false,
+                    ValidateIssuer = false,
                     ValidateAudience = false,
-                    ClockSkew        = TimeSpan.Zero
+                    ClockSkew = TimeSpan.Zero
                 };
             });
 

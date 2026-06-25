@@ -1,0 +1,82 @@
+/* VictorySearcher — design tokens (dark only). See design/01-tokens.md */
+:root {
+  /* neutrals — corpus */
+  --ink-900: #0A0B0D;
+  --ink-850: #0F1114;
+  --ink-800: #141619;
+  --ink-750: #1A1D22;
+  --ink-700: #22262D;
+  --line-soft: #1E2228;
+  --line: #262A31;
+  --line-strong: #333842;
+  --text-100: #F3F5F8;
+  --text-300: #B6BDC7;
+  --text-500: #868E9A;
+  --text-700: #5A616B;
+  --edge-highlight: rgba(255, 255, 255, 0.04);
+
+  /* signal blue — single chromatic identity */
+  --signal-100: #BFE6F2;
+  --signal-300: #7FCDE0;
+  --signal-500: #46A6C4;
+  --signal-700: #2C6E85;
+  --signal-900: #16323D;
+  --focus-ring: var(--signal-500);
+
+  /* score ramp — magnitude (low -> high) */
+  --score-0: #4A5159;
+  --score-1: #557083;
+  --score-2: #4D8CA8;
+  --score-3: #46A6C4;
+  --score-4: #6FC9DD;
+
+  /* status — alarms / system, separate axis from score */
+  --warn: #D9A441;
+  --warn-bg: #2A2415;
+  --alert: #CC5B4E;
+  --alert-bg: #2A1816;
+  --ok: #5FB39A;
+  --ok-bg: #15241F;
+
+  /* type */
+  --font-display: "Saira Condensed", "Oswald", system-ui, sans-serif;
+  --font-ui: "IBM Plex Sans", system-ui, sans-serif;
+  --font-data: "IBM Plex Mono", ui-monospace, monospace;
+
+  /* spacing */
+  --space-1: 4px;  --space-2: 8px;  --space-3: 12px; --space-4: 16px;
+  --space-5: 20px; --space-6: 24px; --space-8: 32px; --space-10: 40px;
+  --space-12: 48px; --space-16: 64px;
+
+  /* radius */
+  --r-0: 0px; --r-sm: 4px; --r-md: 6px; --r-lg: 10px;
+
+  /* elevation */
+  --elev-1: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --elev-2: 0 8px 24px rgba(0, 0, 0, 0.5);
+
+  /* motion */
+  --dur-fast: 120ms; --dur: 180ms;
+  --ease: cubic-bezier(0.2, 0.6, 0.2, 1);
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  background: var(--ink-900);
+  color: var(--text-100);
+  font-family: var(--font-ui);
+  font-size: 14px;
+  line-height: 20px;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+.tnum { font-family: var(--font-data); font-variant-numeric: tabular-nums; }
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}

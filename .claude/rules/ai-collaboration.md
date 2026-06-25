@@ -1,6 +1,7 @@
 ---
 description: Rules for maintaining docs/ai-collaboration.md — the AI collaboration log that captures episode context and rejected decisions
-globs: ["docs/ai-collaboration.md"]
+paths:
+  - "*/ai-collaboration.md"
 ---
 
 # docs/ai-collaboration.md — Maintenance Rules

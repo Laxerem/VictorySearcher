@@ -8,10 +8,13 @@ using VictorySearcher.Service.Infrastructure.Persistence;
 
 #nullable disable
 
-namespace VictorySearcher.Service.Infrastructure.Persistence.Migrations {
+namespace VictorySearcher.Service.Infrastructure.Persistence.Migrations
+{
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot {
-        protected override void BuildModel(ModelBuilder modelBuilder) {
+    partial class AppDbContextModelSnapshot : ModelSnapshot
+    {
+        protected override void BuildModel(ModelBuilder modelBuilder)
+        {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "9.0.4")
@@ -19,7 +22,8 @@ namespace VictorySearcher.Service.Infrastructure.Persistence.Migrations {
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("VictorySearcher.Service.Domain.Entities.Resume", b => {
+            modelBuilder.Entity("VictorySearcher.Service.Domain.Entities.Resume", b =>
+                {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
@@ -50,7 +54,8 @@ namespace VictorySearcher.Service.Infrastructure.Persistence.Migrations {
                     b.ToTable("Resumes");
                 });
 
-            modelBuilder.Entity("VictorySearcher.Service.Domain.Entities.ScoringRequest", b => {
+            modelBuilder.Entity("VictorySearcher.Service.Domain.Entities.ScoringRequest", b =>
+                {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
@@ -77,7 +82,8 @@ namespace VictorySearcher.Service.Infrastructure.Persistence.Migrations {
                     b.ToTable("ScoringRequests");
                 });
 
-            modelBuilder.Entity("VictorySearcher.Service.Domain.Entities.ScoringResult", b => {
+            modelBuilder.Entity("VictorySearcher.Service.Domain.Entities.ScoringResult", b =>
+                {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
@@ -88,8 +94,9 @@ namespace VictorySearcher.Service.Infrastructure.Persistence.Migrations {
                     b.Property<int?>("ExtraScore")
                         .HasColumnType("integer");
 
-                    b.Property<bool>("Incongruity")
-                        .HasColumnType("boolean");
+                    b.Property<bool>("IsUncertain")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_uncertain");
 
                     b.Property<int>("OverallScore")
                         .HasColumnType("integer");
@@ -119,7 +126,8 @@ namespace VictorySearcher.Service.Infrastructure.Persistence.Migrations {
                     b.ToTable("ScoringResults");
                 });
 
-            modelBuilder.Entity("VictorySearcher.Service.Domain.Entities.User", b => {
+            modelBuilder.Entity("VictorySearcher.Service.Domain.Entities.User", b =>
+                {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
@@ -141,7 +149,8 @@ namespace VictorySearcher.Service.Infrastructure.Persistence.Migrations {
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("VictorySearcher.Service.Domain.Entities.Vacancy", b => {
+            modelBuilder.Entity("VictorySearcher.Service.Domain.Entities.Vacancy", b =>
+                {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
@@ -175,7 +184,8 @@ namespace VictorySearcher.Service.Infrastructure.Persistence.Migrations {
                     b.ToTable("Vacancies");
                 });
 
-            modelBuilder.Entity("VictorySearcher.Service.Domain.Entities.Resume", b => {
+            modelBuilder.Entity("VictorySearcher.Service.Domain.Entities.Resume", b =>
+                {
                     b.HasOne("VictorySearcher.Service.Domain.Entities.Vacancy", "Vacancy")
                         .WithMany("Resumes")
                         .HasForeignKey("VacancyId")
@@ -185,7 +195,8 @@ namespace VictorySearcher.Service.Infrastructure.Persistence.Migrations {
                     b.Navigation("Vacancy");
                 });
 
-            modelBuilder.Entity("VictorySearcher.Service.Domain.Entities.ScoringRequest", b => {
+            modelBuilder.Entity("VictorySearcher.Service.Domain.Entities.ScoringRequest", b =>
+                {
                     b.HasOne("VictorySearcher.Service.Domain.Entities.Vacancy", "Vacancy")
                         .WithMany("ScoringRequests")
                         .HasForeignKey("VacancyId")
@@ -195,7 +206,8 @@ namespace VictorySearcher.Service.Infrastructure.Persistence.Migrations {
                     b.Navigation("Vacancy");
                 });
 
-            modelBuilder.Entity("VictorySearcher.Service.Domain.Entities.ScoringResult", b => {
+            modelBuilder.Entity("VictorySearcher.Service.Domain.Entities.ScoringResult", b =>
+                {
                     b.HasOne("VictorySearcher.Service.Domain.Entities.ScoringRequest", "Request")
                         .WithMany("Results")
                         .HasForeignKey("RequestId")
@@ -208,12 +220,45 @@ namespace VictorySearcher.Service.Infrastructure.Persistence.Migrations {
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.OwnsMany("VictorySearcher.Service.Domain.Entities.RequirementCoverage", "RequirementsAnalysis", b1 =>
+                        {
+                            b1.Property<Guid>("ScoringResultId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<int>("__synthesizedOrdinal")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("integer");
+
+                            b1.Property<bool>("Covered")
+                                .HasColumnType("boolean");
+
+                            b1.Property<string>("Evidence")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.Property<string>("Requirement")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.HasKey("ScoringResultId", "__synthesizedOrdinal");
+
+                            b1.ToTable("ScoringResults");
+
+                            b1.ToJson("requirements_analysis");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ScoringResultId");
+                        });
+
                     b.Navigation("Request");
+
+                    b.Navigation("RequirementsAnalysis");
 
                     b.Navigation("Resume");
                 });
 
-            modelBuilder.Entity("VictorySearcher.Service.Domain.Entities.Vacancy", b => {
+            modelBuilder.Entity("VictorySearcher.Service.Domain.Entities.Vacancy", b =>
+                {
                     b.HasOne("VictorySearcher.Service.Domain.Entities.User", "CreatedBy")
                         .WithMany("Vacancies")
                         .HasForeignKey("CreatedById")
@@ -223,19 +268,23 @@ namespace VictorySearcher.Service.Infrastructure.Persistence.Migrations {
                     b.Navigation("CreatedBy");
                 });
 
-            modelBuilder.Entity("VictorySearcher.Service.Domain.Entities.Resume", b => {
+            modelBuilder.Entity("VictorySearcher.Service.Domain.Entities.Resume", b =>
+                {
                     b.Navigation("ScoringResults");
                 });
 
-            modelBuilder.Entity("VictorySearcher.Service.Domain.Entities.ScoringRequest", b => {
+            modelBuilder.Entity("VictorySearcher.Service.Domain.Entities.ScoringRequest", b =>
+                {
                     b.Navigation("Results");
                 });
 
-            modelBuilder.Entity("VictorySearcher.Service.Domain.Entities.User", b => {
+            modelBuilder.Entity("VictorySearcher.Service.Domain.Entities.User", b =>
+                {
                     b.Navigation("Vacancies");
                 });
 
-            modelBuilder.Entity("VictorySearcher.Service.Domain.Entities.Vacancy", b => {
+            modelBuilder.Entity("VictorySearcher.Service.Domain.Entities.Vacancy", b =>
+                {
                     b.Navigation("Resumes");
 
                     b.Navigation("ScoringRequests");
