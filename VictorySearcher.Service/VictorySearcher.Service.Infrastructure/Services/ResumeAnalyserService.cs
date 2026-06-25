@@ -18,8 +18,10 @@ public class ResumeAnalyserService(IAnalyserLlmClient llmClient, AnalyserPromptB
         var messages = promptBuilder.Build(opts.SystemPrompt, vacancy, content);
 
         var runs = await RunLlmCallsAsync(messages, opts, ct);
-        if (runs.Length == 0)
-            throw new InvalidOperationException("All LLM runs failed.");
+        if (runs.Length == 0) {
+            logger.LogWarning("All LLM runs returned degenerate responses, marking result as uncertain.");
+            return new LlmAnalysisDto(0, 0, 0, null, string.Empty, true, []);
+        }
 
         return AggregateResults(runs, opts);
     }
@@ -40,6 +42,10 @@ public class ResumeAnalyserService(IAnalyserLlmClient llmClient, AnalyserPromptB
                             ? Math.Clamp(result.ExtraScore.Value, 0, 100)
                             : (int?)null,
                     };
+                    if (clamped.ExperienceScore == 0 && clamped.SkillsScore == 0) {
+                        logger.LogWarning("LLM run {Run}/{Total}: degenerate response (all scores zero), skipping.", i + 1, opts.Runs);
+                        return null;
+                    }
                     logger.LogInformation(
                         "LLM run {Run}/{Total}: experience={Experience}, skills={Skills}, extra={Extra}. {Reasoning}",
                         i + 1, opts.Runs, clamped.ExperienceScore, clamped.SkillsScore, clamped.ExtraScore, clamped.Reasoning);
@@ -75,7 +81,7 @@ public class ResumeAnalyserService(IAnalyserLlmClient llmClient, AnalyserPromptB
         var extraScore = MedianNullable(runs.Select(r => r.ExtraScore));
 
         var spread = perRunOveralls.Max() - perRunOveralls.Min();
-        var isUncertain = degraded || spread > opts.UncertaintySpreadThreshold;
+        var isUncertain = runs.Length == 1 || spread > opts.UncertaintySpreadThreshold;
 
         var bestRun = runs
             .Select((r, i) => (run: r, overall: perRunOveralls[i]))
