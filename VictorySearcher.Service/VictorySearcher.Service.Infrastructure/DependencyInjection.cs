@@ -7,6 +7,7 @@ using VictorySearcher.Service.Application.Interfaces;
 using VictorySearcher.Service.Application.Resumes;
 using VictorySearcher.Service.Application.Scoring;
 using VictorySearcher.Service.Domain.Repositories;
+using VictorySearcher.Service.Infrastructure.Channels;
 using VictorySearcher.Service.Infrastructure.Jobs;
 using VictorySearcher.Service.Infrastructure.Options;
 using VictorySearcher.Service.Infrastructure.Persistence;
@@ -44,6 +45,7 @@ public static class DependencyInjection {
         services.AddScoped<IResumeParser, DocxResumeParser>();
         services.AddScoped<IResumeParser, PdfResumeParser>();
 
+        services.AddSingleton<IScoringProgressChannel, InMemoryScoringProgressChannel>();
         services.AddSingleton<IAnalyserLlmClient, OpenAiAnalyserLlmClient>();
         services.AddSingleton<AnalyserPromptBuilder>();
         services.AddScoped<IResumeAnalyserService, ResumeAnalyserService>();

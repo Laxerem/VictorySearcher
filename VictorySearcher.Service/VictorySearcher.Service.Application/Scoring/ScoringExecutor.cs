@@ -16,6 +16,7 @@ public class ScoringExecutor(
     ResumeParserDispatcher parserDispatcher,
     IResumeAnalyserService analyserService,
     IScoringResultRepository scoringResultRepository,
+    IScoringProgressChannel progressChannel,
     IUnitOfWork unitOfWork,
     ILogger<ScoringExecutor> logger) : IScoringExecutor {
 
@@ -26,16 +27,22 @@ public class ScoringExecutor(
         request.Status = ScoringStatus.InProcess;
         await unitOfWork.SaveChangesAsync(ct);
 
+        var scoredCount = 0;
+        var total = 0;
+
         try {
             var vacancy = await vacancyRepository.GetByIdAsync(request.VacancyId, ct)
                 ?? throw new InvalidOperationException($"Vacancy {request.VacancyId} not found.");
 
             var resumes = await resumeRepository.GetUnscoredByVacancyIdAsync(request.VacancyId, ct);
+            total = resumes.Count;
 
             if (resumes.Count == 0) {
                 request.Status = ScoringStatus.Finished;
                 request.FinishedAt = DateTime.UtcNow;
                 await unitOfWork.SaveChangesAsync(ct);
+                progressChannel.TryWrite(requestId,
+                    new ScoringProgressEvent(ScoringStatus.Finished, 0, 0));
                 logger.LogInformation("Scoring finished: no unscored resumes for request {RequestId}", requestId);
                 return;
             }
@@ -54,10 +61,14 @@ public class ScoringExecutor(
                 var content = await parserDispatcher.ParseAsync(resume, ct);
                 var analysis = await analyserService.AnalyseAsync(content, vacancyContext, ct);
 
-                var scoringResultEntity = analysis.ToScoringResult(Guid.NewGuid(), resume.Id);
+                var scoringResultEntity = analysis.ToScoringResult(requestId, resume.Id);
                 await scoringResultRepository.AddAsync(scoringResultEntity, ct);
 
                 await unitOfWork.SaveChangesAsync(ct);
+
+                scoredCount++;
+                progressChannel.TryWrite(requestId,
+                    new ScoringProgressEvent(ScoringStatus.InProcess, scoredCount, total));
 
                 logger.LogInformation(
                     "Scored resume \"{FileName}\": overall={OverallScore}, uncertain={IsUncertain}",
@@ -68,6 +79,9 @@ public class ScoringExecutor(
             request.FinishedAt = DateTime.UtcNow;
             await unitOfWork.SaveChangesAsync(ct);
 
+            progressChannel.TryWrite(requestId,
+                new ScoringProgressEvent(ScoringStatus.Finished, total, total));
+
             logger.LogInformation(
                 "Scoring finished: request {RequestId}, {ResumeCount} resumes processed",
                 requestId, resumes.Count);
@@ -76,7 +90,11 @@ public class ScoringExecutor(
             request.Status = ScoringStatus.Failed;
             request.ErrorMessage = ex.Message;
             await unitOfWork.SaveChangesAsync(ct);
+            progressChannel.TryWrite(requestId,
+                new ScoringProgressEvent(ScoringStatus.Failed, scoredCount, total, ex.Message));
             throw;
+        } finally {
+            progressChannel.Complete(requestId);
         }
     }
 }

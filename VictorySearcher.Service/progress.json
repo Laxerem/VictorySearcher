@@ -19,7 +19,8 @@
           "Рефакторинг Result<T> в VictorySearcher.Service: строковая ошибка заменена на типизированный AppError со статус-кодом; добавлен глобальный exception middleware",
           "Улучшен LLM-пайплайн скоринга в VictorySearcher.Service: N параллельных ранов, медиана баллов, флаг IsUncertain при разбросе выше порога; результаты возвращают только последний скоринг на каждое резюме",
           "Добавлено структурированное логирование в VictorySearcher.Service: Serilog с выводом ключевых событий скоринга и LLM-ранов",
-          "Реализованы парсеры DOCX и PDF в VictorySearcher.Service: DocxResumeParser (DocumentFormat.OpenXml) и PdfResumeParser (PdfPig); ResumeService принимает .txt, .docx и .pdf"
+          "Реализованы парсеры DOCX и PDF в VictorySearcher.Service: DocxResumeParser (DocumentFormat.OpenXml) и PdfResumeParser (PdfPig); ResumeService принимает .txt, .docx и .pdf",
+          "Реализован SSE-стрим прогресса скоринга в VictorySearcher.Service: GET /api/vacancies/{id}/scoring/stream отдаёт события checked/total в реальном времени через System.Threading.Channels; исправлен баг привязки ScoringResult к requestId"
         ]
       }
     ]
