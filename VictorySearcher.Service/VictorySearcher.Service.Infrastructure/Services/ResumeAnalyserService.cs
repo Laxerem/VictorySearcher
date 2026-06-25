@@ -17,6 +17,14 @@ public class ResumeAnalyserService(IAnalyserLlmClient llmClient, AnalyserPromptB
         var opts = options.Value;
         var messages = promptBuilder.Build(opts.SystemPrompt, vacancy, content);
 
+        var runs = await RunLlmCallsAsync(messages, opts, ct);
+        if (runs.Length == 0)
+            throw new InvalidOperationException("All LLM runs failed.");
+
+        return AggregateResults(runs, opts);
+    }
+
+    private async Task<LlmResponseJson[]> RunLlmCallsAsync(IReadOnlyList<LlmMessage> messages, ResumeAnalyserOptions opts, CancellationToken ct) {
         var tasks = Enumerable.Range(0, opts.Runs)
             .Select(async i => {
                 if (i > 0)
@@ -45,12 +53,14 @@ public class ResumeAnalyserService(IAnalyserLlmClient llmClient, AnalyserPromptB
         var allResults = await Task.WhenAll(tasks);
         var runs = allResults.Where(r => r is not null).Select(r => r!).ToArray();
 
-        if (runs.Length == 0)
-            throw new InvalidOperationException("All LLM runs failed.");
-
-        var degraded = runs.Length < opts.Runs;
-        if (degraded)
+        if (runs.Length < opts.Runs)
             logger.LogWarning("Only {Succeeded}/{Total} LLM runs succeeded", runs.Length, opts.Runs);
+
+        return runs;
+    }
+
+    private LlmAnalysisDto AggregateResults(LlmResponseJson[] runs, ResumeAnalyserOptions opts) {
+        var degraded = runs.Length < opts.Runs;
 
         var perRunOveralls = runs
             .Select(r => (int)Math.Round(
@@ -81,12 +91,12 @@ public class ResumeAnalyserService(IAnalyserLlmClient llmClient, AnalyserPromptB
             bestRun.Reasoning, isUncertain, analysis);
     }
 
-    private static int Median(IEnumerable<int> values) {
+    private int Median(IEnumerable<int> values) {
         var sorted = values.Order().ToArray();
         return sorted[sorted.Length / 2];
     }
 
-    private static int? MedianNullable(IEnumerable<int?> values) {
+    private int? MedianNullable(IEnumerable<int?> values) {
         var arr = values.Where(v => v.HasValue).Select(v => v!.Value).Order().ToArray();
         return arr.Length == 0 ? null : arr[arr.Length / 2];
     }

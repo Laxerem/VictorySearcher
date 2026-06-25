@@ -1,4 +1,5 @@
 using VictorySearcher.Service.Application.Common;
+using VictorySearcher.Service.Application.Extensions;
 using VictorySearcher.Service.Application.Interfaces;
 using VictorySearcher.Service.Application.Scoring.Dtos;
 using VictorySearcher.Service.Domain.Entities;
@@ -47,19 +48,7 @@ public class ScoringService(
         var results = await scoringResultRepository.GetLatestByVacancyIdAsync(vacancyId, ct);
 
         var dtos = results
-            .Select(r => new ScoringResultDto(
-                r.ResumeId,
-                r.Resume.FileName,
-                r.OverallScore,
-                r.ExperienceScore,
-                r.SkillsScore,
-                r.ExtraScore,
-                r.Reasoning,
-                r.IsUncertain,
-                r.RequirementsAnalysis
-                    .Select(c => new RequirementCoverageDto(c.Requirement, c.Covered, c.Evidence))
-                    .ToList(),
-                r.ScoredAt))
+            .Select(r => r.ToDto())
             .ToList();
 
         return Result<List<ScoringResultDto>>.Success(dtos);

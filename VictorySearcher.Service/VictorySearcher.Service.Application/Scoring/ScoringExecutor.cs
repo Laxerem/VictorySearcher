@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Logging;
+using VictorySearcher.Service.Application.Extensions;
 using VictorySearcher.Service.Application.Interfaces;
 using VictorySearcher.Service.Application.Resumes;
 using VictorySearcher.Service.Application.Scoring.Dtos;
@@ -53,21 +54,8 @@ public class ScoringExecutor(
                 var content = await parserDispatcher.ParseAsync(resume, ct);
                 var analysis = await analyserService.AnalyseAsync(content, vacancyContext, ct);
 
-                await scoringResultRepository.AddAsync(new ScoringResult {
-                    Id = Guid.NewGuid(),
-                    RequestId = requestId,
-                    ResumeId = resume.Id,
-                    OverallScore = analysis.OverallScore,
-                    ExperienceScore = analysis.ExperienceScore,
-                    SkillsScore = analysis.SkillsScore,
-                    ExtraScore = analysis.ExtraScore,
-                    Reasoning = analysis.Reasoning,
-                    IsUncertain = analysis.IsUncertain,
-                    RequirementsAnalysis = analysis.RequirementsAnalysis
-                        .Select(r => new RequirementCoverage(r.Requirement, r.Covered, r.Evidence))
-                        .ToList(),
-                    ScoredAt = DateTime.UtcNow
-                }, ct);
+                var scoringResultEntity = analysis.ToScoringResult(Guid.NewGuid(), resume.Id);
+                await scoringResultRepository.AddAsync(scoringResultEntity, ct);
 
                 await unitOfWork.SaveChangesAsync(ct);
 
