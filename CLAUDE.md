@@ -6,7 +6,7 @@ Internal HR tool: LLM-based resume scoring + job market analytics.
 
 | Service | Role |
 |---------|------|
-| `VictorySearcher.Service` | .NET 8 backend — scoring, jobs, API |
+| `VictorySearcher.Service` | .NET 9 backend — scoring, jobs, API |
 | `VictorySearcher.Web`     | React + TypeScript frontend |
 | `VictorySearcher.Design`  | Frontend design mockups (specs, HTML/CSS prototypes, references) |
 

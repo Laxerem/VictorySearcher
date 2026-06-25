@@ -1,73 +1,40 @@
-# React + TypeScript + Vite
+# VictorySearcher.Web
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Веб-интерфейс VictorySearcher: создание вакансий, загрузка резюме, просмотр результатов скоринга и аналитики рынка. Часть монорепозитория — см. [корневой README](../README.md).
 
-Currently, two official plugins are available:
+## Что делает
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Две защищённые секции под одним входом (единственный JWT-пользователь):
 
-## React Compiler
+- **Скоринг резюме** (`/scoring`) — создание вакансии, загрузка резюме (TXT, DOCX, PDF), запуск скоринга с прогрессом в реальном времени и ранжированный список кандидатов с разбивкой баллов, обоснованием и разбором по требованиям.
+- **Аналитика рынка** (`/market`) — дашборды по целевым ролям. *Запланировано, пока не реализовано.*
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Стек
 
-## Expanding the ESLint configuration
+React 19 + TypeScript + Vite. React Router, TanStack Query, React Hook Form, Radix UI Primitives, Recharts, clsx.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Команды
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+npm run dev      # Dev-сервер на http://localhost:5173 (проксирует /api → http://localhost:5000)
+npm run build    # Проверка типов + сборка
+npm run lint     # ESLint
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Для работы нужен запущенный бэкенд — см. [`VictorySearcher.Service`](../VictorySearcher.Service/README.md).
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Структура
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
 ```
+src/
+  api/         # client.ts (fetch + JWT) + *.api.ts по фичам
+  components/  # ui/ (примитивы), layout/ (AppLayout, Header, Sidebar)
+  features/    # auth/, scoring/, market/ — каждая с components/, hooks/, index.ts
+  pages/       # тонкие обёртки над features
+  providers/   # AuthProvider, QueryProvider
+  styles/      # variables.css, global.css, animations.css
+  types/       # api.ts — DTO-контракты, синхронизированы с бэкендом
+```
+
+Соглашения проекта (публичное API фич, CSS Modules, разделение «компонент = отображение / логика в хуках», работа с auth) — в [`CLAUDE.md`](CLAUDE.md). Визуальный язык и дизайн-токены — в [`VictorySearcher.Design`](../VictorySearcher.Design/design/).

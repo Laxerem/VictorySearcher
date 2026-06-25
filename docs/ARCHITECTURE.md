@@ -57,6 +57,10 @@ ResumeScoringJob — запускается вручную рекрутёром;
 MarketCollectJob — cron ежедневно; собирает вакансии с HH + SuperJob, строит снимок [запланировано]
 ```
 
+### Прогресс скоринга (SSE)
+
+`ResumeScoringJob` отдаёт прогресс через `System.Threading.Channels`; `GET /api/vacancies/{id}/scoring/stream` транслирует события `checked/total` клиенту по Server-Sent Events в реальном времени. Рядом остаются обычные `GET .../scoring/status` и `GET .../scoring/results` для одноразового опроса.
+
 ### Схема БД (логические группы)
 
 ```
@@ -88,7 +92,7 @@ Hangfire хранит свои таблицы в том же PostgreSQL.
 
 ## VictorySearcher.Web
 
-React 19 + TypeScript + Vite. Стек: React Router, TanStack Query, React Hook Form, Radix UI Primitives, clsx.
+React 19 + TypeScript + Vite. Стек: React Router, TanStack Query, React Hook Form, Radix UI Primitives, Recharts, clsx.
 
 Две защищённые секции (`/scoring`, `/market`) + публичный `/login`. JWT хранится в памяти (AuthContext) и восстанавливается из localStorage; все запросы проходят через `api/client.ts`, который проставляет заголовок `Authorization`.
 

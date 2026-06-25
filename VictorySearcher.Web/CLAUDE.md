@@ -68,7 +68,7 @@ import { VacancyForm } from '@/features/scoring/components/VacancyForm/VacancyFo
 
 ### Server state
 - All server data through TanStack Query (`useQuery` / `useMutation`).
-- Scoring status polling: `refetchInterval: data?.status === 'done' ? false : 3000`.
+- Scoring progress streams over SSE from `GET /api/vacancies/{id}/scoring/stream` (checked/total events) — not polling. On stream completion, invalidate the resume and results queries to refetch.
 
 ### Auth
 - JWT token lives in `AuthContext` (memory + localStorage).
