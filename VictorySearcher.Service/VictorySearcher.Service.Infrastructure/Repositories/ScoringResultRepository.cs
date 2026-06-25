@@ -13,6 +13,18 @@ public class ScoringResultRepository(AppDbContext db) : IScoringResultRepository
             .OrderByDescending(r => r.OverallScore)
             .ToListAsync(ct);
 
+    public async Task<IReadOnlyList<ScoringResult>> GetLatestByVacancyIdAsync(
+        Guid vacancyId, CancellationToken ct = default)
+        => await db.ScoringResults
+            .Where(r => r.Request.VacancyId == vacancyId)
+            .Where(r => !db.ScoringResults.Any(other =>
+                other.ResumeId == r.ResumeId &&
+                other.Request.VacancyId == vacancyId &&
+                other.ScoredAt > r.ScoredAt))
+            .Include(r => r.Resume)
+            .OrderByDescending(r => r.OverallScore)
+            .ToListAsync(ct);
+
     public Task AddAsync(ScoringResult result, CancellationToken ct = default) {
         db.ScoringResults.Add(result);
         return Task.CompletedTask;

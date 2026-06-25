@@ -44,10 +44,10 @@ public class ScoringService(
     }
 
     public async Task<Result<List<ScoringResultDto>>> GetResultsAsync(Guid vacancyId, CancellationToken ct = default) {
-        var request = await scoringRequestRepository.GetLatestByVacancyIdAsync(vacancyId, ct);
-        if (request is null) return Result<List<ScoringResultDto>>.Failure(AppError.NotFound());
+        var vacancy = await vacancyRepository.GetByIdAsync(vacancyId, ct);
+        if (vacancy is null) return Result<List<ScoringResultDto>>.Failure(AppError.NotFound());
 
-        var results = await scoringResultRepository.GetByRequestIdAsync(request.Id, ct);
+        var results = await scoringResultRepository.GetLatestByVacancyIdAsync(vacancyId, ct);
 
         var dtos = results
             .Select(r => new ScoringResultDto(
