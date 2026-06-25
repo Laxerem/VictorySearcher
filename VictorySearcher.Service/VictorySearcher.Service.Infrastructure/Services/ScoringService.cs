@@ -19,7 +19,7 @@ public class ScoringService(
 
     public async Task<Result<Guid>> EnqueueAsync(Guid vacancyId, CancellationToken ct = default) {
         var vacancy = await vacancyRepository.GetByIdAsync(vacancyId, ct);
-        if (vacancy is null) return Result<Guid>.Failure("not_found");
+        if (vacancy is null) return Result<Guid>.Failure(AppError.NotFound());
 
         var request = new ScoringRequest {
             Id = Guid.NewGuid(),
@@ -38,14 +38,14 @@ public class ScoringService(
 
     public async Task<Result<ScoringStatusDto>> GetStatusAsync(Guid vacancyId, CancellationToken ct = default) {
         var request = await scoringRequestRepository.GetLatestByVacancyIdAsync(vacancyId, ct);
-        if (request is null) return Result<ScoringStatusDto>.Failure("not_found");
+        if (request is null) return Result<ScoringStatusDto>.Failure(AppError.NotFound());
 
         return Result<ScoringStatusDto>.Success(MapToStatusDto(request));
     }
 
     public async Task<Result<List<ScoringResultDto>>> GetResultsAsync(Guid vacancyId, CancellationToken ct = default) {
         var request = await scoringRequestRepository.GetLatestByVacancyIdAsync(vacancyId, ct);
-        if (request is null) return Result<List<ScoringResultDto>>.Failure("not_found");
+        if (request is null) return Result<List<ScoringResultDto>>.Failure(AppError.NotFound());
 
         var results = await scoringResultRepository.GetByRequestIdAsync(request.Id, ct);
 

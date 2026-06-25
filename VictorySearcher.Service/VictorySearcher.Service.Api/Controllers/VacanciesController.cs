@@ -42,11 +42,8 @@ public class VacanciesController(IVacancyService vacancyService) : ControllerBas
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetByIdAsync(Guid id, CancellationToken ct) {
         var result = await vacancyService.GetByIdAsync(id, ct);
-
-        return result.Error switch {
-            "not_found" => NotFound(),
-            _ => Ok(result.Value)
-        };
+        if (!result.IsSuccess) return StatusCode(result.Error!.StatusCode, result.Error);
+        return Ok(result.Value);
     }
 
     [HttpDelete("{id:guid}")]
@@ -55,10 +52,7 @@ public class VacanciesController(IVacancyService vacancyService) : ControllerBas
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DeleteAsync(Guid id, CancellationToken ct) {
         var result = await vacancyService.DeleteAsync(id, ct);
-
-        return result.Error switch {
-            "not_found" => NotFound(),
-            _ => NoContent()
-        };
+        if (!result.IsSuccess) return StatusCode(result.Error!.StatusCode, result.Error);
+        return NoContent();
     }
 }

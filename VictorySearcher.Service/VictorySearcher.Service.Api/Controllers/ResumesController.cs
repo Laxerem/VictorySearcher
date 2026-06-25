@@ -17,13 +17,8 @@ public class ResumesController(IResumeService resumeService) : ControllerBase {
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> UploadAsync(Guid vacancyId, IFormFile file, CancellationToken ct) {
         var result = await resumeService.UploadAsync(vacancyId, file.FileName, file.OpenReadStream(), ct);
-
-        return result.Error switch {
-            "invalid_format" => BadRequest("Only .txt files are allowed."),
-            "not_found" => NotFound(),
-            _ when result.IsSuccess => StatusCode(StatusCodes.Status201Created),
-            _ => StatusCode(StatusCodes.Status500InternalServerError)
-        };
+        if (!result.IsSuccess) return StatusCode(result.Error!.StatusCode, result.Error);
+        return StatusCode(StatusCodes.Status201Created);
     }
 
     [HttpGet]
@@ -41,11 +36,8 @@ public class ResumesController(IResumeService resumeService) : ControllerBase {
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetContentAsync(Guid vacancyId, Guid resumeId, CancellationToken ct) {
         var result = await resumeService.GetContentAsync(vacancyId, resumeId, ct);
-
-        return result.Error switch {
-            "not_found" => NotFound(),
-            _ => Ok(result.Value)
-        };
+        if (!result.IsSuccess) return StatusCode(result.Error!.StatusCode, result.Error);
+        return Ok(result.Value);
     }
 
     [HttpGet("{resumeId:guid}/download")]
@@ -54,8 +46,7 @@ public class ResumesController(IResumeService resumeService) : ControllerBase {
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DownloadAsync(Guid vacancyId, Guid resumeId, CancellationToken ct) {
         var result = await resumeService.GetFileAsync(vacancyId, resumeId, ct);
-
-        if (result.Error == "not_found") return NotFound();
+        if (!result.IsSuccess) return StatusCode(result.Error!.StatusCode, result.Error);
 
         var file = result.Value!;
         var mimeType = file.Format switch {

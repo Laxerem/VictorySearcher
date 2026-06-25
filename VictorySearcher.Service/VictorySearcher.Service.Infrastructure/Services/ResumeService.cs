@@ -24,10 +24,10 @@ public class ResumeService(
         Stream content,
         CancellationToken ct = default) {
         if (Path.GetExtension(fileName).ToLowerInvariant() != ".txt")
-            return Result<Guid>.Failure("invalid_format");
+            return Result<Guid>.Failure(AppError.BadRequest("Only .txt files are allowed."));
 
         var vacancy = await vacancyRepository.GetByIdAsync(vacancyId, ct);
-        if (vacancy is null) return Result<Guid>.Failure("not_found");
+        if (vacancy is null) return Result<Guid>.Failure(AppError.NotFound());
 
         var fileId = Guid.NewGuid();
         var dir = Path.Combine(storageOptions.Value.UploadsPath, vacancyId.ToString());
@@ -88,7 +88,7 @@ public class ResumeService(
         Guid vacancyId, Guid resumeId, CancellationToken ct = default) {
         var resume = await resumeRepository.GetByIdAsync(resumeId, ct);
         if (resume is null || resume.VacancyId != vacancyId)
-            return Result<ResumeContentDto>.Failure("not_found");
+            return Result<ResumeContentDto>.Failure(AppError.NotFound());
 
         var content = await parserDispatcher.ParseAsync(resume, ct);
         return Result<ResumeContentDto>.Success(new ResumeContentDto(resume.FileName, content));
@@ -98,7 +98,7 @@ public class ResumeService(
         Guid vacancyId, Guid resumeId, CancellationToken ct = default) {
         var resume = await resumeRepository.GetByIdAsync(resumeId, ct);
         if (resume is null || resume.VacancyId != vacancyId)
-            return Result<ResumeFileDto>.Failure("not_found");
+            return Result<ResumeFileDto>.Failure(AppError.NotFound());
 
         var data = await File.ReadAllBytesAsync(resume.FilePath, ct);
         return Result<ResumeFileDto>.Success(new ResumeFileDto(resume.FileName, resume.Format, data));

@@ -15,10 +15,8 @@ public class ScoringController(IScoringService scoringService) : ControllerBase 
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> EnqueueAsync(Guid vacancyId, CancellationToken ct) {
         var result = await scoringService.EnqueueAsync(vacancyId, ct);
-        return result.Error switch {
-            "not_found" => NotFound(),
-            _ => Accepted()
-        };
+        if (!result.IsSuccess) return StatusCode(result.Error!.StatusCode, result.Error);
+        return Accepted();
     }
 
     [HttpGet("status")]
@@ -27,10 +25,8 @@ public class ScoringController(IScoringService scoringService) : ControllerBase 
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> GetStatusAsync(Guid vacancyId, CancellationToken ct) {
         var result = await scoringService.GetStatusAsync(vacancyId, ct);
-        return result.Error switch {
-            "not_found" => NotFound(),
-            _ => Ok(result.Value)
-        };
+        if (!result.IsSuccess) return StatusCode(result.Error!.StatusCode, result.Error);
+        return Ok(result.Value);
     }
 
     [HttpGet("results")]
@@ -39,9 +35,7 @@ public class ScoringController(IScoringService scoringService) : ControllerBase 
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> GetResultsAsync(Guid vacancyId, CancellationToken ct) {
         var result = await scoringService.GetResultsAsync(vacancyId, ct);
-        return result.Error switch {
-            "not_found" => NotFound(),
-            _ => Ok(result.Value)
-        };
+        if (!result.IsSuccess) return StatusCode(result.Error!.StatusCode, result.Error);
+        return Ok(result.Value);
     }
 }

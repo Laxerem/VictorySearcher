@@ -48,7 +48,7 @@ public class VacancyService : IVacancyService {
     public async Task<Result<VacancyDto>> GetByIdAsync(Guid id, CancellationToken ct = default) {
         var vacancy = await _vacancyRepository.GetByIdAsync(id, ct);
         if (vacancy is null)
-            return Result<VacancyDto>.Failure("not_found");
+            return Result<VacancyDto>.Failure(AppError.NotFound());
 
         return Result<VacancyDto>.Success(new VacancyDto(
             vacancy.Id,
@@ -62,7 +62,7 @@ public class VacancyService : IVacancyService {
     public async Task<Result<bool>> DeleteAsync(Guid id, CancellationToken ct = default) {
         var vacancy = await _vacancyRepository.GetByIdAsync(id, ct);
         if (vacancy is null)
-            return Result<bool>.Failure("not_found");
+            return Result<bool>.Failure(AppError.NotFound());
 
         await _vacancyRepository.DeleteAsync(vacancy, ct);
         await _unitOfWork.SaveChangesAsync(ct);
