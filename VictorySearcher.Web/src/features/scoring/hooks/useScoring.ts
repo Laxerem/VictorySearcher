@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { startScoring, getScoringStatus } from '@/api/scoring.api';
+import type { ScoringInfo } from '@/types/api';
 import { useScoringStream } from './useScoringStream';
 
 export function useScoring(vacancyId: string) {
@@ -8,6 +9,10 @@ export function useScoring(vacancyId: string) {
   const [retryKey, setRetryKey] = useState(0);
   const { event, isConnected, error: streamError } = useScoringStream(vacancyId, retryKey);
   const [streamClosed, setStreamClosed] = useState(false);
+
+  useEffect(() => {
+    setStreamClosed(false);
+  }, [vacancyId]);
 
   useEffect(() => {
     if (!isConnected && event) {
@@ -36,17 +41,14 @@ export function useScoring(vacancyId: string) {
   });
 
   const activeEvent = event || (streamClosed ? fallbackStatus : null);
-  const statusDto = activeEvent ? {
-    status: activeEvent.status,
-    errorMessage: activeEvent.errorMessage,
-    createdAt: '',
-    finishedAt: null,
-  } : null;
+  const status: ScoringInfo | null = activeEvent
+    ? { status: activeEvent.status, errorMessage: activeEvent.errorMessage }
+    : null;
 
   const isLoading = !event && !fallbackStatus && !streamError && isConnected;
 
   return {
-    status: statusDto,
+    status,
     isStatusLoading: isLoading,
     statusError: streamError && !event && !fallbackStatus ? streamError : null,
     start,

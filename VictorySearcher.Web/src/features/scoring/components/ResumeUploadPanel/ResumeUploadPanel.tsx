@@ -1,15 +1,8 @@
 import { useRef } from 'react';
 import { ACCEPTED_RESUME_FORMATS } from '../../config';
 import { FileStatusItem } from '../FileStatusItem/FileStatusItem';
+import type { FileEntry } from '../../hooks/useResumeUpload';
 import styles from './ResumeUploadPanel.module.css';
-
-interface FileEntry {
-  id: string;
-  file: File;
-  status: 'loading' | 'loaded' | 'error';
-  loadedAt?: Date;
-  errorMessage?: string;
-}
 
 interface Props {
   entries: FileEntry[];

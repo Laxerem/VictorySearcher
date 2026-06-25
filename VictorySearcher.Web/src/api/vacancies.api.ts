@@ -1,4 +1,4 @@
-import { get, post, postForm, getToken, clearToken } from './client';
+import { get, post, postForm, getToken, clearToken, notifyUnauthorized } from './client';
 import type { VacancyDto, VacancyListItemDto, CreateVacancyRequestDto, PagedResumesDto, ResumeContentDto } from '@/types/api';
 
 export const getVacancies = () => get<VacancyListItemDto[]>('/vacancies');
@@ -26,7 +26,10 @@ export async function downloadResume(vacancyId: string, resumeId: string): Promi
     method: 'GET',
     headers: token ? { Authorization: `Bearer ${token}` } : {},
   });
-  if (res.status === 401) clearToken();
-  if (!res.ok) throw { message: res.statusText, status: res.status };
+  if (res.status === 401) {
+    clearToken();
+    notifyUnauthorized();
+  }
+  if (!res.ok) throw new Error(`HTTP ${res.status}: ${res.statusText}`);
   return res.blob();
 }

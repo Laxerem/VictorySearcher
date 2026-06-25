@@ -16,9 +16,12 @@ export { ResumeContentDialog } from './components/ResumeContentDialog/ResumeCont
 export { useVacancies } from './hooks/useVacancies';
 export { useVacancy } from './hooks/useVacancy';
 export { useResumeUpload } from './hooks/useResumeUpload';
+export type { FileEntry } from './hooks/useResumeUpload';
 export { useScoring } from './hooks/useScoring';
 export { useScoringStream } from './hooks/useScoringStream';
+export { useScoringStatus } from './hooks/useScoringStatus';
 export { useScoringResults } from './hooks/useScoringResults';
 export { useResumes } from './hooks/useResumes';
 export { useResumeDownload } from './hooks/useResumeDownload';
 export { useResumeContent } from './hooks/useResumeContent';
+export { useVacancyCreate } from './hooks/useVacancyCreate';

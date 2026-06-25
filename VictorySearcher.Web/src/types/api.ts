@@ -35,6 +35,11 @@ export interface CreateVacancyRequestDto {
 
 export type ScoringStatus = 'pending' | 'inProcess' | 'finished' | 'failed';
 
+export interface ScoringInfo {
+  status: ScoringStatus;
+  errorMessage: string | null;
+}
+
 export interface ScoringStatusDto {
   status: ScoringStatus;
   errorMessage: string | null;

@@ -3,7 +3,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { uploadResume } from '@/api/vacancies.api';
 import { ACCEPTED_RESUME_FORMATS } from '../config';
 
-type FileEntry = {
+export type FileEntry = {
   id: string;
   file: File;
   status: 'loading' | 'loaded' | 'error';

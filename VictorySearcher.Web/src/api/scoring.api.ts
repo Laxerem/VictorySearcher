@@ -1,4 +1,4 @@
-import { get, post, getToken, clearToken } from './client';
+import { get, post, getToken, clearToken, notifyUnauthorized } from './client';
 import type { ScoringStatusDto, ScoringResultDto, ScoringProgressEvent } from '@/types/api';
 
 export const startScoring = (vacancyId: string): Promise<void> =>
@@ -13,24 +13,25 @@ export const getScoringResults = (vacancyId: string) =>
 export async function streamScoringProgress(
   vacancyId: string,
   onEvent: (event: ScoringProgressEvent) => void,
-  onError?: (error: Error) => void
-): Promise<() => void> {
+  onError?: (error: Error) => void,
+  signal?: AbortSignal
+): Promise<void> {
   const token = getToken();
   const headers: Record<string, string> = {};
   if (token) {
     headers.Authorization = `Bearer ${token}`;
   }
 
-  let aborted = false;
-
   try {
     const res = await fetch(`/api/vacancies/${vacancyId}/scoring/stream`, {
       method: 'GET',
       headers,
+      signal,
     });
 
     if (res.status === 401) {
       clearToken();
+      notifyUnauthorized();
       throw new Error('Unauthorized');
     }
 
@@ -42,7 +43,7 @@ export async function streamScoringProgress(
     const decoder = new TextDecoder();
     let buffer = '';
 
-    while (reader && !aborted) {
+    while (reader) {
       const { done, value } = await reader.read();
       if (done) break;
 
@@ -63,10 +64,7 @@ export async function streamScoringProgress(
       }
     }
   } catch (e) {
+    if (e instanceof DOMException && e.name === 'AbortError') return;
     onError?.(e instanceof Error ? e : new Error(String(e)));
   }
-
-  return () => {
-    aborted = true;
-  };
 }

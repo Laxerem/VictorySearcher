@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
-import { getToken, setToken, clearToken } from '@/api/client';
+import { getToken, setToken, clearToken, registerUnauthorizedHandler } from '@/api/client';
 
 interface AuthContextValue {
   token: string | null;
@@ -25,13 +25,6 @@ interface AuthProviderProps {
 export function AuthProvider({ children }: AuthProviderProps) {
   const [token, setTokenState] = useState<string | null>(() => getToken());
 
-  useEffect(() => {
-    const stored = getToken();
-    if (stored !== token) {
-      setTokenState(stored);
-    }
-  }, [token]);
-
   function login(newToken: string): void {
     setToken(newToken);
     setTokenState(newToken);
@@ -41,6 +34,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
     clearToken();
     setTokenState(null);
   }
+
+  useEffect(() => {
+    registerUnauthorizedHandler(logout);
+  }, []); // register once on mount; logout is stable
 
   const value: AuthContextValue = {
     token,

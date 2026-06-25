@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { streamScoringProgress } from '@/api/scoring.api';
 import type { ScoringProgressEvent } from '@/types/api';
 
@@ -15,12 +15,11 @@ export function useScoringStream(vacancyId: string, retryKey: number = 0) {
     error: null,
   });
 
-  const unsubscribeRef = useRef<(() => void) | null>(null);
-
   useEffect(() => {
     if (!vacancyId) return;
 
     let mounted = true;
+    const controller = new AbortController();
 
     (async () => {
       try {
@@ -28,31 +27,23 @@ export function useScoringStream(vacancyId: string, retryKey: number = 0) {
           setState(prev => ({ ...prev, isConnected: true, error: null }));
         }
 
-        const unsubscribe = await streamScoringProgress(
+        await streamScoringProgress(
           vacancyId,
           (event) => {
             if (mounted) {
-              setState(prev => ({
-                ...prev,
-                event,
-                isConnected: true,
-                error: null,
-              }));
+              setState(prev => ({ ...prev, event, isConnected: true, error: null }));
             }
           },
           (error) => {
             if (mounted) {
-              setState(prev => ({
-                ...prev,
-                isConnected: false,
-                error,
-              }));
+              setState(prev => ({ ...prev, isConnected: false, error }));
             }
-          }
+          },
+          controller.signal
         );
 
         if (mounted) {
-          unsubscribeRef.current = unsubscribe;
+          setState(prev => ({ ...prev, isConnected: false }));
         }
       } catch (e) {
         if (mounted) {
@@ -67,7 +58,7 @@ export function useScoringStream(vacancyId: string, retryKey: number = 0) {
 
     return () => {
       mounted = false;
-      unsubscribeRef.current?.();
+      controller.abort();
     };
   }, [vacancyId, retryKey]);
 

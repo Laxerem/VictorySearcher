@@ -2,6 +2,16 @@ import type { ApiError } from '@/types/api';
 
 const TOKEN_KEY = 'auth_token';
 
+let onUnauthorized: (() => void) | null = null;
+
+export function registerUnauthorizedHandler(fn: () => void): void {
+  onUnauthorized = fn;
+}
+
+export function notifyUnauthorized(): void {
+  onUnauthorized?.();
+}
+
 export function getToken(): string | null {
   return localStorage.getItem(TOKEN_KEY);
 }
@@ -33,6 +43,7 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
 
   if (response.status === 401) {
     clearToken();
+    onUnauthorized?.();
   }
 
   if (!response.ok) {
@@ -43,7 +54,6 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
     throw error;
   }
 
-  // Handle empty responses (204 No Content, etc.)
   const text = await response.text();
   return text ? (JSON.parse(text) as T) : ({} as T);
 }
@@ -66,8 +76,11 @@ export async function postForm<T>(path: string, body: FormData): Promise<T> {
     headers: token ? { Authorization: `Bearer ${token}` } : {},
     body,
   });
-  if (res.status === 401) clearToken();
-  if (!res.ok) throw { message: res.statusText, status: res.status };
+  if (res.status === 401) {
+    clearToken();
+    onUnauthorized?.();
+  }
+  if (!res.ok) throw new Error(`HTTP ${res.status}: ${res.statusText}`);
   const text = await res.text();
   return text ? JSON.parse(text) : (undefined as T);
 }

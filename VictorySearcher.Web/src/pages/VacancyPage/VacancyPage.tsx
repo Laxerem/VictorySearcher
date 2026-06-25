@@ -13,15 +13,14 @@ import {
   ResumeListPanel,
   ScoringResultList,
   ScoringProgress,
-  useVacancies,
   useVacancy,
   useResumeUpload,
   useScoring,
   useResumes,
   useScoringResults,
+  useVacancyCreate,
 } from '@/features/scoring';
 import type { ApiError } from '@/types/api';
-import type { CreateVacancyRequestDto } from '@/types/api';
 import styles from './VacancyPage.module.css';
 
 export function VacancyPage() {
@@ -29,15 +28,20 @@ export function VacancyPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  const { vacancies, isLoading: isListLoading, create, isCreating, createError } = useVacancies();
+  const {
+    vacancies,
+    isLoading: isListLoading,
+    dialogOpen,
+    openDialog,
+    closeDialog,
+    handleCreate,
+    isCreating,
+    createError,
+  } = useVacancyCreate();
   const { vacancy, isLoading: isDetailLoading, isPlaceholderData: isVacancyStale } = useVacancy(id!);
   const { entries, upload, clear } = useResumeUpload();
   const { status, isStatusLoading, statusError, start, isStarting, progressEvent } = useScoring(id!);
-  const { ranked, flagged, isLoading: isResultsLoading } = useScoringResults(
-    id!,
-    true,
-  );
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const { ranked, flagged, isLoading: isResultsLoading } = useScoringResults(id!, true);
   const [resumesPage, setResumesPage] = useState(1);
   const { data: resumesData, isLoading: isResumesLoading } = useResumes(id!, resumesPage);
 
@@ -67,15 +71,6 @@ export function VacancyPage() {
     }
   }
 
-  function handleCreate(data: CreateVacancyRequestDto) {
-    create(data, {
-      onSuccess: (newVacancy) => {
-        setDialogOpen(false);
-        navigate(`/scoring/vacancies/${newVacancy.id}`);
-      },
-    });
-  }
-
   return (
     <div className={styles.content}>
       <VacancyList
@@ -83,7 +78,7 @@ export function VacancyPage() {
         isLoading={isListLoading}
         selectedId={id ?? null}
         onSelect={handleSelectVacancy}
-        onCreateClick={() => setDialogOpen(true)}
+        onCreateClick={openDialog}
       />
 
       <main className={styles.main}>
@@ -199,7 +194,7 @@ export function VacancyPage() {
 
       <NewVacancyDialog
         open={dialogOpen}
-        onClose={() => setDialogOpen(false)}
+        onClose={closeDialog}
         onSubmit={handleCreate}
         isLoading={isCreating}
         error={createError}

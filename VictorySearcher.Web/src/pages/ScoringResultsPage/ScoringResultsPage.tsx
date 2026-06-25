@@ -1,30 +1,36 @@
-import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   VacancyList,
   ScoringStatusBar,
   ScoringResultList,
   NewVacancyDialog,
-  useVacancies,
-  useScoring,
+  useScoringStatus,
   useScoringResults,
+  useVacancyCreate,
 } from '@/features/scoring';
 import type { ApiError } from '@/types/api';
-import type { CreateVacancyRequestDto } from '@/types/api';
 import styles from './ScoringResultsPage.module.css';
 
 export function ScoringResultsPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
-  const { vacancies, isLoading: isListLoading, create, isCreating, createError } = useVacancies();
-  const { status, isStatusLoading, statusError, start, isStarting } = useScoring(id!);
+  const {
+    vacancies,
+    isLoading: isListLoading,
+    dialogOpen,
+    openDialog,
+    closeDialog,
+    handleCreate,
+    isCreating,
+    createError,
+  } = useVacancyCreate();
+
+  const { status, isStatusLoading, statusError, start, isStarting } = useScoringStatus(id!);
   const { ranked, flagged, isLoading: isResultsLoading } = useScoringResults(
     id!,
     status?.status === 'finished',
   );
-
-  const [dialogOpen, setDialogOpen] = useState(false);
 
   const notStarted = (statusError as ApiError | null)?.status === 404;
 
@@ -34,15 +40,6 @@ export function ScoringResultsPage() {
     }
   }
 
-  function handleCreate(data: CreateVacancyRequestDto) {
-    create(data, {
-      onSuccess: (vacancy) => {
-        setDialogOpen(false);
-        navigate(`/scoring/vacancies/${vacancy.id}`);
-      },
-    });
-  }
-
   return (
     <div className={styles.content}>
       <VacancyList
@@ -50,7 +47,7 @@ export function ScoringResultsPage() {
         isLoading={isListLoading}
         selectedId={id ?? null}
         onSelect={handleSelectVacancy}
-        onCreateClick={() => setDialogOpen(true)}
+        onCreateClick={openDialog}
       />
 
       <main className={styles.main}>
@@ -106,7 +103,7 @@ export function ScoringResultsPage() {
 
       <NewVacancyDialog
         open={dialogOpen}
-        onClose={() => setDialogOpen(false)}
+        onClose={closeDialog}
         onSubmit={handleCreate}
         isLoading={isCreating}
         error={createError}

@@ -1,21 +1,19 @@
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { VacancyList, NewVacancyDialog, useVacancies } from '@/features/scoring';
+import { VacancyList, NewVacancyDialog, useVacancyCreate } from '@/features/scoring';
 import styles from './ScoringPage.module.css';
 
 export function ScoringPage() {
   const navigate = useNavigate();
-  const { vacancies, isLoading, create, isCreating, createError } = useVacancies();
-  const [dialogOpen, setDialogOpen] = useState(false);
-
-  function handleCreate(data: Parameters<typeof create>[0]) {
-    create(data, {
-      onSuccess: (vacancy) => {
-        setDialogOpen(false);
-        navigate(`/scoring/vacancies/${vacancy.id}`);
-      },
-    });
-  }
+  const {
+    vacancies,
+    isLoading,
+    dialogOpen,
+    openDialog,
+    closeDialog,
+    handleCreate,
+    isCreating,
+    createError,
+  } = useVacancyCreate();
 
   return (
     <div className={styles.content}>
@@ -24,7 +22,7 @@ export function ScoringPage() {
         isLoading={isLoading}
         selectedId={null}
         onSelect={(id) => navigate(`/scoring/vacancies/${id}`)}
-        onCreateClick={() => setDialogOpen(true)}
+        onCreateClick={openDialog}
       />
 
       <main className={styles.main}>
@@ -35,7 +33,7 @@ export function ScoringPage() {
 
       <NewVacancyDialog
         open={dialogOpen}
-        onClose={() => setDialogOpen(false)}
+        onClose={closeDialog}
         onSubmit={handleCreate}
         isLoading={isCreating}
         error={createError}
