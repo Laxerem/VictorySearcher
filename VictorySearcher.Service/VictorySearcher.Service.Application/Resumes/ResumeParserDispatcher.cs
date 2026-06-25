@@ -1,8 +1,7 @@
-using VictorySearcher.Service.Application.Resumes;
 using VictorySearcher.Service.Domain.Entities;
 using VictorySearcher.Service.Domain.Enums;
 
-namespace VictorySearcher.Service.Infrastructure.Services.Parsers;
+namespace VictorySearcher.Service.Application.Resumes;
 
 public class ResumeParserDispatcher {
     private readonly Dictionary<FileFormat, IResumeParser> _parsers;

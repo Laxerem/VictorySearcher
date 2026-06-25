@@ -54,8 +54,8 @@ VictorySearcher.Service/
 ### Clean Architecture — strict dependency rule
 Domain has zero external references. Application references Domain only. Infrastructure and Api never reference each other. Each layer self-registers via an `AddX()` extension on `IServiceCollection`; `Program.cs` calls only `AddApplication()` and `AddInfrastructure()`.
 
-### Application — plain service interfaces
-Application exposes `IFeatureService` interfaces with `Result<T>` return types — no MediatR, no CQRS. Implementations live in `Infrastructure/Services/`. DTOs are `record` types placed in `Application/<Feature>/Dtos/` alongside the interface they belong to.
+### Application — service interfaces and implementations
+Application exposes `IFeatureService` interfaces with `Result<T>` return types — no MediatR, no CQRS. Implementations of business services live in `Application/<Feature>/` alongside the interfaces they implement. DTOs are `record` types placed in `Application/<Feature>/Dtos/`. Infrastructure-specific abstractions required by Application services (e.g. `IResumeStorage`, `IScoringJobScheduler`, `IPasswordVerifier`) are defined in Application and implemented in Infrastructure.
 
 ### Result<T> — business error handling
 Service methods return `Result<T>` for expected failures (not found, invalid state) instead of throwing exceptions. Controllers check `result.IsSuccess` and map to appropriate HTTP status codes. Infrastructure-level exceptions (DB, network) propagate normally and are caught by global middleware.

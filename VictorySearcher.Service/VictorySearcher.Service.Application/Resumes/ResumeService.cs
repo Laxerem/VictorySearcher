@@ -1,21 +1,17 @@
-using Microsoft.Extensions.Options;
 using VictorySearcher.Service.Application.Common;
 using VictorySearcher.Service.Application.Interfaces;
-using VictorySearcher.Service.Application.Resumes;
 using VictorySearcher.Service.Application.Resumes.Dtos;
 using VictorySearcher.Service.Domain.Entities;
 using VictorySearcher.Service.Domain.Enums;
 using VictorySearcher.Service.Domain.Repositories;
-using VictorySearcher.Service.Infrastructure.Options;
-using VictorySearcher.Service.Infrastructure.Services.Parsers;
 
-namespace VictorySearcher.Service.Infrastructure.Services;
+namespace VictorySearcher.Service.Application.Resumes;
 
 public class ResumeService(
     IResumeRepository resumeRepository,
     IVacancyRepository vacancyRepository,
     IUnitOfWork unitOfWork,
-    IOptions<StorageOptions> storageOptions,
+    IResumeStorage resumeStorage,
     ResumeParserDispatcher parserDispatcher) : IResumeService {
 
     public async Task<Result<Guid>> UploadAsync(
@@ -33,14 +29,7 @@ public class ResumeService(
         if (vacancy is null) return Result<Guid>.Failure(AppError.NotFound());
 
         var fileId = Guid.NewGuid();
-        var dir = Path.Combine(storageOptions.Value.UploadsPath, vacancyId.ToString());
-        var filePath = Path.Combine(dir, $"{fileId}{ext}");
-
-        Directory.CreateDirectory(dir);
-
-        await using (var fs = File.Create(filePath)) {
-            await content.CopyToAsync(fs, ct);
-        }
+        var filePath = await resumeStorage.SaveAsync(vacancyId, fileId, ext, content, ct);
 
         var resume = new Resume {
             Id = fileId,
@@ -56,20 +45,12 @@ public class ResumeService(
         try {
             await unitOfWork.SaveChangesAsync(ct);
         } catch {
-            File.Delete(filePath);
+            resumeStorage.Delete(filePath);
             throw;
         }
 
         return Result<Guid>.Success(resume.Id);
     }
-
-    private static (FileFormat Format, string Ext)? DetectFormat(string fileName) =>
-        Path.GetExtension(fileName).ToLowerInvariant() switch {
-            ".txt" => (FileFormat.TXT, ".txt"),
-            ".docx" => (FileFormat.DOCX, ".docx"),
-            ".pdf" => (FileFormat.PDF, ".pdf"),
-            _ => null
-        };
 
     public async Task<Result<PagedResumesDto>> GetPagedAsync(
         Guid vacancyId, int page, int pageSize, CancellationToken ct = default) {
@@ -111,7 +92,15 @@ public class ResumeService(
         if (resume is null || resume.VacancyId != vacancyId)
             return Result<ResumeFileDto>.Failure(AppError.NotFound());
 
-        var data = await File.ReadAllBytesAsync(resume.FilePath, ct);
+        var data = await resumeStorage.ReadAllBytesAsync(resume.FilePath, ct);
         return Result<ResumeFileDto>.Success(new ResumeFileDto(resume.FileName, resume.Format, data));
     }
+
+    private static (FileFormat Format, string Ext)? DetectFormat(string fileName) =>
+        Path.GetExtension(fileName).ToLowerInvariant() switch {
+            ".txt" => (FileFormat.TXT, ".txt"),
+            ".docx" => (FileFormat.DOCX, ".docx"),
+            ".pdf" => (FileFormat.PDF, ".pdf"),
+            _ => null
+        };
 }

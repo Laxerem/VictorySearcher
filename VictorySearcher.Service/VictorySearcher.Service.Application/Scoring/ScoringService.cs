@@ -1,20 +1,17 @@
-using Hangfire;
 using VictorySearcher.Service.Application.Common;
 using VictorySearcher.Service.Application.Interfaces;
-using VictorySearcher.Service.Application.Scoring;
 using VictorySearcher.Service.Application.Scoring.Dtos;
 using VictorySearcher.Service.Domain.Entities;
 using VictorySearcher.Service.Domain.Enums;
 using VictorySearcher.Service.Domain.Repositories;
-using VictorySearcher.Service.Infrastructure.Jobs;
 
-namespace VictorySearcher.Service.Infrastructure.Services;
+namespace VictorySearcher.Service.Application.Scoring;
 
 public class ScoringService(
     IVacancyRepository vacancyRepository,
     IScoringRequestRepository scoringRequestRepository,
     IScoringResultRepository scoringResultRepository,
-    IBackgroundJobClient backgroundJobClient,
+    IScoringJobScheduler jobScheduler,
     IUnitOfWork unitOfWork) : IScoringService {
 
     public async Task<Result<Guid>> EnqueueAsync(Guid vacancyId, CancellationToken ct = default) {
@@ -31,7 +28,7 @@ public class ScoringService(
         await scoringRequestRepository.AddAsync(request, ct);
         await unitOfWork.SaveChangesAsync(ct);
 
-        backgroundJobClient.Enqueue<ResumeScoringJob>(job => job.ExecuteAsync(request.Id, CancellationToken.None));
+        jobScheduler.Schedule(request.Id);
 
         return Result<Guid>.Success(request.Id);
     }
