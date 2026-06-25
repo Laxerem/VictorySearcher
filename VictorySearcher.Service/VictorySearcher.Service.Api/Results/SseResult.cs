@@ -19,10 +19,15 @@ public sealed class SseResult<T>(IAsyncEnumerable<T> events) : IActionResult {
             .GetRequiredService<IOptions<Microsoft.AspNetCore.Mvc.JsonOptions>>()
             .Value.JsonSerializerOptions;
 
-        await foreach (var evt in events.WithCancellation(ct)) {
-            var json = JsonSerializer.Serialize(evt, opts);
-            await response.WriteAsync($"data: {json}\n\n", Encoding.UTF8, ct);
+        try {
             await response.Body.FlushAsync(ct);
+
+            await foreach (var evt in events.WithCancellation(ct)) {
+                var json = JsonSerializer.Serialize(evt, opts);
+                await response.WriteAsync($"data: {json}\n\n", Encoding.UTF8, ct);
+                await response.Body.FlushAsync(ct);
+            }
+        } catch (OperationCanceledException) {
         }
     }
 }
