@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Serilog;
 using VictorySearcher.Service.Api.Extensions;
 using VictorySearcher.Service.Application;
 using VictorySearcher.Service.Infrastructure;
@@ -33,6 +34,9 @@ using (var scope = app.Services.CreateScope()) {
     await db.Database.MigrateAsync();
     await AppDbContextSeed.SeedAsync(db, jwtOpts);
 }
+
+var llmOpts = app.Services.GetRequiredService<IOptions<LlmOptions>>().Value;
+Log.Information("LLM provider: {BaseUrl}, model: {ModelId}", llmOpts.BaseUrl, llmOpts.ModelId);
 
 if (app.Environment.IsDevelopment()) {
     app.UseSwaggerWithUi();
