@@ -36,7 +36,9 @@ using (var scope = app.Services.CreateScope()) {
 }
 
 var llmOpts = app.Services.GetRequiredService<IOptions<LlmOptions>>().Value;
+var resumeAnalyserOptions = app.Services.GetRequiredService<IOptions<ResumeAnalyserOptions>>().Value;
 Log.Information("LLM provider: {BaseUrl}, model: {ModelId}", llmOpts.BaseUrl, llmOpts.ModelId);
+Log.Information("LLM Analyser system prompt: {prompt}", resumeAnalyserOptions.SystemPrompt);
 
 if (app.Environment.IsDevelopment()) {
     app.UseSwaggerWithUi();
