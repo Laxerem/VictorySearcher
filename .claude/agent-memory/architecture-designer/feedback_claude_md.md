@@ -24,4 +24,4 @@ CLAUDE.md пишется строго по скиллу `.claude/skills/write-cl
 
 **How to apply:** Во всех создаваемых и редактируемых C#-файлах — открывающая скобка всегда на той же строке. Allman style (скобка на отдельной строке) — ошибка.
 
-Связано с: [[feedback-architecture-doc]], [[adr-core]]
+Связано с: [[adr-core]]

@@ -1,11 +1,11 @@
 # CLAUDE.md — VictorySearcher.Web
 
+> 🚨 **READ FIRST — MANDATORY.** Before doing anything in this service, read the root [`../CLAUDE.md`](../CLAUDE.md). It is the single registry of repo-wide skills and rules that are NOT auto-loaded from this subfolder. Skipping it means working without the project's shared skills and rules. This is not optional.
+
 React 19 + TypeScript + Vite frontend for the internal HR tool.
 Two protected sections: **Resume Scoring** and **Market Analytics**. Single JWT user.
 
 ## Key docs
-
-> IMPORTANT! Before any changes, read the root `../CLAUDE.md` - stick to these rules
 
 | File | When to read |
 |------|-------------|

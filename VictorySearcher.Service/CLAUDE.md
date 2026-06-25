@@ -1,10 +1,10 @@
 # CLAUDE.md — VictorySearcher.Service
 
+> 🚨 **READ FIRST — MANDATORY.** Before doing anything in this service, read the root [`../CLAUDE.md`](../CLAUDE.md). It is the single registry of repo-wide skills and rules that are NOT auto-loaded from this subfolder. Skipping it means working without the project's shared skills and rules. This is not optional.
+
 VictorySearcher is an internal HR automation tool with two features: LLM-powered resume scoring (recruiter uploads CVs against a vacancy, gets a ranked list with explanations) and automated daily labor market analytics collected from HH and SuperJob APIs.
 
 ## Key docs
-
-> IMPORTANT! Before any changes, read the root `../CLAUDE.md`.
 
 | File | When to read |
 |------|-------------|
