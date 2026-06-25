@@ -1,0 +1,106 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 11, 13, 0.75);
+  z-index: 50;
+  animation: fadeIn var(--dur) var(--ease);
+}
+
+.content {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 51;
+  width: min(780px, calc(100vw - var(--space-8)));
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--ink-800);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-lg);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
+  animation: slideIn var(--dur) var(--ease);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--line);
+  flex-shrink: 0;
+}
+
+.title {
+  font-family: var(--font-ui);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-200);
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.closeBtn {
+  font-size: 14px;
+  color: var(--text-500);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--r-sm);
+  line-height: 1;
+  flex-shrink: 0;
+  transition: color var(--dur) var(--ease);
+}
+
+.closeBtn:hover {
+  color: var(--text-100);
+}
+
+.body {
+  overflow-y: auto;
+  padding: var(--space-5);
+  flex: 1;
+  min-height: 0;
+}
+
+.pre {
+  font-family: var(--font-data);
+  font-size: 13px;
+  color: var(--text-300);
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin: 0;
+  line-height: 1.6;
+}
+
+.skeleton {
+  height: 200px;
+  border-radius: var(--r-md);
+  background: var(--ink-850);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.error {
+  font-size: 13px;
+  color: var(--alert);
+  margin: 0;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translate(-50%, -48%); }
+  to { opacity: 1; transform: translate(-50%, -50%); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}

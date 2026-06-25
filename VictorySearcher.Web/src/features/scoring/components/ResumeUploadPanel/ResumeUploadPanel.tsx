@@ -16,9 +16,11 @@ interface Props {
   onUpload: (files: File[]) => void;
   onStart: () => void;
   isStarting: boolean;
+  disabled?: boolean;
+  unscoredCount?: number;
 }
 
-export function ResumeUploadPanel({ entries, onUpload, onStart, isStarting }: Props) {
+export function ResumeUploadPanel({ entries, onUpload, onStart, isStarting, disabled, unscoredCount = 0 }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const loadedCount = entries.filter((e) => e.status === 'loaded').length;
@@ -42,12 +44,14 @@ export function ResumeUploadPanel({ entries, onUpload, onStart, isStarting }: Pr
 
       <div
         className={styles.drop}
-        onClick={() => inputRef.current?.click()}
+        onClick={() => !disabled && inputRef.current?.click()}
         onDragOver={(e) => e.preventDefault()}
-        onDrop={handleDrop}
+        onDrop={disabled ? undefined : handleDrop}
         role="button"
-        tabIndex={0}
-        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') inputRef.current?.click(); }}
+        tabIndex={disabled ? -1 : 0}
+        aria-disabled={disabled}
+        onKeyDown={(e) => { if (!disabled && (e.key === 'Enter' || e.key === ' ')) inputRef.current?.click(); }}
+        style={disabled ? { opacity: 0.5, cursor: 'not-allowed', pointerEvents: 'none' } : undefined}
       >
         <svg className={styles.uploadIcon} viewBox="0 0 24 24">
           <path d="M12 16V4M7 9l5-5 5 5" />
@@ -57,7 +61,7 @@ export function ResumeUploadPanel({ entries, onUpload, onStart, isStarting }: Pr
           Перетащите резюме или{' '}
           <span className={styles.dropLink}>выберите файлы</span>
         </span>
-        <span className={styles.dropSub}>TXT · несколько за раз</span>
+        <span className={styles.dropSub}>TXT, PDF, DOCX · несколько за раз</span>
       </div>
 
       <input
@@ -93,7 +97,7 @@ export function ResumeUploadPanel({ entries, onUpload, onStart, isStarting }: Pr
           type="button"
           className={styles.runBtn}
           onClick={onStart}
-          disabled={loadedCount === 0 || isStarting}
+          disabled={(loadedCount === 0 && unscoredCount === 0) || isStarting || disabled}
         >
           {isStarting ? 'Запуск…' : 'Запустить скоринг'}
         </button>

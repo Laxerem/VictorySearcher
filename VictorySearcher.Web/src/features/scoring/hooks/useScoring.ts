@@ -1,30 +1,57 @@
+import { useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { startScoring, getScoringStatus } from '@/api/scoring.api';
-import type { ScoringStatusDto } from '@/types/api';
+import { useScoringStream } from './useScoringStream';
 
 export function useScoring(vacancyId: string) {
   const queryClient = useQueryClient();
+  const [retryKey, setRetryKey] = useState(0);
+  const { event, isConnected, error: streamError } = useScoringStream(vacancyId, retryKey);
+  const [streamClosed, setStreamClosed] = useState(false);
 
-  const {
-    data: status,
-    isLoading: isStatusLoading,
-    error: statusError,
-  } = useQuery({
+  useEffect(() => {
+    if (!isConnected && event) {
+      setStreamClosed(true);
+    }
+    if (streamError && !event) {
+      setStreamClosed(true);
+    }
+  }, [isConnected, event, streamError]);
+
+  const { data: fallbackStatus } = useQuery({
     queryKey: ['scoring', 'status', vacancyId],
     queryFn: () => getScoringStatus(vacancyId),
+    enabled: streamClosed,
     retry: false,
-    refetchInterval: (query) => {
-      const current = query.state.data as ScoringStatusDto | undefined;
-      return current?.status === 'finished' || current?.status === 'failed' ? false : 3000;
-    },
   });
 
   const { mutate: start, isPending: isStarting, error: startError } = useMutation({
     mutationFn: () => startScoring(vacancyId),
     onSuccess: () => {
+      setStreamClosed(false);
+      setRetryKey((prev) => prev + 1);
       queryClient.invalidateQueries({ queryKey: ['scoring', 'status', vacancyId] });
+      queryClient.invalidateQueries({ queryKey: ['resumes', vacancyId], exact: false });
     },
   });
 
-  return { status, isStatusLoading, statusError, start, isStarting, startError };
+  const activeEvent = event || (streamClosed ? fallbackStatus : null);
+  const statusDto = activeEvent ? {
+    status: activeEvent.status,
+    errorMessage: activeEvent.errorMessage,
+    createdAt: '',
+    finishedAt: null,
+  } : null;
+
+  const isLoading = !event && !fallbackStatus && !streamError && isConnected;
+
+  return {
+    status: statusDto,
+    isStatusLoading: isLoading,
+    statusError: streamError && !event && !fallbackStatus ? streamError : null,
+    start,
+    isStarting,
+    startError,
+    progressEvent: event,
+  };
 }

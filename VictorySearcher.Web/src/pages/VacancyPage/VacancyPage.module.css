@@ -16,6 +16,12 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-6);
+  transition: opacity 0.15s var(--ease);
+}
+
+.detailFetching {
+  opacity: 0.5;
+  pointer-events: none;
 }
 
 .divider {
@@ -97,4 +103,95 @@
 .retryBtn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.tabList {
+  display: flex;
+  gap: 2px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 0;
+}
+
+.tabTrigger {
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 500;
+  height: 36px;
+  padding: 0 var(--space-4);
+  background: transparent;
+  color: var(--text-500);
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  transition: color var(--dur) var(--ease), border-color var(--dur) var(--ease);
+}
+
+.tabTrigger:hover {
+  color: var(--text-200);
+}
+
+.tabTrigger[data-state='active'] {
+  color: var(--text-100);
+  border-bottom-color: var(--signal-500);
+}
+
+.tabBadge {
+  font-family: var(--font-data);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-600);
+  background: var(--ink-700);
+  border-radius: 10px;
+  padding: 1px 6px;
+}
+
+.tabContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  outline: none;
+}
+
+.errorPanel {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  border: 1px solid var(--signal-700);
+  border-radius: var(--r-md);
+  background: rgba(220, 38, 38, 0.1);
+}
+
+.errorText {
+  font-size: 13px;
+  color: var(--text-400);
+  margin: 0;
+}
+
+.placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  background: var(--ink-900);
+}
+
+.placeholderText {
+  font-size: 13px;
+  color: var(--text-600);
+  margin: 0;
 }

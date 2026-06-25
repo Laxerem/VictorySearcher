@@ -1,5 +1,5 @@
-import { get, post, postForm } from './client';
-import type { VacancyDto, VacancyListItemDto, CreateVacancyRequestDto } from '@/types/api';
+import { get, post, postForm, getToken, clearToken } from './client';
+import type { VacancyDto, VacancyListItemDto, CreateVacancyRequestDto, PagedResumesDto, ResumeContentDto } from '@/types/api';
 
 export const getVacancies = () => get<VacancyListItemDto[]>('/vacancies');
 
@@ -13,3 +13,20 @@ export const uploadResume = (vacancyId: string, file: File): Promise<void> => {
   form.append('file', file);
   return postForm<void>(`/vacancies/${vacancyId}/resumes`, form);
 };
+
+export const getResumes = (vacancyId: string, page: number, pageSize: number) =>
+  get<PagedResumesDto>(`/vacancies/${vacancyId}/resumes?page=${page}&pageSize=${pageSize}`);
+
+export const getResumeContent = (vacancyId: string, resumeId: string) =>
+  get<ResumeContentDto>(`/vacancies/${vacancyId}/resumes/${resumeId}/content`);
+
+export async function downloadResume(vacancyId: string, resumeId: string): Promise<Blob> {
+  const token = getToken();
+  const res = await fetch(`/api/vacancies/${vacancyId}/resumes/${resumeId}/download`, {
+    method: 'GET',
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+  });
+  if (res.status === 401) clearToken();
+  if (!res.ok) throw { message: res.statusText, status: res.status };
+  return res.blob();
+}

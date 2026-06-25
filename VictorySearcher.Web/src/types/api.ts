@@ -42,6 +42,13 @@ export interface ScoringStatusDto {
   finishedAt: string | null;
 }
 
+export interface ScoringProgressEvent {
+  status: ScoringStatus;
+  checked: number;
+  total: number;
+  errorMessage: string | null;
+}
+
 export interface RequirementCoverageDto {
   requirement: string;
   covered: boolean;
@@ -59,4 +66,26 @@ export interface ScoringResultDto {
   isUncertain: boolean;
   requirementsAnalysis: RequirementCoverageDto[];
   scoredAt: string;
+}
+
+export interface ResumeListItemDto {
+  id: string;
+  fileName: string;
+  format: string;
+  loadedAt: string;
+  isScored: boolean;
+}
+
+export interface PagedResumesDto {
+  items: ResumeListItemDto[];
+  totalCount: number;
+  page: number;
+  pageSize: number;
+  scoredCount: number;
+  unscoredCount: number;
+}
+
+export interface ResumeContentDto {
+  fileName: string;
+  content: string;
 }

@@ -8,8 +8,17 @@ export { ScoringStatusBar } from './components/ScoringStatusBar/ScoringStatusBar
 export { ScoredResumeCard } from './components/ScoredResumeCard/ScoredResumeCard';
 export { ScoringResultList } from './components/ScoringResultList/ScoringResultList';
 export { NewVacancyDialog } from './components/NewVacancyDialog/NewVacancyDialog';
+export { ScoringCounter } from './components/ScoringCounter/ScoringCounter';
+export { ScoringProgress } from './components/ScoringProgress/ScoringProgress';
+export { ResumeListItem } from './components/ResumeListItem/ResumeListItem';
+export { ResumeListPanel } from './components/ResumeListPanel/ResumeListPanel';
+export { ResumeContentDialog } from './components/ResumeContentDialog/ResumeContentDialog';
 export { useVacancies } from './hooks/useVacancies';
 export { useVacancy } from './hooks/useVacancy';
 export { useResumeUpload } from './hooks/useResumeUpload';
 export { useScoring } from './hooks/useScoring';
+export { useScoringStream } from './hooks/useScoringStream';
 export { useScoringResults } from './hooks/useScoringResults';
+export { useResumes } from './hooks/useResumes';
+export { useResumeDownload } from './hooks/useResumeDownload';
+export { useResumeContent } from './hooks/useResumeContent';
