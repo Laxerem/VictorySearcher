@@ -45,9 +45,9 @@ export function ScoredResumeCard({ result, rank, flagged }: Props) {
       </div>
 
       <div className={styles.metrics}>
-        <Metric label="Опыт" value={result.experienceScore} max={50} />
-        <Metric label="Навыки" value={result.skillsScore} max={40} />
-        <Metric label="Доп. требования" value={result.extraScore} max={10} />
+        <Metric label="Опыт" value={result.experienceScore} max={100} />
+        <Metric label="Навыки" value={result.skillsScore} max={100} />
+        <Metric label="Доп. требования" value={result.extraScore} max={100} />
       </div>
 
       <p className={styles.reasoning}>{result.reasoning}</p>
