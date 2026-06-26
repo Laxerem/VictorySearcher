@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using VictorySearcher.Service.Application.Common;
 using VictorySearcher.Service.Application.Extensions;
 using VictorySearcher.Service.Application.Interfaces;
@@ -59,11 +60,28 @@ public class ScoringService(
             return Result<IAsyncEnumerable<ScoringProgressEvent>>.Failure(
                 AppError.Conflict("Scoring has already finished. Fetch results via GET /results."));
 
-        var stream = progressChannel.TryGetReader(request.Id);
-        if (stream is null)
+        var reader = progressChannel.TryGetReader(request.Id);
+        if (reader is null)
             return Result<IAsyncEnumerable<ScoringProgressEvent>>.Failure(AppError.Unavailable());
 
+        var snapshot = progressChannel.HasPendingEvents(request.Id)
+            ? null
+            : progressChannel.TryGetLastEvent(request.Id);
+
+        var stream = snapshot is not null
+            ? PrependSnapshotAsync(snapshot, reader)
+            : reader;
+
         return Result<IAsyncEnumerable<ScoringProgressEvent>>.Success(stream);
+    }
+
+    private static async IAsyncEnumerable<ScoringProgressEvent> PrependSnapshotAsync(
+        ScoringProgressEvent snapshot,
+        IAsyncEnumerable<ScoringProgressEvent> source,
+        [EnumeratorCancellation] CancellationToken ct = default) {
+        yield return snapshot;
+        await foreach (var evt in source.WithCancellation(ct))
+            yield return evt;
     }
 
     public async Task<Result<ScoringStatusDto>> GetStatusAsync(Guid vacancyId, CancellationToken ct = default) {

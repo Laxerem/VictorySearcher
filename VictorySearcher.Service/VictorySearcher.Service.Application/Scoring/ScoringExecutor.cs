@@ -51,6 +51,8 @@ public class ScoringExecutor(
                 "Scoring started: request {RequestId}, vacancy \"{VacancyTitle}\", {ResumeCount} unscored resumes",
                 requestId, vacancy.Title, resumes.Count);
 
+            progressChannel.TryWrite(requestId, new ScoringProgressEvent(ScoringStatus.InProcess, 0, total));
+
             var vacancyContext = new VacancyContextDto(
                 vacancy.Title,
                 vacancy.Description,

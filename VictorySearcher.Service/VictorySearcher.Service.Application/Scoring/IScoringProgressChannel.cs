@@ -7,4 +7,6 @@ public interface IScoringProgressChannel {
     bool TryWrite(Guid requestId, ScoringProgressEvent evt);
     void Complete(Guid requestId);
     IAsyncEnumerable<ScoringProgressEvent>? TryGetReader(Guid requestId);
+    ScoringProgressEvent? TryGetLastEvent(Guid requestId);
+    bool HasPendingEvents(Guid requestId);
 }
