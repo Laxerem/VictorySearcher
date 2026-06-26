@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Serilog;
 using VictorySearcher.Service.Api.Extensions;
+using VictorySearcher.Service.Api.Middleware;
 using VictorySearcher.Service.Application;
 using VictorySearcher.Service.Infrastructure;
 using VictorySearcher.Service.Infrastructure.Options;
@@ -44,10 +45,13 @@ if (app.Environment.IsDevelopment()) {
     app.UseSwaggerWithUi();
 }
 
+app.UseMiddleware<ExceptionHandler>();
+
 app.UseSerilogLogging();
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseHangfireDashboard("/hangfire");
-app.MapControllers();
 
+app.UseHangfireDashboard("/hangfire");
+
+app.MapControllers();
 app.Run();
