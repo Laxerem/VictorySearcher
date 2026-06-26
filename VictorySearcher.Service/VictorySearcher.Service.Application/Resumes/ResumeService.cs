@@ -96,11 +96,9 @@ public class ResumeService(
         return Result<ResumeFileDto>.Success(new ResumeFileDto(resume.FileName, resume.Format, data));
     }
 
-    private static (FileFormat Format, string Ext)? DetectFormat(string fileName) =>
-        Path.GetExtension(fileName).ToLowerInvariant() switch {
-            ".txt" => (FileFormat.TXT, ".txt"),
-            ".docx" => (FileFormat.DOCX, ".docx"),
-            ".pdf" => (FileFormat.PDF, ".pdf"),
-            _ => null
-        };
+    private static (FileFormat Format, string Ext)? DetectFormat(string fileName) {
+        var ext = Path.GetExtension(fileName);
+        var format = FileFormatExtensions.FromFileExtension(ext);
+        return format is null ? null : (format.Value, format.Value.ToFileExtension());
+    }
 }

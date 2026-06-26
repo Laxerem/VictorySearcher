@@ -25,6 +25,7 @@ builder.Services.AddAuthorization();
 builder.Services.AddControllers()
     .AddJsonOptions(o =>
         o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)));
+builder.Services.AddValidation(builder.Configuration);
 builder.Services.AddSwagger();
 
 var app = builder.Build();

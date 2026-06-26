@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using VictorySearcher.Service.Api.Contracts;
 using VictorySearcher.Service.Application.Resumes;
 using VictorySearcher.Service.Application.Resumes.Dtos;
 using VictorySearcher.Service.Domain.Enums;
@@ -15,8 +16,8 @@ public class ResumesController(IResumeService resumeService) : ControllerBase {
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> UploadAsync(Guid vacancyId, IFormFile file, CancellationToken ct) {
-        var result = await resumeService.UploadAsync(vacancyId, file.FileName, file.OpenReadStream(), ct);
+    public async Task<IActionResult> UploadAsync(Guid vacancyId, [FromForm] UploadResumeRequest request, CancellationToken ct) {
+        var result = await resumeService.UploadAsync(vacancyId, request.File.FileName, request.File.OpenReadStream(), ct);
         if (!result.IsSuccess) return StatusCode(result.Error!.StatusCode, result.Error);
         return StatusCode(StatusCodes.Status201Created);
     }
@@ -25,8 +26,8 @@ public class ResumesController(IResumeService resumeService) : ControllerBase {
     [ProducesResponseType<PagedResumesDto>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> GetPagedAsync(
-        Guid vacancyId, [FromQuery] int page = 1, [FromQuery] int pageSize = 20, CancellationToken ct = default) {
-        var result = await resumeService.GetPagedAsync(vacancyId, page, pageSize, ct);
+        Guid vacancyId, [FromQuery] GetPagedResumesRequest request, CancellationToken ct = default) {
+        var result = await resumeService.GetPagedAsync(vacancyId, request.Page, request.PageSize, ct);
         return Ok(result.Value);
     }
 
