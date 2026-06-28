@@ -58,7 +58,68 @@
   gap: var(--space-2);
   color: var(--text-300);
   font-size: 13px;
-  cursor: default;
+  font-family: var(--font-ui);
+  padding: var(--space-1) var(--space-2);
+  border: none;
+  border-radius: var(--r-sm);
+  background: transparent;
+  cursor: pointer;
+  transition: color var(--dur) var(--ease), background var(--dur) var(--ease);
+}
+
+.account:hover,
+.account[data-state='open'] {
+  color: var(--text-100);
+  background: var(--ink-800);
+}
+
+/* ---- account dropdown ---- */
+.menuContent {
+  min-width: 180px;
+  padding: var(--space-1);
+  background: var(--ink-800);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-md);
+  box-shadow: var(--elev-2);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  z-index: 50;
+}
+
+.menuItem {
+  padding: 8px 10px;
+  border-radius: var(--r-sm);
+  color: var(--text-300);
+  font-size: 13px;
+  font-weight: 500;
+  font-family: var(--font-ui);
+  cursor: pointer;
+  outline: none;
+  user-select: none;
+  transition: color var(--dur) var(--ease), background var(--dur) var(--ease);
+}
+
+.menuItem:hover,
+.menuItem[data-highlighted] {
+  color: var(--text-100);
+  background: var(--ink-700);
+}
+
+.menuItemDanger {
+  color: var(--alert);
+}
+
+.menuItemDanger:hover,
+.menuItemDanger[data-highlighted] {
+  color: var(--alert);
+  background: var(--alert-bg);
+}
+
+.menuSeparator {
+  height: 1px;
+  margin: var(--space-1) 0;
+  background: var(--line);
 }
 
 .avatar {

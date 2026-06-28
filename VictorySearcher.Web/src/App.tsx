@@ -7,6 +7,7 @@ import { NotFoundPage } from '@/pages/NotFoundPage/NotFoundPage';
 import { ScoringPage } from '@/pages/ScoringPage/ScoringPage';
 import { VacancyPage } from '@/pages/VacancyPage/VacancyPage';
 import { ScoringResultsPage } from '@/pages/ScoringResultsPage/ScoringResultsPage';
+import { ProfilePage } from '@/pages/ProfilePage/ProfilePage';
 
 interface ProtectedRouteProps {
   children: ReactNode;
@@ -61,6 +62,16 @@ export default function App() {
                 <div style={{ padding: 'var(--space-8)', color: 'var(--text-500)' }}>
                   Market Analytics — coming soon
                 </div>
+              </AppLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <AppLayout context="Профиль">
+                <ProfilePage />
               </AppLayout>
             </ProtectedRoute>
           }

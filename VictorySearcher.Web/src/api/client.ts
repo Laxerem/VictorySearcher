@@ -24,6 +24,12 @@ export function clearToken(): void {
   localStorage.removeItem(TOKEN_KEY);
 }
 
+/** Reaction to an expired/invalid token: drop it and notify the app to redirect. */
+function handleUnauthorized(): void {
+  clearToken();
+  notifyUnauthorized();
+}
+
 async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
   const token = getToken();
 
@@ -42,8 +48,7 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
   });
 
   if (response.status === 401) {
-    clearToken();
-    onUnauthorized?.();
+    handleUnauthorized();
   }
 
   if (!response.ok) {
@@ -77,8 +82,7 @@ export async function postForm<T>(path: string, body: FormData): Promise<T> {
     body,
   });
   if (res.status === 401) {
-    clearToken();
-    onUnauthorized?.();
+    handleUnauthorized();
   }
   if (!res.ok) throw new Error(`HTTP ${res.status}: ${res.statusText}`);
   const text = await res.text();

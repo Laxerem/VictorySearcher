@@ -1,5 +1,7 @@
 import type { ReactNode } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
+import { useAuth } from '@/providers/AuthProvider';
 import { cn } from '@/utils/cn';
 import styles from './AppLayout.module.css';
 
@@ -32,9 +34,15 @@ interface Props {
 export function AppLayout({ children, context = 'Вакансии', username = 'recruiter' }: Props) {
   const navigate = useNavigate();
   const location = useLocation();
+  const { logout } = useAuth();
 
   const isScoringActive = location.pathname.startsWith('/scoring');
   const isMarketActive = location.pathname.startsWith('/market');
+
+  function handleLogout(): void {
+    logout();
+    navigate('/login', { replace: true });
+  }
 
   return (
     <div className={styles.shell}>
@@ -56,10 +64,33 @@ export function AppLayout({ children, context = 'Вакансии', username = '
 
         <span className={styles.spacer} />
 
-        <span className={styles.account}>
-          <span className={styles.avatar}>{username.slice(0, 2).toUpperCase()}</span>
-          <span>{username}</span>
-        </span>
+        <DropdownMenu.Root>
+          <DropdownMenu.Trigger className={styles.account}>
+            <span className={styles.avatar}>{username.slice(0, 2).toUpperCase()}</span>
+            <span>{username}</span>
+          </DropdownMenu.Trigger>
+          <DropdownMenu.Portal>
+            <DropdownMenu.Content
+              className={styles.menuContent}
+              align="end"
+              sideOffset={8}
+            >
+              <DropdownMenu.Item
+                className={styles.menuItem}
+                onSelect={() => navigate('/profile')}
+              >
+                Профиль
+              </DropdownMenu.Item>
+              <DropdownMenu.Separator className={styles.menuSeparator} />
+              <DropdownMenu.Item
+                className={cn(styles.menuItem, styles.menuItemDanger)}
+                onSelect={handleLogout}
+              >
+                Выйти
+              </DropdownMenu.Item>
+            </DropdownMenu.Content>
+          </DropdownMenu.Portal>
+        </DropdownMenu.Root>
       </header>
 
       <div className={styles.body}>
