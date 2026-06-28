@@ -28,7 +28,7 @@ services:
       - Jwt__Password=${APP_PASSWORD:-password}
       - Llm__ApiKey=${LLM_API_KEY:-placeholder}
       - Llm__BaseUrl=${LLM_BASE_URL:-https://api.polza.ai/v1}
-      - Llm__ModelId=${LLM_MODEL_ID:-gpt-4o}
+      - Llm__ModelId=${LLM_MODEL_ID:-deepseek/deepseek-v3.2}
       - Storage__UploadsPath=/uploads
     volumes:
       - uploads_data:/uploads
