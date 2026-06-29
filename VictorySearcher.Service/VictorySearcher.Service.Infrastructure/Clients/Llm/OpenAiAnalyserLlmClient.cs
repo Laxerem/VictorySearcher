@@ -6,7 +6,7 @@ using OpenAI;
 using OpenAI.Chat;
 using VictorySearcher.Service.Infrastructure.Options;
 
-namespace VictorySearcher.Service.Infrastructure.Clients;
+namespace VictorySearcher.Service.Infrastructure.Clients.Llm;
 
 public class OpenAiAnalyserLlmClient(IOptions<LlmOptions> llmOptions, ILogger<OpenAiAnalyserLlmClient> logger) : IAnalyserLlmClient {
     private readonly LlmOptions _opts = llmOptions.Value;
