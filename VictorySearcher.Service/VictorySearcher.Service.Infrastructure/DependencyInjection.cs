@@ -3,11 +3,16 @@ using Hangfire.PostgreSql;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using VictorySearcher.Service.Application.Interfaces;
 using VictorySearcher.Service.Application.Resumes;
 using VictorySearcher.Service.Application.Scoring;
 using VictorySearcher.Service.Domain.Repositories;
 using VictorySearcher.Service.Infrastructure.Channels;
+using VictorySearcher.Service.Infrastructure.Clients;
+using VictorySearcher.Service.Infrastructure.Clients.HeadHunter;
+using VictorySearcher.Service.Infrastructure.Clients.Llm;
+using VictorySearcher.Service.Infrastructure.Clients.SuperJob;
 using VictorySearcher.Service.Infrastructure.Jobs;
 using VictorySearcher.Service.Infrastructure.Options;
 using VictorySearcher.Service.Infrastructure.Persistence;
@@ -35,6 +40,8 @@ public static class DependencyInjection {
         services.Configure<LlmOptions>(configuration.GetSection("Llm"));
         services.Configure<ResumeAnalyserOptions>(configuration.GetSection("ResumeAnalyser"));
         services.Configure<StorageOptions>(configuration.GetSection("Storage"));
+        services.Configure<HeadHunterOptions>(configuration.GetSection("HeadHunter"));
+        services.Configure<SuperJobOptions>(configuration.GetSection("SuperJob"));
 
         services.AddScoped<IJwtProvider, JwtProvider>();
         services.AddScoped<IPasswordVerifier, BcryptPasswordVerifier>();
@@ -47,6 +54,21 @@ public static class DependencyInjection {
 
         services.AddSingleton<IScoringProgressChannel, InMemoryScoringProgressChannel>();
         services.AddSingleton<IAnalyserLlmClient, OpenAiAnalyserLlmClient>();
+
+        services.AddSingleton<IHhTokenProvider, HhOAuthTokenProvider>();
+        services.AddHttpClient<IHeadHunterClient, HeadHunterClient>()
+            .ConfigureHttpClient((sp, c) => {
+                var opts = sp.GetRequiredService<IOptions<HeadHunterOptions>>().Value;
+                c.BaseAddress = new Uri(opts.BaseUrl);
+                c.DefaultRequestHeaders.Add("User-Agent", opts.UserAgent);
+            });
+
+        services.AddHttpClient<ISuperJobClient, SuperJobClient>()
+            .ConfigureHttpClient((sp, c) => {
+                var opts = sp.GetRequiredService<IOptions<SuperJobOptions>>().Value;
+                c.BaseAddress = new Uri(opts.BaseUrl);
+                c.DefaultRequestHeaders.Add("X-Api-App-Id", opts.SecretKey);
+            });
         services.AddSingleton<AnalyserPromptBuilder>();
         services.AddScoped<IResumeAnalyserService, ResumeAnalyserService>();
         services.AddTransient<ResumeScoringJob>();
