@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using VictorySearcher.Service.Application.Scoring;
 using VictorySearcher.Service.Application.Scoring.Dtos;
-using VictorySearcher.Service.Infrastructure.Clients.Contracts;
+using VictorySearcher.Service.Infrastructure.Clients.Llm.Responses;
 using VictorySearcher.Service.Infrastructure.Options;
 
 namespace VictorySearcher.Service.Infrastructure.Services;
