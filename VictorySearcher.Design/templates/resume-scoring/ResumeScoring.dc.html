@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<!-- @template name="Скоринг резюме (вакансия)" description="Страница вакансии: загрузка и LLM-скоринг резюме, файлы с пагинацией, ранжированные кандидаты с анализом требований" -->
+<helmet>
+<script src="./ds-base.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body { background: #050506; }
+  ::selection { background: rgba(255,255,255,0.16); }
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-thumb { background: #26262b; border-radius: 8px; }
+  input::placeholder, textarea::placeholder { color: #5c5c64; }
+  @keyframes vg-bar-stripes { from { background-position: 0 0, 0 0; } to { background-position: 0 0, 28px 0; } }
+  @keyframes vg-fade-up { from { opacity:0; transform: translateY(8px); } to { opacity:1; transform:none; } }
+  @keyframes vg-spin { to { transform: rotate(360deg); } }
+</style>
+</helmet>
+
+<div style="min-height:100vh; background:var(--surface-page); font-family:var(--font-body); color:var(--text-strong);">
+
+  <!-- ============================ TOP BAR ============================ -->
+  <header style="position:sticky; top:0; z-index:40; display:flex; align-items:center; justify-content:space-between; gap:24px; padding:14px 32px; background:rgba(5,5,6,0.82); backdrop-filter:blur(14px); border-bottom:1px solid var(--border-hairline);">
+    <div style="display:flex; align-items:center; gap:26px; min-width:0;">
+      <div style="display:inline-flex; align-items:center; gap:12px;">
+        <img src="../../assets/victorysearcher-logo.png" alt="VictorySearcher" style="height:30px; width:30px; object-fit:contain;">
+        <span style="font-family:var(--font-display); font-weight:700; letter-spacing:-0.01em; font-size:16px;">Victory<span style="color:var(--text-muted);">Searcher</span></span>
+      </div>
+      <div style="width:1px; height:24px; background:var(--border-hairline);"></div>
+      <div style="display:inline-flex; align-items:center; gap:9px; font-size:13px; color:var(--text-muted); min-width:0;">
+        <a href="../vacancies/Vacancies.dc.html" style="color:var(--text-muted); text-decoration:none; white-space:nowrap;" onmouseover="this.style.color='var(--text-strong)'" onmouseout="this.style.color='var(--text-muted)'">Вакансии</a>
+        <span style="color:var(--vg-ink-400);">/</span>
+        <span style="color:var(--text-body); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Senior C# / .NET разработчик</span>
+      </div>
+    </div>
+    <div style="display:flex; align-items:center; gap:14px;">
+      <button type="button" style="display:inline-flex; align-items:center; gap:8px; padding:9px 16px; font-family:var(--font-body); font-size:12px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-on-light); background:var(--action-fill); border:none; border-radius:var(--radius-sm); cursor:pointer;" style-hover="background:var(--action-fill-hover)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="square"/></svg>
+        Новая вакансия
+      </button>
+      <div style="width:34px; height:34px; border-radius:50%; display:grid; place-items:center; font-size:12px; font-weight:700; letter-spacing:0.04em; color:var(--text-body); background:var(--surface-card); border:1px solid var(--border-hairline);">АК</div>
+    </div>
+  </header>
+
+  <div style="max-width:1200px; margin:0 auto; padding:36px 32px 96px;">
+
+    <!-- ============================ VACANCY HEADER ============================ -->
+    <section>
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
+        <span style="font-size:12px; font-weight:600; letter-spacing:0.22em; text-transform:uppercase; color:var(--text-muted);">Вакансия · VG-2041</span>
+        <span style="display:inline-flex; align-items:center; gap:7px; padding:4px 11px; font-size:11px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:var(--vg-green); border:1px solid rgba(59,220,107,0.32); border-radius:var(--radius-sm);">
+          <span style="width:6px; height:6px; border-radius:50%; background:var(--vg-green); box-shadow:0 0 10px rgba(59,220,107,0.8);"></span>Активна
+        </span>
+      </div>
+      <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:28px; flex-wrap:wrap;">
+        <h1 style="margin:0; font-family:var(--font-display); font-weight:800; text-transform:uppercase; line-height:1.04; letter-spacing:-0.01em; font-size:40px; max-width:720px;">Senior C# / .NET разработчик</h1>
+        <div style="display:flex; gap:28px; padding-bottom:4px;">
+          <div><div style="font-family:var(--font-display); font-weight:700; font-size:26px; line-height:1;">{{ totalFiles }}</div><div style="font-size:12px; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-muted); margin-top:6px;">резюме</div></div>
+          <div style="width:1px; background:var(--border-hairline);"></div>
+          <div><div style="font-family:var(--font-display); font-weight:700; font-size:26px; line-height:1; color:var(--vg-green);">{{ scoredCount }}</div><div style="font-size:12px; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-muted); margin-top:6px;">проверено</div></div>
+        </div>
+      </div>
+
+      <!-- collapsible vacancy details -->
+      <div style="margin-top:20px; border:1px solid var(--border-hairline); border-radius:var(--radius-sm); background:var(--surface-section);">
+        <button type="button" onClick="{{ toggleDetails }}" style="width:100%; display:flex; align-items:center; justify-content:space-between; gap:16px; padding:15px 20px; background:none; border:none; cursor:pointer; font-family:var(--font-body); color:var(--text-body); text-align:left;">
+          <span style="display:inline-flex; align-items:center; gap:11px; font-size:13px; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-muted);">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M8 6h12M8 12h12M8 18h12M3.5 6h.01M3.5 12h.01M3.5 18h.01" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+            Описание вакансии
+          </span>
+          <span style="transform:{{ detailsCaret }}; transition:transform 200ms; display:inline-flex;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 8l7 7 7-7" stroke="var(--text-muted)" stroke-width="1.7" stroke-linecap="square"/></svg></span>
+        </button>
+        <sc-if value="{{ detailsOpen }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:4px 20px 22px; display:grid; grid-template-columns:1fr 1fr; gap:26px 36px;">
+            <div style="grid-column:1 / -1;">
+              <div style="font-size:11px; font-weight:700; letter-spacing:0.16em; text-transform:uppercase; color:var(--text-faint); margin-bottom:8px;">Описание</div>
+              <p style="margin:0; font-size:14px; line-height:1.6; color:var(--text-body);">Ищем сильного backend-инженера в продуктовую команду. Разработка и поддержка высоконагруженных сервисов на .NET, проектирование микросервисной архитектуры, code review и менторинг middle-разработчиков.</p>
+            </div>
+            <div>
+              <div style="font-size:11px; font-weight:700; letter-spacing:0.16em; text-transform:uppercase; color:var(--text-faint); margin-bottom:8px;">Требования</div>
+              <ul style="margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:7px;">
+                <li style="font-size:14px; line-height:1.5; color:var(--text-body); padding-left:16px; position:relative;"><span style="position:absolute; left:0; top:9px; width:5px; height:5px; border-radius:50%; background:var(--vg-ink-300);"></span>C# / .NET Core от 3 лет, ASP.NET</li>
+                <li style="font-size:14px; line-height:1.5; color:var(--text-body); padding-left:16px; position:relative;"><span style="position:absolute; left:0; top:9px; width:5px; height:5px; border-radius:50%; background:var(--vg-ink-300);"></span>ООП, шаблоны проектирования, SOLID</li>
+                <li style="font-size:14px; line-height:1.5; color:var(--text-body); padding-left:16px; position:relative;"><span style="position:absolute; left:0; top:9px; width:5px; height:5px; border-radius:50%; background:var(--vg-ink-300);"></span>Высоконагруженные распределённые системы</li>
+              </ul>
+            </div>
+            <div>
+              <div style="font-size:11px; font-weight:700; letter-spacing:0.16em; text-transform:uppercase; color:var(--text-faint); margin-bottom:8px;">Дополнительные требования</div>
+              <ul style="margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:7px;">
+                <li style="font-size:14px; line-height:1.5; color:var(--text-body); padding-left:16px; position:relative;"><span style="position:absolute; left:0; top:9px; width:5px; height:5px; border-radius:50%; background:var(--vg-ink-300);"></span>Опыт с ИИ-инструментами (Copilot, Cursor)</li>
+                <li style="font-size:14px; line-height:1.5; color:var(--text-body); padding-left:16px; position:relative;"><span style="position:absolute; left:0; top:9px; width:5px; height:5px; border-radius:50%; background:var(--vg-ink-300);"></span>Законченное профильное СПО / ВО</li>
+              </ul>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+    </section>
+
+    <!-- ============================ TABS ============================ -->
+    <nav style="display:flex; gap:4px; margin:30px 0 26px; border-bottom:1px solid var(--border-hairline);">
+      <button type="button" onClick="{{ tabScoring }}" style="{{ tabScoringStyle }}">Скоринг резюме</button>
+      <button type="button" onClick="{{ tabFiles }}" style="{{ tabFilesStyle }}">Файлы резюме<span style="margin-left:9px; font-size:11px; font-weight:700; padding:2px 7px; border-radius:var(--radius-pill); background:var(--surface-card); color:var(--text-muted);">{{ totalFiles }}</span></button>
+      <button type="button" onClick="{{ tabResults }}" style="{{ tabResultsStyle }}">Результаты<span style="margin-left:9px; font-size:11px; font-weight:700; padding:2px 7px; border-radius:var(--radius-pill); background:var(--surface-card); color:var(--text-muted);">{{ scoredCount }}</span></button>
+    </nav>
+
+    <!-- ============================ TAB 1 — СКОРИНГ ============================ -->
+    <sc-if value="{{ isScoring }}" hint-placeholder-val="{{ false }}">
+    <section>
+      <div style="border:1.5px dashed var(--border-strong); border-radius:var(--radius-sm); background:var(--surface-section); padding:44px 32px; text-align:center;" style-hover="border-color:var(--text-muted); background:var(--surface-card)">
+        <div style="width:52px; height:52px; margin:0 auto 18px; border-radius:50%; display:grid; place-items:center; background:var(--surface-card); border:1px solid var(--border-hairline);">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" stroke="var(--text-body)" stroke-width="1.6" stroke-linecap="square" stroke-linejoin="round"/></svg>
+        </div>
+        <div style="font-size:17px; font-weight:600; color:var(--text-strong);">Перетащите файлы резюме сюда</div>
+        <div style="font-size:13px; color:var(--text-muted); margin-top:7px;">Поддерживаются форматы DOCX, PDF, TXT — до 20 МБ на файл</div>
+        <div style="margin-top:20px; display:inline-block;">
+          <x-import component-from-global-scope="VictoryGroupDesignSystem_5427f7.Button" variant="secondary" size="md" onClick="{{ addStaged }}" hint-size="160px,46px">Выбрать файлы</x-import>
+        </div>
+      </div>
+
+      <div style="margin-top:24px; display:flex; align-items:center; justify-content:space-between; gap:16px;">
+        <div style="font-size:13px; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-muted);">К анализу · {{ stagedCount }} файлов</div>
+        <button type="button" onClick="{{ clearStaged }}" style="font-size:13px; color:var(--text-muted); background:none; border:none; cursor:pointer; padding:4px;" style-hover="color:var(--text-strong)">Очистить</button>
+      </div>
+      <div style="margin-top:12px; display:flex; flex-direction:column; gap:8px;">
+        <sc-for list="{{ staged }}" as="f" hint-placeholder-count="4">
+          <div style="display:flex; align-items:center; gap:14px; padding:12px 16px; background:var(--surface-card); border:1px solid var(--border-hairline); border-radius:var(--radius-sm);">
+            <span style="display:grid; place-items:center; width:34px; height:34px; border-radius:var(--radius-xs); background:var(--surface-section); color:var(--text-muted); font-size:9px; font-weight:800; letter-spacing:0.06em;">{{ f.ext }}</span>
+            <div style="flex:1; min-width:0;">
+              <div style="font-size:14px; font-weight:600; color:var(--text-strong); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ f.name }}</div>
+              <div style="font-size:12px; color:var(--text-faint); margin-top:2px;">{{ f.size }}</div>
+            </div>
+            <span style="font-size:12px; color:{{ f.statusColor }};">{{ f.statusLabel }}</span>
+            <button type="button" onClick="{{ f.onRemove }}" style="display:grid; place-items:center; width:30px; height:30px; background:none; border:none; cursor:pointer; color:var(--text-faint); border-radius:var(--radius-xs);" style-hover="color:var(--text-strong); background:var(--surface-section)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="1.7" stroke-linecap="square"/></svg></button>
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="margin-top:26px; border:1px solid var(--border-hairline); border-radius:var(--radius-sm); background:var(--grad-card); box-shadow:var(--shadow-card); padding:26px 28px;">
+        <sc-if value="{{ scoreIdle }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex; align-items:center; justify-content:space-between; gap:24px; flex-wrap:wrap;">
+            <div>
+              <div style="font-family:var(--font-display); font-weight:700; text-transform:uppercase; font-size:18px; letter-spacing:-0.01em;">Запустить скоринг</div>
+              <div style="font-size:13px; color:var(--text-muted); margin-top:7px; max-width:520px; line-height:1.5;">Модель проанализирует каждое резюме по требованиям вакансии и выставит баллы за опыт, навыки и доп.требования.</div>
+            </div>
+            <x-import component-from-global-scope="VictoryGroupDesignSystem_5427f7.Button" variant="primary" size="lg" onClick="{{ startScoring }}" hint-size="220px,56px">Запустить скоринг · {{ stagedCount }}</x-import>
+          </div>
+        </sc-if>
+        <sc-if value="{{ scoreRunning }}" hint-placeholder-val="{{ false }}">
+          <div>
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:16px;">
+              <div style="display:inline-flex; align-items:center; gap:12px;">
+                <span style="width:18px; height:18px; border-radius:50%; border:2px solid var(--vg-ink-500); border-top-color:var(--vg-cyan); animation:vg-spin 0.8s linear infinite; display:inline-block;"></span>
+                <span style="font-family:var(--font-display); font-weight:700; text-transform:uppercase; font-size:16px; letter-spacing:-0.01em;">Анализируем резюме</span>
+              </div>
+              <div style="font-size:14px; color:var(--text-body);"><span style="font-weight:700; color:var(--text-strong);">{{ scoreDone }}</span> из {{ scoreTotal }}</div>
+            </div>
+            <div style="height:10px; border-radius:var(--radius-pill); background:var(--vg-ink-700); overflow:hidden; border:1px solid var(--border-hairline);">
+              <div style="height:100%; width:{{ scorePct }}; border-radius:var(--radius-pill); background-image:repeating-linear-gradient(45deg, rgba(255,255,255,0.16) 0 8px, transparent 8px 16px), linear-gradient(90deg, var(--vg-cyan), var(--vg-green)); background-size:28px 28px, 100% 100%; animation:vg-bar-stripes 0.7s linear infinite; transition:width 450ms var(--ease-out);"></div>
+            </div>
+            <div style="margin-top:11px; font-size:12px; color:var(--text-faint);">{{ scoreCurrentName }}</div>
+          </div>
+        </sc-if>
+        <sc-if value="{{ scoreDoneState }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex; align-items:center; justify-content:space-between; gap:24px; flex-wrap:wrap;">
+            <div style="display:inline-flex; align-items:center; gap:14px;">
+              <span style="display:grid; place-items:center; width:40px; height:40px; border-radius:50%; background:rgba(59,220,107,0.12); border:1px solid rgba(59,220,107,0.4); color:var(--vg-green);"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M5 12.5l4.5 4.5L19 7" stroke="currentColor" stroke-width="2" stroke-linecap="square"/></svg></span>
+              <div>
+                <div style="font-family:var(--font-display); font-weight:700; text-transform:uppercase; font-size:17px; letter-spacing:-0.01em;">Скоринг завершён</div>
+                <div style="font-size:13px; color:var(--text-muted); margin-top:5px;">Проанализировано {{ scoreTotal }} резюме · результаты отранжированы по соответствию.</div>
+              </div>
+            </div>
+            <x-import component-from-global-scope="VictoryGroupDesignSystem_5427f7.Button" variant="primary" size="md" onClick="{{ tabResults }}" hint-size="200px,46px">Перейти к результатам</x-import>
+          </div>
+        </sc-if>
+      </div>
+    </section>
+    </sc-if>
+
+    <!-- ============================ TAB 2 — ФАЙЛЫ ============================ -->
+    <sc-if value="{{ isFiles }}" hint-placeholder-val="{{ false }}">
+    <section>
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:18px; flex-wrap:wrap; margin-bottom:18px;">
+        <div style="position:relative; flex:1; min-width:260px; max-width:380px;">
+          <span style="position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--text-faint); display:inline-flex;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.6"/><path d="m20 20-3.6-3.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="square"/></svg></span>
+          <input type="text" value="{{ filesSearch }}" onInput="{{ onFilesSearch }}" placeholder="Поиск по имени файла" style="width:100%; font-family:var(--font-body); font-size:14px; color:var(--text-strong); background:var(--surface-card); border:1px solid var(--border-hairline); border-radius:var(--radius-sm); padding:11px 14px 11px 42px; outline:none;" onfocus="this.style.borderColor='var(--text-muted)'" onblur="this.style.borderColor='var(--border-hairline)'">
+        </div>
+        <div style="display:flex; gap:7px;">
+          <sc-for list="{{ filesChips }}" as="ch" hint-placeholder-count="3">
+            <button type="button" onClick="{{ ch.onClick }}" style="{{ ch.style }}">{{ ch.label }}<span style="opacity:0.55; margin-left:6px;">{{ ch.count }}</span></button>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="border:1px solid var(--border-hairline); border-radius:var(--radius-sm); overflow:hidden;">
+        <div style="display:grid; grid-template-columns:1fr 110px 132px 132px; gap:16px; padding:11px 18px; background:var(--surface-section); border-bottom:1px solid var(--border-hairline); font-size:11px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--text-faint);">
+          <div>Файл</div><div>Размер</div><div>Статус</div><div style="text-align:right;">Действия</div>
+        </div>
+        <sc-for list="{{ filesView }}" as="f" hint-placeholder-count="6">
+          <div style="display:grid; grid-template-columns:1fr 110px 132px 132px; gap:16px; align-items:center; padding:13px 18px; border-bottom:1px solid var(--border-hairline);" style-hover="background:var(--surface-card)">
+            <div style="display:flex; align-items:center; gap:13px; min-width:0;">
+              <span style="display:grid; place-items:center; width:32px; height:32px; border-radius:var(--radius-xs); background:var(--surface-card); border:1px solid var(--border-hairline); color:var(--text-muted); font-size:9px; font-weight:800;">{{ f.ext }}</span>
+              <div style="font-size:14px; font-weight:500; color:var(--text-strong); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ f.name }}</div>
+            </div>
+            <div style="font-size:13px; color:var(--text-muted);">{{ f.size }}</div>
+            <div><span style="display:inline-flex; align-items:center; gap:7px; padding:4px 10px; font-size:11px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:{{ f.statusColor }}; background:{{ f.statusBg }}; border-radius:var(--radius-pill);"><span style="width:5px; height:5px; border-radius:50%; background:{{ f.statusColor }};"></span>{{ f.statusLabel }}</span></div>
+            <div style="display:flex; justify-content:flex-end; gap:6px;">
+              <button type="button" title="Просмотреть" onClick="{{ f.onView }}" style="display:grid; place-items:center; width:32px; height:32px; background:var(--surface-card); border:1px solid var(--border-hairline); border-radius:var(--radius-xs); cursor:pointer; color:var(--text-body);" style-hover="color:var(--text-strong); border-color:var(--text-muted)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="2.6" stroke="currentColor" stroke-width="1.5"/></svg></button>
+              <button type="button" title="Скачать" onClick="{{ f.onDownload }}" style="display:grid; place-items:center; width:32px; height:32px; background:var(--surface-card); border:1px solid var(--border-hairline); border-radius:var(--radius-xs); cursor:pointer; color:var(--text-body);" style-hover="color:var(--text-strong); border-color:var(--text-muted)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 19h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="square"/></svg></button>
+            </div>
+          </div>
+        </sc-for>
+        <sc-if value="{{ filesEmpty }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:48px; text-align:center; color:var(--text-faint); font-size:14px;">Файлы не найдены</div>
+        </sc-if>
+      </div>
+
+      <!-- pagination -->
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:16px; margin-top:18px; flex-wrap:wrap;">
+        <div style="font-size:13px; color:var(--text-faint);">{{ filesRangeLabel }}</div>
+        <div style="display:flex; align-items:center; gap:6px;">
+          <button type="button" onClick="{{ filesPrev }}" style="{{ filesPrevStyle }}"><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="1.7" stroke-linecap="square"/></svg></button>
+          <sc-for list="{{ filesPages }}" as="p" hint-placeholder-count="4">
+            <button type="button" onClick="{{ p.onClick }}" style="{{ p.style }}">{{ p.label }}</button>
+          </sc-for>
+          <button type="button" onClick="{{ filesNext }}" style="{{ filesNextStyle }}"><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="1.7" stroke-linecap="square"/></svg></button>
+        </div>
+      </div>
+    </section>
+    </sc-if>
+
+    <!-- ============================ TAB 3 — РЕЗУЛЬТАТЫ ============================ -->
+    <sc-if value="{{ isResults }}" hint-placeholder-val="{{ false }}">
+    <section>
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:18px; flex-wrap:wrap; margin-bottom:18px;">
+        <div style="position:relative; flex:1; min-width:260px; max-width:380px;">
+          <span style="position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--text-faint); display:inline-flex;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.6"/><path d="m20 20-3.6-3.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="square"/></svg></span>
+          <input type="text" value="{{ resultsSearch }}" onInput="{{ onResultsSearch }}" placeholder="Поиск кандидата" style="width:100%; font-family:var(--font-body); font-size:14px; color:var(--text-strong); background:var(--surface-card); border:1px solid var(--border-hairline); border-radius:var(--radius-sm); padding:11px 14px 11px 42px; outline:none;" onfocus="this.style.borderColor='var(--text-muted)'" onblur="this.style.borderColor='var(--border-hairline)'">
+        </div>
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span style="font-size:12px; color:var(--text-faint); letter-spacing:0.04em; text-transform:uppercase;">Сортировка</span>
+          <div style="display:flex; gap:4px; padding:3px; background:var(--surface-card); border:1px solid var(--border-hairline); border-radius:var(--radius-sm);">
+            <sc-for list="{{ sortOptions }}" as="s" hint-placeholder-count="4">
+              <button type="button" onClick="{{ s.onClick }}" style="{{ s.style }}">{{ s.label }}</button>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <sc-for list="{{ resultsView }}" as="c" hint-placeholder-count="6">
+          <div style="border:1px solid {{ c.borderColor }}; border-radius:var(--radius-sm); background:var(--surface-card); overflow:hidden; transition:border-color 160ms;" style-hover="border-color:var(--border-strong)">
+            <!-- compact row -->
+            <div style="display:grid; grid-template-columns:42px 1fr auto; gap:18px; align-items:center; padding:16px 18px;">
+              <div style="display:grid; place-items:center; width:42px; height:42px; border-radius:var(--radius-sm); font-family:var(--font-display); font-weight:700; font-size:16px; color:{{ c.rankColor }}; background:{{ c.rankBg }}; border:1px solid {{ c.rankBorder }};">{{ c.rank }}</div>
+              <div style="min-width:0;">
+                <div style="display:flex; align-items:center; gap:10px;">
+                  <span style="font-size:16px; font-weight:700; color:var(--text-strong); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ c.name }}</span>
+                  <span style="font-size:12px; color:var(--text-muted); white-space:nowrap;">{{ c.role }}</span>
+                </div>
+                <div style="font-size:13px; line-height:1.45; color:var(--text-muted); margin-top:4px; display:-webkit-box; -webkit-line-clamp:1; -webkit-box-orient:vertical; overflow:hidden;">{{ c.summary }}</div>
+              </div>
+              <div style="display:flex; align-items:center; gap:22px;">
+                <!-- mini metrics -->
+                <div style="display:flex; gap:16px;">
+                  <div style="text-align:center;">
+                    <div style="font-size:11px; color:var(--text-faint); letter-spacing:0.04em; text-transform:uppercase; margin-bottom:6px;">Опыт</div>
+                    <div style="font-size:15px; font-weight:700; color:var(--text-strong);">{{ c.exp }}</div>
+                    <div style="width:46px; height:3px; margin-top:5px; border-radius:2px; background:var(--vg-ink-600); overflow:hidden;"><div style="height:100%; width:{{ c.expPct }}; background:{{ c.expColor }};"></div></div>
+                  </div>
+                  <div style="text-align:center;">
+                    <div style="font-size:11px; color:var(--text-faint); letter-spacing:0.04em; text-transform:uppercase; margin-bottom:6px;">Навыки</div>
+                    <div style="font-size:15px; font-weight:700; color:var(--text-strong);">{{ c.skills }}</div>
+                    <div style="width:46px; height:3px; margin-top:5px; border-radius:2px; background:var(--vg-ink-600); overflow:hidden;"><div style="height:100%; width:{{ c.skillsPct }}; background:{{ c.skillsColor }};"></div></div>
+                  </div>
+                  <div style="text-align:center;">
+                    <div style="font-size:11px; color:var(--text-faint); letter-spacing:0.04em; text-transform:uppercase; margin-bottom:6px;">Доп.</div>
+                    <div style="font-size:15px; font-weight:700; color:var(--text-strong);">{{ c.extra }}</div>
+                    <div style="width:46px; height:3px; margin-top:5px; border-radius:2px; background:var(--vg-ink-600); overflow:hidden;"><div style="height:100%; width:{{ c.extraPct }}; background:{{ c.extraColor }};"></div></div>
+                  </div>
+                </div>
+                <!-- total -->
+                <div style="text-align:center; padding-left:22px; border-left:1px solid var(--border-hairline);">
+                  <div style="font-family:var(--font-display); font-weight:800; font-size:28px; line-height:1; color:{{ c.totalColor }};">{{ c.total }}</div>
+                  <div style="font-size:10px; color:var(--text-faint); letter-spacing:0.1em; text-transform:uppercase; margin-top:5px;">из 100</div>
+                </div>
+              </div>
+            </div>
+            <!-- action bar -->
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; padding:10px 18px; border-top:1px solid var(--border-hairline); background:var(--surface-section);">
+              <button type="button" onClick="{{ c.onToggle }}" style="display:inline-flex; align-items:center; gap:8px; font-family:var(--font-body); font-size:12px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:var(--text-body); background:none; border:none; cursor:pointer; padding:4px 0;" style-hover="color:var(--text-strong)">
+                <span style="transform:{{ c.caret }}; transition:transform 200ms; display:inline-flex;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M5 8l7 7 7-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="square"/></svg></span>
+                Анализ требований
+              </button>
+              <div style="display:flex; gap:8px;">
+                <button type="button" onClick="{{ c.onView }}" style="display:inline-flex; align-items:center; gap:7px; font-size:12px; font-weight:600; color:var(--text-body); background:var(--surface-card); border:1px solid var(--border-hairline); border-radius:var(--radius-xs); padding:7px 13px; cursor:pointer;" style-hover="color:var(--text-strong); border-color:var(--text-muted)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="2.6" stroke="currentColor" stroke-width="1.5"/></svg>Резюме</button>
+                <button type="button" onClick="{{ c.onDownload }}" style="display:inline-flex; align-items:center; gap:7px; font-size:12px; font-weight:600; color:var(--text-body); background:var(--surface-card); border:1px solid var(--border-hairline); border-radius:var(--radius-xs); padding:7px 13px; cursor:pointer;" style-hover="color:var(--text-strong); border-color:var(--text-muted)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 19h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="square"/></svg>Скачать</button>
+              </div>
+            </div>
+            <!-- expanded analysis -->
+            <sc-if value="{{ c.expanded }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:20px 18px 22px; border-top:1px solid var(--border-hairline);">
+                <div style="font-size:11px; font-weight:700; letter-spacing:0.16em; text-transform:uppercase; color:var(--text-faint); margin-bottom:14px;">Соответствие требованиям</div>
+                <div style="display:flex; flex-direction:column; gap:2px;">
+                  <sc-for list="{{ c.analysis }}" as="a" hint-placeholder-count="4">
+                    <div style="display:grid; grid-template-columns:24px 1fr auto; gap:14px; align-items:start; padding:11px 0; border-bottom:1px solid rgba(255,255,255,0.04);">
+                      <span style="display:grid; place-items:center; width:22px; height:22px; border-radius:50%; background:{{ a.iconBg }}; color:{{ a.iconColor }}; margin-top:1px;">{{ a.icon }}</span>
+                      <div>
+                        <div style="font-size:14px; font-weight:600; color:var(--text-strong);">{{ a.label }}</div>
+                        <div style="font-size:13px; line-height:1.5; color:var(--text-muted); margin-top:3px;">{{ a.note }}</div>
+                      </div>
+                      <span style="font-size:11px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:{{ a.iconColor }}; white-space:nowrap; padding-top:2px;">{{ a.verdict }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-if>
+          </div>
+        </sc-for>
+        <sc-if value="{{ resultsEmpty }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:48px; text-align:center; color:var(--text-faint); font-size:14px; border:1px solid var(--border-hairline); border-radius:var(--radius-sm);">Кандидаты не найдены</div>
+        </sc-if>
+      </div>
+    </section>
+    </sc-if>
+
+  </div>
+
+  <!-- ============================ RESUME MODAL ============================ -->
+  <sc-if value="{{ modalOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeModal }}" style="position:fixed; inset:0; z-index:80; background:rgba(2,2,3,0.7); backdrop-filter:blur(4px); display:flex; align-items:flex-start; justify-content:center; padding:48px 24px; overflow-y:auto;">
+      <div onClick="{{ stop }}" style="width:100%; max-width:760px; background:var(--surface-section); border:1px solid var(--border-hairline); border-radius:var(--radius-sm); box-shadow:var(--shadow-raised); animation:vg-fade-up 200ms var(--ease-out);">
+        <div style="position:sticky; top:0; display:flex; align-items:center; justify-content:space-between; gap:16px; padding:18px 22px; background:var(--surface-section); border-bottom:1px solid var(--border-hairline); border-radius:var(--radius-sm) var(--radius-sm) 0 0;">
+          <div style="display:flex; align-items:center; gap:13px; min-width:0;">
+            <span style="display:grid; place-items:center; width:36px; height:36px; border-radius:var(--radius-xs); background:var(--surface-card); border:1px solid var(--border-hairline); color:var(--text-muted); font-size:9px; font-weight:800;">{{ modalExt }}</span>
+            <div style="min-width:0;">
+              <div style="font-size:15px; font-weight:700; color:var(--text-strong); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ modalName }}</div>
+              <div style="font-size:12px; color:var(--text-faint); margin-top:2px;">{{ modalMeta }}</div>
+            </div>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <button type="button" onClick="{{ modalDownload }}" style="display:inline-flex; align-items:center; gap:7px; font-size:12px; font-weight:600; color:var(--text-body); background:var(--surface-card); border:1px solid var(--border-hairline); border-radius:var(--radius-xs); padding:8px 13px; cursor:pointer;" style-hover="color:var(--text-strong); border-color:var(--text-muted)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 19h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="square"/></svg>Скачать</button>
+            <button type="button" onClick="{{ closeModal }}" style="display:grid; place-items:center; width:34px; height:34px; background:var(--surface-card); border:1px solid var(--border-hairline); border-radius:var(--radius-xs); cursor:pointer; color:var(--text-body);" style-hover="color:var(--text-strong); border-color:var(--text-muted)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="1.7" stroke-linecap="square"/></svg></button>
+          </div>
+        </div>
+        <div style="padding:26px 30px 34px; font-size:14px; line-height:1.7; color:var(--text-body); white-space:pre-wrap; font-family:var(--font-body);">{{ modalText }}</div>
+      </div>
+    </div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1200,&quot;height&quot;:900}}">
+class Component extends DCLogic {
+  state = {
+    tab: 'scoring',
+    detailsOpen: true,
+    scorePhase: 'idle',     // idle | running | done
+    scoreDone: 0,
+    scoredCount: 9,
+    stagedRemoved: {},
+    filesSearch: '',
+    filesFilter: 'all',
+    filesPage: 1,
+    resultsSearch: '',
+    sort: 'total',
+    expanded: {},
+    modal: null,
+  };
+
+  // ---------- static data ----------
+  get stagedData() {
+    return [
+      { id:'s1', name:'Иванов_Алексей_резюме.pdf', ext:'PDF', size:'248 КБ' },
+      { id:'s2', name:'petrov-dev-cv.docx', ext:'DOCX', size:'92 КБ' },
+      { id:'s3', name:'Сидорова_М_backend.pdf', ext:'PDF', size:'315 КБ' },
+      { id:'s4', name:'resume_kuznetsov.txt', ext:'TXT', size:'18 КБ' },
+      { id:'s5', name:'Волков_Дмитрий.docx', ext:'DOCX', size:'104 КБ' },
+      { id:'s6', name:'a_morozova_cv.pdf', ext:'PDF', size:'271 КБ' },
+    ].filter(f => !this.state.stagedRemoved[f.id]);
+  }
+
+  get filesData() {
+    const exts = ['PDF','DOCX','TXT'];
+    const first = ['Иванов А.','Петров С.','Сидорова М.','Кузнецов И.','Волков Д.','Морозова А.','Новиков П.','Лебедев К.','Соколова Е.','Орлов В.','Зайцева Н.','Фёдоров Г.','Григорьев Р.','Павлова Ю.','Тарасов М.','Беляева О.','Комаров А.','Жукова Д.','Маркин С.','Титова В.','Беляков Е.','Громова И.','Савельев Т.'];
+    const arr = [];
+    for (let i=0;i<23;i++){
+      const ext = exts[i%3];
+      const checked = i < 9;
+      arr.push({
+        id:'f'+i,
+        name:(first[i]||('Кандидат '+i)).replace(/[.\s]/g,'_').replace('__','_').toLowerCase()+'_резюме.'+ext.toLowerCase(),
+        ext, size:(40+((i*37)%320))+' КБ',
+        status: checked ? 'checked' : 'uploaded',
+      });
+    }
+    return arr;
+  }
+
+  get candidatesData() {
+    return [
+      { id:'c1', name:'Иванов Алексей', role:'Senior .NET Engineer', total:94, exp:38, skills:34, extra:22,
+        file:'ivanov_a_резюме.pdf', ext:'PDF', size:'248 КБ',
+        summary:'8 лет на C#/.NET, вёл команду из 5 человек, проектировал микросервисы под высокую нагрузку в финтехе.',
+        analysis:[
+          {k:'match', label:'C# / .NET Core от 3 лет', note:'8 лет коммерческого опыта, .NET Core 3.1–8, ASP.NET Core.'},
+          {k:'match', label:'ООП, SOLID, паттерны', note:'Явно описаны DDD, CQRS, чистая архитектура в проектах.'},
+          {k:'match', label:'Высоконагруженные системы', note:'Платёжный шлюз ~12k RPS, Kafka, шардирование.'},
+          {k:'partial', label:'ИИ-инструменты разработки', note:'Упомянут GitHub Copilot, без деталей по интеграции.'},
+          {k:'match', label:'Профильное образование', note:'МГТУ им. Баумана, ПОВТ, специалитет.'},
+        ]},
+      { id:'c2', name:'Сидорова Мария', role:'Backend Developer', total:88, exp:34, skills:33, extra:21,
+        file:'sidorova_m_backend.pdf', ext:'PDF', size:'315 КБ',
+        summary:'6 лет в backend, сильная в ASP.NET и распределённых системах, опыт менторинга джунов.',
+        analysis:[
+          {k:'match', label:'C# / .NET Core от 3 лет', note:'6 лет, .NET 6/8, активная работа с ASP.NET Core.'},
+          {k:'match', label:'ООП, SOLID, паттерны', note:'Хорошее понимание принципов, есть pet-проекты.'},
+          {k:'partial', label:'Высоконагруженные системы', note:'Опыт есть, но нагрузка ниже заявленной в вакансии.'},
+          {k:'match', label:'ИИ-инструменты разработки', note:'Cursor + Copilot в ежедневной работе.'},
+          {k:'match', label:'Профильное образование', note:'ИТМО, прикладная информатика.'},
+        ]},
+      { id:'c3', name:'Волков Дмитрий', role:'.NET / Go Developer', total:81, exp:30, skills:31, extra:20,
+        file:'volkov_d.docx', ext:'DOCX', size:'104 КБ',
+        summary:'5 лет, переходит из Go в .NET, сильные алгоритмические навыки, опыт в e-commerce.',
+        analysis:[
+          {k:'match', label:'C# / .NET Core от 3 лет', note:'4 года на .NET + 1 год Go, релевантный стек.'},
+          {k:'match', label:'ООП, SOLID, паттерны', note:'Сильная инженерная база.'},
+          {k:'partial', label:'Высоконагруженные системы', note:'Работал с очередями, но без явной метрики нагрузки.'},
+          {k:'miss', label:'ИИ-инструменты разработки', note:'Не упомянуты в резюме.'},
+          {k:'match', label:'Профильное образование', note:'СПбГУ, математика и механика.'},
+        ]},
+      { id:'c4', name:'Морозова Анна', role:'Middle+ .NET Developer', total:74, exp:27, skills:29, extra:18,
+        file:'a_morozova_cv.pdf', ext:'PDF', size:'271 КБ',
+        summary:'4 года на .NET, опыт в продуктовой разработке, активно растёт в архитектуре.',
+        analysis:[
+          {k:'match', label:'C# / .NET Core от 3 лет', note:'4 года, .NET Core/5/6.'},
+          {k:'partial', label:'ООП, SOLID, паттерны', note:'Базовое уверенное владение, без сложных паттернов.'},
+          {k:'partial', label:'Высоконагруженные системы', note:'Ограниченный опыт, в основном CRUD-сервисы.'},
+          {k:'match', label:'ИИ-инструменты разработки', note:'Copilot, ChatGPT для рефакторинга.'},
+          {k:'match', label:'Профильное образование', note:'МИФИ, информатика.'},
+        ]},
+      { id:'c5', name:'Кузнецов Игорь', role:'Fullstack (.NET + React)', total:69, exp:24, skills:27, extra:18,
+        file:'resume_kuznetsov.txt', ext:'TXT', size:'18 КБ',
+        summary:'5 лет фуллстек, бэкенд на .NET составляет ~60% времени, остальное — фронтенд.',
+        analysis:[
+          {k:'partial', label:'C# / .NET Core от 3 лет', note:'Опыт есть, но распылён между фронтом и бэком.'},
+          {k:'match', label:'ООП, SOLID, паттерны', note:'Уверенное владение принципами.'},
+          {k:'miss', label:'Высоконагруженные системы', note:'Нет релевантного опыта.'},
+          {k:'partial', label:'ИИ-инструменты разработки', note:'Использует, без указания инструментов.'},
+          {k:'match', label:'Профильное образование', note:'ВО, прикладная математика.'},
+        ]},
+      { id:'c6', name:'Петров Сергей', role:'Junior+ .NET Developer', total:58, exp:18, skills:24, extra:16,
+        file:'petrov-dev-cv.docx', ext:'DOCX', size:'92 КБ',
+        summary:'2 года опыта, быстро обучается, сильная теоретическая база, нужен ментор.',
+        analysis:[
+          {k:'miss', label:'C# / .NET Core от 3 лет', note:'Только 2 года — ниже минимального порога.'},
+          {k:'partial', label:'ООП, SOLID, паттерны', note:'Теория сильная, практики недостаточно.'},
+          {k:'miss', label:'Высоконагруженные системы', note:'Нет опыта.'},
+          {k:'match', label:'ИИ-инструменты разработки', note:'Активно использует Cursor и Copilot.'},
+          {k:'match', label:'Профильное образование', note:'Профильный бакалавриат.'},
+        ]},
+    ];
+  }
+
+  resumeText(c){
+    return `${c.name} — ${c.role}\nТелефон: +7 (9xx) xxx-xx-xx · Email: ${c.id}@example.com\n\nКРАТКО О СЕБЕ\n${c.summary}\n\nОПЫТ РАБОТЫ\n\n2021 — наст. время · Senior Backend Developer, FinTech Solutions\n· Проектирование и разработка микросервисов на .NET Core (C#)\n· Высоконагруженные платёжные сервисы, оптимизация под пиковые нагрузки\n· Code review, менторинг middle-разработчиков, развитие инженерной культуры\n· Stack: ASP.NET Core, EF Core, PostgreSQL, Kafka, Redis, Docker, K8s\n\n2018 — 2021 · Backend Developer, E-commerce Platform\n· Разработка REST/gRPC API, интеграции с внешними системами\n· Перевод монолита на микросервисную архитектуру\n· Stack: .NET, RabbitMQ, MS SQL, Elasticsearch\n\nКЛЮЧЕВЫЕ НАВЫКИ\nC#, .NET Core / .NET 8, ASP.NET Core, EF Core, SOLID, DDD, CQRS,\nмикросервисы, PostgreSQL, Kafka, Redis, Docker, Kubernetes, CI/CD\n\nОБРАЗОВАНИЕ\nВысшее техническое, специальность «Программная инженерия»\n\nДОПОЛНИТЕЛЬНО\n· Опыт работы с ИИ-инструментами (GitHub Copilot, Cursor)\n· Английский — Upper-Intermediate (чтение тех. документации)`;
+  }
+
+  // ---------- helpers ----------
+  scoreColor(v, max){
+    const r = v/max;
+    if (r >= 0.8) return 'var(--vg-green)';
+    if (r >= 0.55) return 'var(--vg-cyan)';
+    return 'var(--text-muted)';
+  }
+  totalColor(v){
+    if (v >= 85) return 'var(--vg-green)';
+    if (v >= 70) return 'var(--vg-cyan)';
+    if (v >= 60) return 'var(--text-body)';
+    return 'var(--text-muted)';
+  }
+
+  startScoring = () => {
+    if (this.state.scorePhase === 'running') return;
+    const total = this.stagedData.length;
+    this.setState({ scorePhase:'running', scoreDone:0 });
+    if (this._t) clearInterval(this._t);
+    this._t = setInterval(() => {
+      this.setState(s => {
+        const next = s.scoreDone + 1;
+        if (next >= total){
+          clearInterval(this._t);
+          return { scoreDone: total, scorePhase:'done', scoredCount: s.scoredCount + total };
+        }
+        return { scoreDone: next };
+      });
+    }, 750);
+  };
+
+  componentWillUnmount(){ if (this._t) clearInterval(this._t); }
+
+  renderVals(){
+    const st = this.state;
+    const tabBase = 'font-family:var(--font-body); font-size:14px; font-weight:600; letter-spacing:0.01em; padding:13px 4px; margin-right:22px; background:none; border:none; border-bottom:2px solid transparent; cursor:pointer; display:inline-flex; align-items:center; transition:color 160ms, border-color 160ms;';
+    const tabOn = tabBase + 'color:var(--text-strong); border-bottom-color:var(--text-strong);';
+    const tabOff = tabBase + 'color:var(--text-muted); border-bottom-color:transparent;';
+
+    // ----- staged -----
+    const staged = this.stagedData.map(f => ({
+      ...f,
+      statusLabel:'Готов к анализу', statusColor:'var(--text-faint)',
+      onRemove:() => this.setState(s => ({ stagedRemoved:{...s.stagedRemoved, [f.id]:true} })),
+    }));
+
+    // ----- files filter + paginate -----
+    const PAGE = 8;
+    const q = st.filesSearch.trim().toLowerCase();
+    let files = this.filesData;
+    if (st.filesFilter !== 'all') files = files.filter(f => f.status === st.filesFilter);
+    if (q) files = files.filter(f => f.name.toLowerCase().includes(q));
+    const totalPages = Math.max(1, Math.ceil(files.length / PAGE));
+    const page = Math.min(st.filesPage, totalPages);
+    const start = (page-1)*PAGE;
+    const slice = files.slice(start, start+PAGE);
+
+    const statusMap = {
+      uploaded:{ label:'Загружен', color:'var(--vg-cyan)', bg:'rgba(30,156,255,0.1)' },
+      checked:{ label:'Проверен', color:'var(--vg-green)', bg:'rgba(59,220,107,0.1)' },
+    };
+    const filesView = slice.map(f => {
+      const sm = statusMap[f.status];
+      return {
+        ...f, statusLabel:sm.label, statusColor:sm.color, statusBg:sm.bg,
+        onView:() => this.setState({ modal:{ ext:f.ext, name:f.name, meta:`${f.ext} · ${f.size}`, file:f.name,
+          text:`РЕЗЮМЕ\n\nФайл: ${f.name}\n\n` + this.resumeText({ name:f.name.split('_')[0], role:'.NET Developer', id:f.id, summary:'Backend-разработчик с опытом на C#/.NET.' }) } }),
+        onDownload:() => {},
+      };
+    });
+
+    const chipBase = 'font-family:var(--font-body); font-size:13px; font-weight:600; padding:9px 14px; border-radius:var(--radius-sm); cursor:pointer; transition:all 160ms;';
+    const chipOn = chipBase + 'color:var(--text-on-light); background:var(--action-fill); border:1px solid var(--action-fill);';
+    const chipOff = chipBase + 'color:var(--text-muted); background:var(--surface-card); border:1px solid var(--border-hairline);';
+    const counts = { all:this.filesData.length, uploaded:this.filesData.filter(f=>f.status==='uploaded').length, checked:this.filesData.filter(f=>f.status==='checked').length };
+    const filesChips = [
+      { key:'all', label:'Все' }, { key:'uploaded', label:'Загружен' }, { key:'checked', label:'Проверен' },
+    ].map(c => ({
+      label:c.label, count:counts[c.key], style: st.filesFilter===c.key ? chipOn : chipOff,
+      onClick:() => this.setState({ filesFilter:c.key, filesPage:1 }),
+    }));
+
+    // pagination buttons
+    const pageBtnBase = 'display:grid; place-items:center; min-width:34px; height:34px; padding:0 8px; font-family:var(--font-body); font-size:13px; font-weight:600; border-radius:var(--radius-xs); cursor:pointer; transition:all 140ms;';
+    const filesPages = [];
+    for (let p=1;p<=totalPages;p++){
+      filesPages.push({
+        label:String(p),
+        style: pageBtnBase + (p===page
+          ? 'color:var(--text-on-light); background:var(--action-fill); border:1px solid var(--action-fill);'
+          : 'color:var(--text-body); background:var(--surface-card); border:1px solid var(--border-hairline);'),
+        onClick:() => this.setState({ filesPage:p }),
+      });
+    }
+    const arrowBase = 'display:grid; place-items:center; width:34px; height:34px; border-radius:var(--radius-xs); background:var(--surface-card); border:1px solid var(--border-hairline);';
+    const arrowOn = arrowBase + 'color:var(--text-body); cursor:pointer;';
+    const arrowOff = arrowBase + 'color:var(--vg-ink-400); cursor:not-allowed;';
+
+    // ----- results sort + search -----
+    const rq = st.resultsSearch.trim().toLowerCase();
+    let cands = this.candidatesData.slice();
+    if (rq) cands = cands.filter(c => c.name.toLowerCase().includes(rq) || c.role.toLowerCase().includes(rq));
+    const sortFns = {
+      total:(a,b)=>b.total-a.total, exp:(a,b)=>b.exp-a.exp,
+      skills:(a,b)=>b.skills-a.skills, name:(a,b)=>a.name.localeCompare(b.name,'ru'),
+    };
+    cands.sort(sortFns[st.sort]);
+
+    const aMeta = {
+      match:{ color:'var(--vg-green)', bg:'rgba(59,220,107,0.12)', verdict:'Соответствует',
+        icon: React.createElement('svg',{width:13,height:13,viewBox:'0 0 24 24',fill:'none'},React.createElement('path',{d:'M5 12.5l4.5 4.5L19 7',stroke:'currentColor',strokeWidth:2.2,strokeLinecap:'square'})) },
+      partial:{ color:'var(--vg-orange)', bg:'rgba(255,106,26,0.12)', verdict:'Частично',
+        icon: React.createElement('svg',{width:13,height:13,viewBox:'0 0 24 24',fill:'none'},React.createElement('path',{d:'M5 12h14',stroke:'currentColor',strokeWidth:2.4,strokeLinecap:'square'})) },
+      miss:{ color:'var(--text-muted)', bg:'rgba(140,140,147,0.12)', verdict:'Нет',
+        icon: React.createElement('svg',{width:12,height:12,viewBox:'0 0 24 24',fill:'none'},React.createElement('path',{d:'M6 6l12 12M18 6 6 18',stroke:'currentColor',strokeWidth:2.2,strokeLinecap:'square'})) },
+    };
+
+    const resultsView = cands.map((c, i) => {
+      const expanded = !!st.expanded[c.id];
+      const topThree = st.sort==='total' && !rq && i < 3;
+      return {
+        ...c,
+        rank: st.sort==='total' && !rq ? (i+1) : '·',
+        rankColor: topThree ? 'var(--text-on-light)' : 'var(--text-muted)',
+        rankBg: topThree ? 'var(--action-fill)' : 'var(--surface-section)',
+        rankBorder: topThree ? 'var(--action-fill)' : 'var(--border-hairline)',
+        borderColor: i===0 && st.sort==='total' && !rq ? 'rgba(59,220,107,0.35)' : 'var(--border-hairline)',
+        totalColor: this.totalColor(c.total),
+        expPct:(c.exp/40*100)+'%', skillsPct:(c.skills/35*100)+'%', extraPct:(c.extra/25*100)+'%',
+        expColor:this.scoreColor(c.exp,40), skillsColor:this.scoreColor(c.skills,35), extraColor:this.scoreColor(c.extra,25),
+        expanded, caret: expanded ? 'rotate(180deg)' : 'rotate(0deg)',
+        onToggle:() => this.setState(s => ({ expanded:{...s.expanded, [c.id]: !s.expanded[c.id]} })),
+        onView:() => this.setState({ modal:{ ext:c.ext, name:c.file, meta:`${c.name} · ${c.ext} · ${c.size}`, file:c.file, text:this.resumeText(c) } }),
+        onDownload:() => {},
+        analysis: c.analysis.map(a => {
+          const m = aMeta[a.k];
+          return { label:a.label, note:a.note, icon:m.icon, iconColor:m.color, iconBg:m.bg, verdict:m.verdict };
+        }),
+      };
+    });
+
+    const sortBtnBase = 'font-family:var(--font-body); font-size:12px; font-weight:700; letter-spacing:0.02em; padding:7px 12px; border-radius:var(--radius-xs); border:none; cursor:pointer; transition:all 140ms;';
+    const sortOptions = [
+      { key:'total', label:'Балл' }, { key:'exp', label:'Опыт' }, { key:'skills', label:'Навыки' }, { key:'name', label:'Имя' },
+    ].map(o => ({
+      label:o.label,
+      style: sortBtnBase + (st.sort===o.key ? 'color:var(--text-strong); background:var(--surface-section);' : 'color:var(--text-muted); background:transparent;'),
+      onClick:() => this.setState({ sort:o.key }),
+    }));
+
+    const m = st.modal;
+
+    return {
+      // header
+      totalFiles: this.filesData.length,
+      scoredCount: st.scoredCount,
+      detailsOpen: st.detailsOpen,
+      detailsCaret: st.detailsOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+      toggleDetails:() => this.setState(s => ({ detailsOpen:!s.detailsOpen })),
+
+      // tabs
+      isScoring: st.tab==='scoring', isFiles: st.tab==='files', isResults: st.tab==='results',
+      tabScoring:() => this.setState({ tab:'scoring' }),
+      tabFiles:() => this.setState({ tab:'files' }),
+      tabResults:() => this.setState({ tab:'results' }),
+      tabScoringStyle: st.tab==='scoring'?tabOn:tabOff,
+      tabFilesStyle: st.tab==='files'?tabOn:tabOff,
+      tabResultsStyle: st.tab==='results'?tabOn:tabOff,
+
+      // scoring tab
+      staged, stagedCount: staged.length,
+      addStaged:() => this.setState({ stagedRemoved:{} }),
+      clearStaged:() => { const r={}; this.stagedData.forEach(f=>r[f.id]=true); this.setState({ stagedRemoved:r }); },
+      startScoring: this.startScoring,
+      scoreIdle: st.scorePhase==='idle', scoreRunning: st.scorePhase==='running', scoreDoneState: st.scorePhase==='done',
+      scoreDone: st.scoreDone, scoreTotal: this.stagedData.length || 6,
+      scorePct: Math.round(st.scoreDone/(this.stagedData.length||6)*100)+'%',
+      scoreCurrentName: (this.stagedData[st.scoreDone] && ('Обработка: '+this.stagedData[st.scoreDone].name)) || 'Финализация результатов…',
+
+      // files tab
+      filesSearch: st.filesSearch,
+      onFilesSearch:(e) => this.setState({ filesSearch:e.target.value, filesPage:1 }),
+      filesChips, filesView, filesEmpty: filesView.length===0,
+      filesPages,
+      filesRangeLabel: files.length ? `${start+1}–${Math.min(start+PAGE, files.length)} из ${files.length}` : '0 из 0',
+      filesPrev:() => this.setState(s => ({ filesPage:Math.max(1, s.filesPage-1) })),
+      filesNext:() => this.setState(s => ({ filesPage:Math.min(totalPages, s.filesPage+1) })),
+      filesPrevStyle: page<=1 ? arrowOff : arrowOn,
+      filesNextStyle: page>=totalPages ? arrowOff : arrowOn,
+
+      // results tab
+      resultsSearch: st.resultsSearch,
+      onResultsSearch:(e) => this.setState({ resultsSearch:e.target.value }),
+      sortOptions, resultsView, resultsEmpty: resultsView.length===0,
+
+      // modal
+      modalOpen: !!m,
+      modalExt: m?m.ext:'', modalName: m?m.name:'', modalMeta: m?m.meta:'', modalText: m?m.text:'',
+      closeModal:() => this.setState({ modal:null }),
+      modalDownload:() => {},
+      stop:(e) => e.stopPropagation(),
+      noop:() => {},
+    };
+  }
+}
+</script>
+</body>
+</html>

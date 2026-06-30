@@ -1,0 +1,18 @@
+<!-- @dsCard group="Brand" viewport="700x180" name="Textures + glow" subtitle="Faint grid, metal imagery, neon labels" -->
+<!DOCTYPE html><html><head><meta charset="utf-8"/><link rel="stylesheet" href="../styles.css"/>
+<style>
+  html,body{margin:0;background:var(--surface-page);font-family:var(--font-body);}
+  .wrap{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;padding:28px;}
+  .tile{height:110px;border-radius:var(--radius-sm);border:1px solid var(--border-hairline);position:relative;overflow:hidden;display:flex;align-items:flex-end;}
+  .grid{background:var(--bg-grid),var(--surface-page);background-size:var(--bg-grid-size);}
+  .metal{background-size:cover;background-position:center;}
+  .cap{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--text-strong);padding:8px 10px;background:rgba(0,0,0,.55);width:100%;box-sizing:border-box;}
+  .neon{display:flex;align-items:center;justify-content:center;background:var(--vg-ink-800);}
+  .neon span{font-family:var(--font-display);font-weight:700;text-transform:uppercase;font-size:18px;color:var(--vg-cyan);text-shadow:var(--glow-cyan);}
+</style></head><body>
+<div class="wrap">
+  <div class="tile grid"><span class="cap">Faint grid</span></div>
+  <div class="tile metal" style="background-image:url('../assets/bg-metal.png')"><span class="cap">Dark metal imagery</span></div>
+  <div class="tile neon"><span>Лидогенерация</span></div>
+</div>
+</body></html>

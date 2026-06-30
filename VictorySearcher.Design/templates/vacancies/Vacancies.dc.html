@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<!-- @template name="Вакансии — список" description="Список созданных вакансий с поиском/фильтром и пошаговым созданием новой вакансии" -->
+<helmet>
+<script src="./ds-base.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body { background: #050506; }
+  ::selection { background: rgba(255,255,255,0.16); }
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-thumb { background: #26262b; border-radius: 8px; }
+  input::placeholder, textarea::placeholder { color: #5c5c64; }
+  textarea { resize: vertical; }
+  @keyframes vg-fade-up { from { opacity:0; transform: translateY(8px); } to { opacity:1; transform:none; } }
+  @keyframes vg-slide-in { from { opacity:0; transform: translateX(40px); } to { opacity:1; transform:none; } }
+</style>
+</helmet>
+
+<div style="min-height:100vh; background:var(--surface-page); font-family:var(--font-body); color:var(--text-strong);">
+
+  <!-- ============================ TOP BAR ============================ -->
+  <header style="position:sticky; top:0; z-index:40; display:flex; align-items:center; justify-content:space-between; gap:24px; padding:14px 32px; background:rgba(5,5,6,0.82); backdrop-filter:blur(14px); border-bottom:1px solid var(--border-hairline);">
+    <div style="display:flex; align-items:center; gap:26px; min-width:0;">
+      <div style="display:inline-flex; align-items:center; gap:12px;">
+        <img src="../../assets/victorysearcher-logo.png" alt="VictorySearcher" style="height:30px; width:30px; object-fit:contain;">
+        <span style="font-family:var(--font-display); font-weight:700; letter-spacing:-0.01em; font-size:16px;">Victory<span style="color:var(--text-muted);">Searcher</span></span>
+      </div>
+      <div style="width:1px; height:24px; background:var(--border-hairline);"></div>
+      <span style="font-size:13px; color:var(--text-body); white-space:nowrap;">Вакансии</span>
+    </div>
+    <div style="display:flex; align-items:center; gap:14px;">
+      <button type="button" onClick="{{ openWizard }}" style="display:inline-flex; align-items:center; gap:8px; padding:9px 16px; font-family:var(--font-body); font-size:12px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-on-light); background:var(--action-fill); border:none; border-radius:var(--radius-sm); cursor:pointer;" style-hover="background:var(--action-fill-hover)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="square"/></svg>
+        Новая вакансия
+      </button>
+      <div style="width:34px; height:34px; border-radius:50%; display:grid; place-items:center; font-size:12px; font-weight:700; letter-spacing:0.04em; color:var(--text-body); background:var(--surface-card); border:1px solid var(--border-hairline);">АК</div>
+    </div>
+  </header>
+
+  <div style="max-width:1200px; margin:0 auto; padding:42px 32px 96px;">
+
+    <!-- ============================ PAGE HEADER ============================ -->
+    <section style="display:flex; align-items:flex-end; justify-content:space-between; gap:28px; flex-wrap:wrap; margin-bottom:30px;">
+      <div>
+        <span style="font-size:12px; font-weight:600; letter-spacing:0.22em; text-transform:uppercase; color:var(--text-muted);">Подбор персонала</span>
+        <h1 style="margin:10px 0 0; font-family:var(--font-display); font-weight:800; text-transform:uppercase; line-height:1; letter-spacing:-0.01em; font-size:42px;">Вакансии</h1>
+      </div>
+      <div style="display:flex; gap:28px; padding-bottom:6px;">
+        <div><div style="font-family:var(--font-display); font-weight:700; font-size:26px; line-height:1;">{{ totalVacancies }}</div><div style="font-size:12px; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-muted); margin-top:6px;">всего</div></div>
+        <div style="width:1px; background:var(--border-hairline);"></div>
+        <div><div style="font-family:var(--font-display); font-weight:700; font-size:26px; line-height:1; color:var(--vg-green);">{{ activeCount }}</div><div style="font-size:12px; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-muted); margin-top:6px;">активных</div></div>
+        <div style="width:1px; background:var(--border-hairline);"></div>
+        <div><div style="font-family:var(--font-display); font-weight:700; font-size:26px; line-height:1;">{{ totalResumes }}</div><div style="font-size:12px; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-muted); margin-top:6px;">резюме</div></div>
+      </div>
+    </section>
+
+    <!-- ============================ TOOLBAR ============================ -->
+    <div style="display:flex; align-items:center; justify-content:space-between; gap:18px; flex-wrap:wrap; margin-bottom:20px;">
+      <div style="position:relative; flex:1; min-width:260px; max-width:380px;">
+        <span style="position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--text-faint); display:inline-flex;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.6"/><path d="m20 20-3.6-3.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="square"/></svg></span>
+        <input type="text" value="{{ search }}" onInput="{{ onSearch }}" placeholder="Поиск по названию вакансии" style="width:100%; font-family:var(--font-body); font-size:14px; color:var(--text-strong); background:var(--surface-card); border:1px solid var(--border-hairline); border-radius:var(--radius-sm); padding:11px 14px 11px 42px; outline:none;" onfocus="this.style.borderColor='var(--text-muted)'" onblur="this.style.borderColor='var(--border-hairline)'">
+      </div>
+      <div style="display:flex; gap:7px;">
+        <sc-for list="{{ filterChips }}" as="ch" hint-placeholder-count="4">
+          <button type="button" onClick="{{ ch.onClick }}" style="{{ ch.style }}">{{ ch.label }}<span style="opacity:0.55; margin-left:6px;">{{ ch.count }}</span></button>
+        </sc-for>
+      </div>
+    </div>
+
+    <!-- ============================ VACANCY LIST ============================ -->
+    <div style="display:flex; flex-direction:column; gap:10px;">
+      <sc-for list="{{ vacancyView }}" as="v" hint-placeholder-count="5">
+        <a href="{{ v.href }}" style="text-decoration:none; color:inherit; display:block;">
+          <div style="display:grid; grid-template-columns:1fr auto 30px; gap:22px; align-items:center; padding:18px 20px; border:1px solid var(--border-hairline); border-radius:var(--radius-sm); background:var(--surface-card); transition:border-color 160ms, background 160ms;" style-hover="border-color:var(--border-strong); background:var(--surface-section)">
+            <div style="min-width:0;">
+              <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+                <span style="font-size:17px; font-weight:700; color:var(--text-strong);">{{ v.title }}</span>
+                <span style="display:inline-flex; align-items:center; gap:6px; padding:3px 10px; font-size:10px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:{{ v.statusColor }}; border:1px solid {{ v.statusBorder }}; border-radius:var(--radius-pill);"><span style="width:5px; height:5px; border-radius:50%; background:{{ v.statusColor }};"></span>{{ v.statusLabel }}</span>
+              </div>
+              <div style="display:flex; align-items:center; gap:14px; margin-top:8px; font-size:12px; color:var(--text-faint);">
+                <span>{{ v.code }}</span>
+                <span style="width:3px; height:3px; border-radius:50%; background:var(--vg-ink-400);"></span>
+                <span>{{ v.dept }}</span>
+                <span style="width:3px; height:3px; border-radius:50%; background:var(--vg-ink-400);"></span>
+                <span>Обновлено {{ v.updated }}</span>
+              </div>
+            </div>
+            <div style="display:flex; align-items:center; gap:26px;">
+              <div style="text-align:center; min-width:64px;">
+                <div style="font-size:17px; font-weight:700; color:var(--text-strong);">{{ v.resumes }}</div>
+                <div style="font-size:10px; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-faint); margin-top:4px;">резюме</div>
+              </div>
+              <div style="text-align:center; min-width:64px;">
+                <div style="font-size:17px; font-weight:700; color:var(--vg-green);">{{ v.scored }}</div>
+                <div style="font-size:10px; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-faint); margin-top:4px;">проверено</div>
+              </div>
+              <div style="text-align:center; min-width:64px; padding-left:24px; border-left:1px solid var(--border-hairline);">
+                <div style="font-family:var(--font-display); font-weight:800; font-size:19px; color:{{ v.topColor }};">{{ v.topScore }}</div>
+                <div style="font-size:10px; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-faint); margin-top:4px;">топ-балл</div>
+              </div>
+            </div>
+            <span style="display:grid; place-items:center; color:var(--text-muted);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="1.7" stroke-linecap="square"/></svg></span>
+          </div>
+        </a>
+      </sc-for>
+      <sc-if value="{{ listEmpty }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:54px; text-align:center; color:var(--text-faint); font-size:14px; border:1px solid var(--border-hairline); border-radius:var(--radius-sm);">Вакансии не найдены</div>
+      </sc-if>
+    </div>
+  </div>
+
+  <!-- ============================ CREATE WIZARD ============================ -->
+  <sc-if value="{{ wizardOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeWizard }}" style="position:fixed; inset:0; z-index:80; background:rgba(2,2,3,0.72); backdrop-filter:blur(5px); display:flex; align-items:stretch; justify-content:flex-end;">
+      <div onClick="{{ stop }}" style="width:100%; max-width:560px; height:100%; background:var(--surface-section); border-left:1px solid var(--border-hairline); box-shadow:var(--shadow-raised); display:flex; flex-direction:column; animation:vg-slide-in 260ms var(--ease-out);">
+
+        <!-- wizard header -->
+        <div style="padding:24px 30px 20px; border-bottom:1px solid var(--border-hairline);">
+          <div style="display:flex; align-items:center; justify-content:space-between; gap:16px;">
+            <div>
+              <div style="font-size:11px; font-weight:700; letter-spacing:0.16em; text-transform:uppercase; color:var(--text-faint);">Шаг {{ stepNum }} из 4</div>
+              <div style="font-family:var(--font-display); font-weight:700; text-transform:uppercase; font-size:20px; letter-spacing:-0.01em; margin-top:8px;">Новая вакансия</div>
+            </div>
+            <button type="button" onClick="{{ closeWizard }}" style="display:grid; place-items:center; width:36px; height:36px; background:var(--surface-card); border:1px solid var(--border-hairline); border-radius:var(--radius-xs); cursor:pointer; color:var(--text-body);" style-hover="color:var(--text-strong); border-color:var(--text-muted)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="1.7" stroke-linecap="square"/></svg></button>
+          </div>
+          <!-- step rail -->
+          <div style="display:flex; gap:6px; margin-top:20px;">
+            <sc-for list="{{ stepRail }}" as="s" hint-placeholder-count="4">
+              <div style="flex:1; display:flex; flex-direction:column; gap:8px; cursor:pointer;" onClick="{{ s.onClick }}">
+                <div style="height:3px; border-radius:2px; background:{{ s.barColor }}; transition:background 200ms;"></div>
+                <span style="font-size:11px; font-weight:600; color:{{ s.labelColor }};">{{ s.label }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+
+        <!-- wizard body -->
+        <div style="flex:1; overflow-y:auto; padding:30px;">
+          <sc-if value="{{ isStep1 }}" hint-placeholder-val="{{ true }}">
+            <div style="animation:vg-fade-up 200ms var(--ease-out);">
+              <label style="display:block; font-size:13px; font-weight:700; letter-spacing:0.04em; color:var(--text-body); margin-bottom:6px;">Название вакансии</label>
+              <p style="margin:0 0 14px; font-size:13px; color:var(--text-faint); line-height:1.5;">Как должность называется для кандидатов и в отчётах.</p>
+              <input type="text" value="{{ fTitle }}" onInput="{{ onTitle }}" placeholder="Например, Senior C# / .NET разработчик" style="width:100%; font-family:var(--font-body); font-size:15px; font-weight:500; color:var(--text-strong); background:var(--surface-card); border:1px solid var(--border-hairline); border-radius:var(--radius-sm); padding:14px 16px; outline:none;" onfocus="this.style.borderColor='var(--text-strong)'" onblur="this.style.borderColor='var(--border-hairline)'">
+              <label style="display:block; font-size:13px; font-weight:700; letter-spacing:0.04em; color:var(--text-body); margin:24px 0 6px;">Отдел / направление <span style="color:var(--text-faint); font-weight:500;">— необязательно</span></label>
+              <input type="text" value="{{ fDept }}" onInput="{{ onDept }}" placeholder="Например, Backend-разработка" style="width:100%; font-family:var(--font-body); font-size:15px; font-weight:500; color:var(--text-strong); background:var(--surface-card); border:1px solid var(--border-hairline); border-radius:var(--radius-sm); padding:14px 16px; outline:none;" onfocus="this.style.borderColor='var(--text-strong)'" onblur="this.style.borderColor='var(--border-hairline)'">
+            </div>
+          </sc-if>
+          <sc-if value="{{ isStep2 }}" hint-placeholder-val="{{ false }}">
+            <div style="animation:vg-fade-up 200ms var(--ease-out);">
+              <label style="display:block; font-size:13px; font-weight:700; letter-spacing:0.04em; color:var(--text-body); margin-bottom:6px;">Описание</label>
+              <p style="margin:0 0 14px; font-size:13px; color:var(--text-faint); line-height:1.5;">Чем будет заниматься специалист, контекст команды и продукта.</p>
+              <textarea value="{{ fDesc }}" onInput="{{ onDesc }}" placeholder="Опишите задачи, команду, продукт…" style="width:100%; min-height:240px; font-family:var(--font-body); font-size:14px; line-height:1.6; font-weight:500; color:var(--text-strong); background:var(--surface-card); border:1px solid var(--border-hairline); border-radius:var(--radius-sm); padding:14px 16px; outline:none;" onfocus="this.style.borderColor='var(--text-strong)'" onblur="this.style.borderColor='var(--border-hairline)'"></textarea>
+            </div>
+          </sc-if>
+          <sc-if value="{{ isStep3 }}" hint-placeholder-val="{{ false }}">
+            <div style="animation:vg-fade-up 200ms var(--ease-out);">
+              <label style="display:block; font-size:13px; font-weight:700; letter-spacing:0.04em; color:var(--text-body); margin-bottom:6px;">Требования</label>
+              <p style="margin:0 0 14px; font-size:13px; color:var(--text-faint); line-height:1.5;">Обязательные навыки и опыт. По ним модель оценивает соответствие — по пункту на строку.</p>
+              <textarea value="{{ fReq }}" onInput="{{ onReq }}" placeholder="C# / .NET Core от 3 лет&#10;ООП, SOLID, паттерны проектирования&#10;Высоконагруженные распределённые системы" style="width:100%; min-height:240px; font-family:var(--font-body); font-size:14px; line-height:1.6; font-weight:500; color:var(--text-strong); background:var(--surface-card); border:1px solid var(--border-hairline); border-radius:var(--radius-sm); padding:14px 16px; outline:none;" onfocus="this.style.borderColor='var(--text-strong)'" onblur="this.style.borderColor='var(--border-hairline)'"></textarea>
+            </div>
+          </sc-if>
+          <sc-if value="{{ isStep4 }}" hint-placeholder-val="{{ false }}">
+            <div style="animation:vg-fade-up 200ms var(--ease-out);">
+              <label style="display:block; font-size:13px; font-weight:700; letter-spacing:0.04em; color:var(--text-body); margin-bottom:6px;">Дополнительные требования <span style="color:var(--text-faint); font-weight:500;">— необязательно</span></label>
+              <p style="margin:0 0 14px; font-size:13px; color:var(--text-faint); line-height:1.5;">Желательные, но не критичные пункты. Влияют на отдельный балл «Доп».</p>
+              <textarea value="{{ fExtra }}" onInput="{{ onExtra }}" placeholder="Опыт с ИИ-инструментами (Copilot, Cursor)&#10;Профильное образование" style="width:100%; min-height:180px; font-family:var(--font-body); font-size:14px; line-height:1.6; font-weight:500; color:var(--text-strong); background:var(--surface-card); border:1px solid var(--border-hairline); border-radius:var(--radius-sm); padding:14px 16px; outline:none;" onfocus="this.style.borderColor='var(--text-strong)'" onblur="this.style.borderColor='var(--border-hairline)'"></textarea>
+              <!-- summary -->
+              <div style="margin-top:24px; padding:18px; border:1px solid var(--border-hairline); border-radius:var(--radius-sm); background:var(--surface-card);">
+                <div style="font-size:11px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:var(--text-faint); margin-bottom:12px;">Сводка</div>
+                <div style="display:flex; flex-direction:column; gap:9px;">
+                  <div style="display:flex; justify-content:space-between; gap:14px; font-size:13px;"><span style="color:var(--text-muted);">Название</span><span style="color:var(--text-strong); font-weight:600; text-align:right;">{{ sumTitle }}</span></div>
+                  <div style="display:flex; justify-content:space-between; gap:14px; font-size:13px;"><span style="color:var(--text-muted);">Описание</span><span style="color:var(--text-strong); font-weight:600;">{{ sumDesc }}</span></div>
+                  <div style="display:flex; justify-content:space-between; gap:14px; font-size:13px;"><span style="color:var(--text-muted);">Требований</span><span style="color:var(--text-strong); font-weight:600;">{{ sumReq }}</span></div>
+                  <div style="display:flex; justify-content:space-between; gap:14px; font-size:13px;"><span style="color:var(--text-muted);">Доп. требований</span><span style="color:var(--text-strong); font-weight:600;">{{ sumExtra }}</span></div>
+                </div>
+              </div>
+            </div>
+          </sc-if>
+        </div>
+
+        <!-- wizard footer -->
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:14px; padding:18px 30px; border-top:1px solid var(--border-hairline); background:var(--surface-section);">
+          <button type="button" onClick="{{ prevStep }}" style="{{ backStyle }}">Назад</button>
+          <sc-if value="{{ notLast }}" hint-placeholder-val="{{ true }}">
+            <x-import component-from-global-scope="VictoryGroupDesignSystem_5427f7.Button" variant="primary" size="md" onClick="{{ nextStep }}" hint-size="150px,46px">Далее</x-import>
+          </sc-if>
+          <sc-if value="{{ isLast }}" hint-placeholder-val="{{ false }}">
+            <x-import component-from-global-scope="VictoryGroupDesignSystem_5427f7.Button" variant="primary" size="md" onClick="{{ createVacancy }}" hint-size="200px,46px">Создать вакансию</x-import>
+          </sc-if>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ============================ TOAST ============================ -->
+  <sc-if value="{{ toastOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed; left:50%; bottom:32px; transform:translateX(-50%); z-index:90; display:inline-flex; align-items:center; gap:12px; padding:14px 20px; background:var(--surface-card); border:1px solid rgba(59,220,107,0.4); border-radius:var(--radius-sm); box-shadow:var(--shadow-raised); animation:vg-fade-up 220ms var(--ease-out);">
+      <span style="display:grid; place-items:center; width:26px; height:26px; border-radius:50%; background:rgba(59,220,107,0.14); color:var(--vg-green);"><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M5 12.5l4.5 4.5L19 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="square"/></svg></span>
+      <span style="font-size:14px; color:var(--text-strong); font-weight:500;">Вакансия «{{ toastTitle }}» создана</span>
+    </div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1200,&quot;height&quot;:860}}">
+class Component extends DCLogic {
+  state = {
+    search: '',
+    filter: 'all',
+    extra: [],          // newly created vacancies (prepended)
+    wizardOpen: false,
+    step: 1,
+    f: { title:'', dept:'', desc:'', req:'', extra:'' },
+    toast: null,
+  };
+
+  baseVacancies = [
+    { id:'v1', title:'Senior C# / .NET разработчик', code:'VG-2041', dept:'Backend-разработка', status:'active', resumes:23, scored:9, topScore:94, updated:'2 часа назад' },
+    { id:'v2', title:'Product Designer (Senior)', code:'VG-2038', dept:'Дизайн', status:'active', resumes:41, scored:41, topScore:91, updated:'вчера' },
+    { id:'v3', title:'Performance-маркетолог', code:'VG-2035', dept:'Маркетинг', status:'active', resumes:18, scored:12, topScore:88, updated:'2 дня назад' },
+    { id:'v4', title:'DevOps инженер', code:'VG-2031', dept:'Инфраструктура', status:'paused', resumes:15, scored:15, topScore:82, updated:'5 дней назад' },
+    { id:'v5', title:'Frontend разработчик (React)', code:'VG-2028', dept:'Frontend-разработка', status:'active', resumes:34, scored:30, topScore:90, updated:'неделю назад' },
+    { id:'v6', title:'Аналитик данных', code:'VG-2024', dept:'Аналитика', status:'closed', resumes:52, scored:52, topScore:95, updated:'2 недели назад' },
+    { id:'v7', title:'QA Automation Engineer', code:'VG-2019', dept:'Тестирование', status:'closed', resumes:27, scored:27, topScore:86, updated:'3 недели назад' },
+  ];
+
+  get allVacancies(){ return [...this.state.extra, ...this.baseVacancies]; }
+
+  statusMeta = {
+    active:{ label:'Активна', color:'var(--vg-green)', border:'rgba(59,220,107,0.32)' },
+    paused:{ label:'На паузе', color:'var(--vg-orange)', border:'rgba(255,106,26,0.32)' },
+    closed:{ label:'Закрыта', color:'var(--text-muted)', border:'var(--border-hairline)' },
+  };
+
+  topColor(v){ if(v>=90) return 'var(--vg-green)'; if(v>=80) return 'var(--vg-cyan)'; return 'var(--text-body)'; }
+
+  set = (k) => (e) => this.setState(s => ({ f:{...s.f, [k]:e.target.value} }));
+
+  nextStep = () => this.setState(s => ({ step: Math.min(4, s.step+1) }));
+  prevStep = () => this.setState(s => { if (s.step===1){ return { wizardOpen:false }; } return { step: s.step-1 }; });
+
+  createVacancy = () => {
+    const f = this.state.f;
+    const title = f.title.trim() || 'Без названия';
+    const reqN = f.req.split('\n').filter(x=>x.trim()).length;
+    const nv = {
+      id:'vnew'+Date.now(), title, code:'VG-'+(2042+this.state.extra.length),
+      dept: f.dept.trim() || 'Без отдела', status:'active', resumes:0, scored:0, topScore:'—',
+      updated:'только что', href:'../resume-scoring/ResumeScoring.dc.html',
+    };
+    this.setState(s => ({
+      extra:[nv, ...s.extra], wizardOpen:false, step:1,
+      f:{ title:'', dept:'', desc:'', req:'', extra:'' },
+      toast:title,
+    }));
+    clearTimeout(this._toast);
+    this._toast = setTimeout(() => this.setState({ toast:null }), 3200);
+  };
+
+  componentWillUnmount(){ clearTimeout(this._toast); }
+
+  renderVals(){
+    const st = this.state;
+    const f = st.f;
+
+    // filter + search
+    const q = st.search.trim().toLowerCase();
+    let list = this.allVacancies;
+    if (st.filter !== 'all') list = list.filter(v => v.status === st.filter);
+    if (q) list = list.filter(v => v.title.toLowerCase().includes(q) || v.code.toLowerCase().includes(q) || (v.dept||'').toLowerCase().includes(q));
+
+    const vacancyView = list.map(v => {
+      const sm = this.statusMeta[v.status];
+      return {
+        ...v,
+        href: v.href || '../resume-scoring/ResumeScoring.dc.html',
+        statusLabel:sm.label, statusColor:sm.color, statusBorder:sm.border,
+        topColor: v.topScore==='—' ? 'var(--text-faint)' : this.topColor(v.topScore),
+      };
+    });
+
+    const chipBase = 'font-family:var(--font-body); font-size:13px; font-weight:600; padding:9px 14px; border-radius:var(--radius-sm); cursor:pointer; transition:all 160ms;';
+    const chipOn = chipBase + 'color:var(--text-on-light); background:var(--action-fill); border:1px solid var(--action-fill);';
+    const chipOff = chipBase + 'color:var(--text-muted); background:var(--surface-card); border:1px solid var(--border-hairline);';
+    const all = this.allVacancies;
+    const counts = { all:all.length, active:all.filter(v=>v.status==='active').length, paused:all.filter(v=>v.status==='paused').length, closed:all.filter(v=>v.status==='closed').length };
+    const filterChips = [
+      { key:'all', label:'Все' }, { key:'active', label:'Активные' }, { key:'paused', label:'На паузе' }, { key:'closed', label:'Закрытые' },
+    ].map(c => ({ label:c.label, count:counts[c.key], style: st.filter===c.key?chipOn:chipOff, onClick:() => this.setState({ filter:c.key }) }));
+
+    // wizard step rail
+    const stepLabels = ['Название','Описание','Требования','Доп.'];
+    const stepRail = stepLabels.map((label, i) => {
+      const n = i+1; const reached = st.step >= n;
+      return {
+        label, barColor: reached ? 'var(--action-fill)' : 'var(--vg-ink-600)',
+        labelColor: reached ? 'var(--text-body)' : 'var(--text-faint)',
+        onClick:() => { if (n < st.step) this.setState({ step:n }); },
+      };
+    });
+
+    const backStyle = 'font-family:var(--font-body); font-size:13px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:var(--text-muted); background:none; border:none; cursor:pointer; padding:8px 4px;';
+
+    const reqN = f.req.split('\n').filter(x=>x.trim()).length;
+    const extraN = f.extra.split('\n').filter(x=>x.trim()).length;
+    const descWords = f.desc.trim() ? f.desc.trim().split(/\s+/).length : 0;
+
+    return {
+      totalVacancies: all.length,
+      activeCount: counts.active,
+      totalResumes: all.reduce((a,v)=>a+(typeof v.resumes==='number'?v.resumes:0),0),
+
+      search: st.search,
+      onSearch:(e) => this.setState({ search:e.target.value }),
+      filterChips,
+      vacancyView, listEmpty: vacancyView.length===0,
+
+      // wizard
+      wizardOpen: st.wizardOpen,
+      openWizard:() => this.setState({ wizardOpen:true, step:1 }),
+      closeWizard:() => this.setState({ wizardOpen:false }),
+      stop:(e)=>e.stopPropagation(),
+      stepNum: st.step, stepRail,
+      isStep1: st.step===1, isStep2: st.step===2, isStep3: st.step===3, isStep4: st.step===4,
+      notLast: st.step<4, isLast: st.step===4,
+      nextStep: this.nextStep, prevStep: this.prevStep, createVacancy: this.createVacancy,
+      backStyle,
+      fTitle:f.title, fDept:f.dept, fDesc:f.desc, fReq:f.req, fExtra:f.extra,
+      onTitle:this.set('title'), onDept:this.set('dept'), onDesc:this.set('desc'), onReq:this.set('req'), onExtra:this.set('extra'),
+      sumTitle: f.title.trim() || '—',
+      sumDesc: descWords ? (descWords+' слов') : '—',
+      sumReq: reqN ? (reqN+' пунктов') : '—',
+      sumExtra: extraN ? (extraN+' пунктов') : '—',
+
+      // toast
+      toastOpen: !!st.toast, toastTitle: st.toast || '',
+    };
+  }
+}
+</script>
+</body>
+</html>

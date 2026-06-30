@@ -1,0 +1,31 @@
+:root {
+  /* ---- Card gradient (subtle top-lit dark) ---- */
+  --grad-card: linear-gradient(160deg, var(--vg-ink-600) 0%, var(--vg-ink-700) 48%, var(--vg-ink-800) 100%);
+  --grad-card-hover: linear-gradient(160deg, #232329 0%, #18181c 50%, var(--vg-ink-700) 100%);
+
+  /* ---- Shadows — deep, soft, dark-on-dark ---- */
+  --shadow-card:   0 1px 0 rgba(255,255,255,0.03) inset, 0 24px 60px -24px rgba(0,0,0,0.9);
+  --shadow-raised: 0 40px 90px -30px rgba(0,0,0,0.95);
+  --shadow-btn:    0 12px 28px -12px rgba(0,0,0,0.85);
+
+  /* ---- Neon glows (sparingly, for accent labels/icons) ---- */
+  --glow-orange:  0 0 24px rgba(255,106,26,0.55);
+  --glow-cyan:    0 0 24px rgba(30,156,255,0.55);
+  --glow-magenta: 0 0 24px rgba(192,38,211,0.55);
+  --glow-green:   0 0 24px rgba(59,220,107,0.55);
+
+  /* ---- Textures (faint grid + dot-matrix over dark) ---- */
+  --grid-line: rgba(255,255,255,0.035);
+  --bg-grid: linear-gradient(var(--grid-line) 1px, transparent 1px),
+             linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  --bg-grid-size: 64px 64px;
+
+  /* ---- Motion ---- */
+  --ease-out:   cubic-bezier(0.22, 0.61, 0.36, 1); /* @kind other */
+  --ease-inout: cubic-bezier(0.65, 0, 0.35, 1); /* @kind other */
+  --dur-fast:   140ms; /* @kind other */
+  --dur-med:    240ms; /* @kind other */
+  --dur-slow:   420ms; /* @kind other */
+
+  --hairline: 1px solid var(--border-hairline); /* @kind other */
+}

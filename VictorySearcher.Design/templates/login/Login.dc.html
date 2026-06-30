@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<!-- @template name="Авторизация (split)" description="Страница входа: бренд-панель слева, форма логин/пароль справа" -->
+<helmet>
+<script src="./ds-base.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; }
+  body { background: #050506; }
+  @keyframes vg-streak {
+    0%   { transform: translateX(-30%) rotate(8deg); opacity: 0; }
+    40%  { opacity: 0.5; }
+    100% { transform: translateX(120%) rotate(8deg); opacity: 0; }
+  }
+</style>
+</helmet>
+
+<div style="display:flex; min-height:100vh; width:100%; background:#050506; font-family:var(--font-body); color:var(--text-strong);">
+
+  <!-- ============ LEFT — brand panel ============ -->
+  <div style="position:relative; flex:1 1 52%; overflow:hidden; background:#050506; border-right:1px solid var(--border-hairline);">
+    <!-- grid texture -->
+    <div style="position:absolute; inset:0; background-image:linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px); background-size:64px 64px; opacity:0.9;"></div>
+    <!-- depth vignettes -->
+    <div style="position:absolute; inset:0; background:radial-gradient(120% 90% at 18% 12%, rgba(255,255,255,0.05) 0%, transparent 42%), radial-gradient(140% 120% at 90% 100%, rgba(0,0,0,0.85) 0%, transparent 55%);"></div>
+    <!-- metallic light streak -->
+    <div style="position:absolute; top:-20%; left:0; width:38%; height:140%; background:linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent); filter:blur(8px); animation:vg-streak 7s var(--ease-out) infinite;"></div>
+
+    <div style="position:relative; height:100%; display:flex; flex-direction:column; justify-content:space-between; padding:56px 64px;">
+      <div style="display:inline-flex; align-items:center; gap:14px;">
+        <img src="../../assets/victorysearcher-logo.png" alt="VictorySearcher" style="height:44px; width:44px; object-fit:contain;">
+        <span style="font-family:var(--font-display); font-weight:700; letter-spacing:-0.01em; font-size:22px; color:var(--text-strong);">Victory<span style="color:var(--text-muted);">Searcher</span></span>
+      </div>
+
+      <div style="max-width:560px;">
+        <div style="font-size:13px; font-weight:600; letter-spacing:0.22em; text-transform:uppercase; color:var(--text-muted); margin-bottom:24px;">Личный кабинет</div>
+        <h1 style="margin:0; font-family:var(--font-display); font-weight:800; text-transform:uppercase; line-height:1.04; letter-spacing:-0.01em; font-size:60px; color:var(--text-strong);">Вход<br>в&nbsp;систему</h1>
+        <p style="margin:28px 0 0; font-size:18px; line-height:1.55; color:var(--text-body); max-width:440px;">Скоринг резюме и аналитика рынка труда в едином рабочем пространстве.</p>
+      </div>
+
+      <div style="display:inline-flex; align-items:center; gap:12px;">
+        <span style="width:8px; height:8px; border-radius:50%; background:var(--vg-cyan); box-shadow:0 0 14px rgba(30,156,255,0.8);"></span>
+        <span style="font-size:13px; font-weight:600; letter-spacing:0.18em; text-transform:uppercase; color:var(--text-muted);">Внутренний инструмент · HR</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ RIGHT — form ============ -->
+  <div style="flex:1 1 48%; display:flex; align-items:center; justify-content:center; padding:48px 40px; background:var(--surface-page);">
+    <div style="width:100%; max-width:392px;">
+
+      <h2 style="margin:0 0 10px; font-family:var(--font-display); font-weight:700; text-transform:uppercase; letter-spacing:-0.01em; font-size:32px;">Вход</h2>
+      <p style="margin:0 0 40px; font-size:16px; line-height:1.5; color:var(--text-muted);">Введите данные учётной записи, чтобы продолжить.</p>
+
+      <!-- Login -->
+      <label style="display:block; font-size:12px; font-weight:600; letter-spacing:0.16em; text-transform:uppercase; color:var(--text-muted); margin-bottom:10px;">Логин</label>
+      <x-import component-from-global-scope="VictoryGroupDesignSystem_5427f7.Input" variant="box" type="text" placeholder="Введите логин" hint-size="100%,54px"></x-import>
+
+      <!-- Password -->
+      <div style="display:flex; align-items:baseline; justify-content:space-between; margin:26px 0 10px;">
+        <label style="font-size:12px; font-weight:600; letter-spacing:0.16em; text-transform:uppercase; color:var(--text-muted);">Пароль</label>
+        <a href="#" style="font-size:13px; white-space:nowrap; color:var(--text-muted); text-decoration:none; border-bottom:1px solid transparent; transition:color var(--dur-fast) var(--ease-out);" onmouseover="this.style.color='var(--text-strong)'" onmouseout="this.style.color='var(--text-muted)'">Забыли пароль?</a>
+      </div>
+      <div style="position:relative;">
+        <input type="{{ pwType }}" placeholder="••••••••" style="width:100%; box-sizing:border-box; font-family:var(--font-body); font-size:19px; font-weight:500; color:var(--text-strong); background:var(--surface-card); outline:none; padding:15px 86px 15px 18px; border:1px solid var(--border-hairline); border-radius:var(--radius-sm); transition:border-color var(--dur-med) var(--ease-out);" onfocus="this.style.borderColor='var(--text-strong)'" onblur="this.style.borderColor='var(--border-hairline)'">
+        <button type="button" onClick="{{ togglePw }}" style="position:absolute; top:50%; right:14px; transform:translateY(-50%); background:none; border:none; cursor:pointer; font-family:var(--font-body); font-size:12px; font-weight:600; letter-spacing:0.04em; text-transform:uppercase; color:var(--text-muted); padding:6px;">{{ pwLabel }}</button>
+      </div>
+
+      <!-- Remember -->
+      <div style="margin:24px 0 32px;">
+        <x-import component-from-global-scope="VictoryGroupDesignSystem_5427f7.Checkbox" label="Запомнить меня на этом устройстве" default-checked="{{ true }}" hint-size="auto,24px"></x-import>
+      </div>
+
+      <!-- Submit -->
+      <x-import component-from-global-scope="VictoryGroupDesignSystem_5427f7.Button" variant="primary" size="lg" full-width="{{ true }}" onClick="{{ onSubmit }}" hint-size="100%,58px">Войти</x-import>
+
+      <!-- Footer -->
+      <div style="margin-top:36px; padding-top:24px; border-top:1px solid var(--border-hairline); font-size:13px; color:var(--text-faint);">
+        VictorySearcher — внутренний сервис. Доступ выдаёт администратор.
+      </div>
+
+    </div>
+  </div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:820}}">
+class Component extends DCLogic {
+  state = { showPw: false };
+  renderVals() {
+    return {
+      pwType: this.state.showPw ? 'text' : 'password',
+      pwLabel: this.state.showPw ? 'Скрыть' : 'Показать',
+      togglePw: () => this.setState(s => ({ showPw: !s.showPw })),
+      onSubmit: (e) => { e && e.preventDefault && e.preventDefault(); },
+    };
+  }
+}
+</script>
+</body>
+</html>
