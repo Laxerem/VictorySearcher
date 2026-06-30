@@ -17,6 +17,7 @@ public class ResumeService(
     public async Task<Result<Guid>> UploadAsync(
         Guid vacancyId,
         string fileName,
+        long fileSizeBytes,
         Stream content,
         CancellationToken ct = default) {
         var detected = DetectFormat(fileName);
@@ -37,6 +38,7 @@ public class ResumeService(
             FileName = fileName,
             FilePath = filePath,
             Format = format,
+            FileSizeBytes = fileSizeBytes,
             LoadedAt = DateTime.UtcNow
         };
 
@@ -63,17 +65,20 @@ public class ResumeService(
                 r.Id,
                 r.FileName,
                 r.Format,
+                r.FileSizeBytes,
                 r.LoadedAt,
                 r.ScoringResults.Count > 0))
             .ToList();
 
         return Result<PagedResumesDto>.Success(new PagedResumesDto(
-            items,
             totalCount,
             page,
             pageSize,
             scoredCount,
-            totalCount - scoredCount));
+            totalCount - scoredCount,
+            items
+            )
+        );
     }
 
     public async Task<Result<ResumeContentDto>> GetContentAsync(

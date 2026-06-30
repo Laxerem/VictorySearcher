@@ -8,6 +8,7 @@ public class Resume {
     public string FileName { get; set; } = string.Empty;
     public string FilePath { get; set; } = string.Empty;
     public FileFormat Format { get; set; }
+    public long FileSizeBytes { get; set; }
     public DateTime LoadedAt { get; set; }
 
     public Vacancy Vacancy { get; set; } = null!;
