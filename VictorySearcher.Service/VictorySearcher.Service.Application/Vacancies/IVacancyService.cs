@@ -12,7 +12,7 @@ public interface IVacancyService {
         Guid createdById,
         CancellationToken ct = default);
 
-    Task<Result<IReadOnlyList<VacancyListItemDto>>> GetAllAsync(CancellationToken ct = default);
+    Task<Result<VacancyListItemDto>> GetAllAsync(CancellationToken ct = default);
 
     Task<Result<VacancyDto>> GetByIdAsync(Guid id, CancellationToken ct = default);
 

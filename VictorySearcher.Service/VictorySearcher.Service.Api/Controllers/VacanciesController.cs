@@ -29,7 +29,7 @@ public class VacanciesController(IVacancyService vacancyService) : ControllerBas
     }
 
     [HttpGet]
-    [ProducesResponseType<IReadOnlyList<VacancyListItemDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<VacancyListItemDto>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> GetAllAsync(CancellationToken ct) {
         var result = await vacancyService.GetAllAsync(ct);

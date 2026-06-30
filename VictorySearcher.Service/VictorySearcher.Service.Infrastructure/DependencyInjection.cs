@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using VictorySearcher.Service.Application.Interfaces;
 using VictorySearcher.Service.Application.Resumes;
 using VictorySearcher.Service.Application.Scoring;
+using VictorySearcher.Service.Application.Vacancies;
 using VictorySearcher.Service.Domain.Repositories;
 using VictorySearcher.Service.Infrastructure.Channels;
 using VictorySearcher.Service.Infrastructure.Jobs;
@@ -27,6 +28,7 @@ public static class DependencyInjection {
 
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IVacancyRepository, VacancyRepository>();
+        services.AddScoped<IVacancyStatsRepository, VacancyStatsRepository>();
         services.AddScoped<IResumeRepository, ResumeRepository>();
         services.AddScoped<IScoringRequestRepository, ScoringRequestRepository>();
         services.AddScoped<IScoringResultRepository, ScoringResultRepository>();
