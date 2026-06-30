@@ -22,6 +22,7 @@ public class VacanciesController(IVacancyService vacancyService) : ControllerBas
             request.Description,
             request.Requirements,
             request.ExtraRequirements,
+            request.Trend,
             createdById,
             ct);
 

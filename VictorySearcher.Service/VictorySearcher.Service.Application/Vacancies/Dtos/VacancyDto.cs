@@ -6,4 +6,5 @@ public record VacancyDto(
     string Description,
     string Requirements,
     string? ExtraRequirements,
+    string? Trend,
     DateTime CreatedAt);

@@ -9,6 +9,7 @@ public interface IVacancyService {
         string description,
         string requirements,
         string? extraRequirements,
+        string? trend,
         Guid createdById,
         CancellationToken ct = default);
 

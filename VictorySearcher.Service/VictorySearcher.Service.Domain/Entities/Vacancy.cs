@@ -6,6 +6,7 @@ public class Vacancy {
     public string Description { get; set; } = string.Empty;
     public string Requirements { get; set; } = string.Empty;
     public string? ExtraRequirements { get; set; }
+    public string? Trend { get; set; }
     public Guid CreatedById { get; set; }
     public DateTime CreatedAt { get; set; }
 

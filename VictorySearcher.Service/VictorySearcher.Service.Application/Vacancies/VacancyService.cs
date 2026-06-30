@@ -10,13 +10,14 @@ namespace VictorySearcher.Service.Application.Vacancies;
 public class VacancyService(IVacancyRepository vacancyRepository, IVacancyStatsRepository vacancyStatsRepository, IUnitOfWork unitOfWork) : IVacancyService {
     public async Task<Result<VacancyDto>> CreateAsync(
         string title, string description, string requirements, string? extraRequirements,
-        Guid createdById, CancellationToken ct = default) {
+        string? trend, Guid createdById, CancellationToken ct = default) {
         var vacancy = new Vacancy {
             Id = Guid.NewGuid(),
             Title = title,
             Description = description,
             Requirements = requirements,
             ExtraRequirements = extraRequirements,
+            Trend = trend,
             CreatedById = createdById,
             CreatedAt = DateTime.UtcNow
         };
@@ -53,5 +54,5 @@ public class VacancyService(IVacancyRepository vacancyRepository, IVacancyStatsR
     }
 
     private static VacancyDto MapToDto(Vacancy v) =>
-        new(v.Id, v.Title, v.Description, v.Requirements, v.ExtraRequirements, v.CreatedAt);
+        new(v.Id, v.Title, v.Description, v.Requirements, v.ExtraRequirements, v.Trend, v.CreatedAt);
 }
