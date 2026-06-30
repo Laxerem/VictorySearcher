@@ -7,4 +7,7 @@ public record VacancyDto(
     string Requirements,
     string? ExtraRequirements,
     string? Trend,
-    DateTime CreatedAt);
+    DateTime CreatedAt,
+    int TotalResumes,
+    int ScoredResumes,
+    int UnscoredResumes);

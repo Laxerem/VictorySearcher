@@ -18,4 +18,15 @@ public class VacancyStatsRepository(AppDbContext db) : IVacancyStatsRepository {
 
     public Task<int> GetTotalResumeCountAsync(CancellationToken ct = default)
         => db.Resumes.CountAsync(ct);
+
+    public Task<VacancyStats?> GetByVacancyIdAsync(Guid vacancyId, CancellationToken ct = default)
+        => db.Vacancies
+            .Where(v => v.Id == vacancyId)
+            .Select(v => new VacancyStats(
+                v.Id,
+                v.Resumes.Count(),
+                v.Resumes.Count(r => r.ScoringResults.Any()),
+                v.Resumes.SelectMany(r => r.ScoringResults).Max(sr => (int?)sr.OverallScore) ?? 0
+            ))
+            .FirstOrDefaultAsync(ct);
 }
