@@ -13,15 +13,23 @@ export function notifyUnauthorized(): void {
 }
 
 export function getToken(): string | null {
-  return localStorage.getItem(TOKEN_KEY);
+  return localStorage.getItem(TOKEN_KEY) ?? sessionStorage.getItem(TOKEN_KEY);
 }
 
-export function setToken(token: string): void {
-  localStorage.setItem(TOKEN_KEY, token);
+/**
+ * Persist the token. When `remember` is true it survives browser restarts
+ * (localStorage); otherwise it lives only for the tab session (sessionStorage).
+ */
+export function setToken(token: string, remember = true): void {
+  const store = remember ? localStorage : sessionStorage;
+  const other = remember ? sessionStorage : localStorage;
+  store.setItem(TOKEN_KEY, token);
+  other.removeItem(TOKEN_KEY);
 }
 
 export function clearToken(): void {
   localStorage.removeItem(TOKEN_KEY);
+  sessionStorage.removeItem(TOKEN_KEY);
 }
 
 /** Reaction to an expired/invalid token: drop it and notify the app to redirect. */

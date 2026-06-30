@@ -1,98 +1,192 @@
 .auth {
+  display: flex;
   min-height: 100%;
-  display: grid;
-  place-items: center;
-  padding: var(--space-6);
-  position: relative;
-  overflow: hidden;
-  background: var(--ink-900);
+  width: 100%;
+  background: var(--surface-page);
+  color: var(--text-strong);
 }
 
-/* faint instrument grid backdrop */
-.auth::before {
-  content: "";
+/* ============ Brand panel ============ */
+.brandPanel {
+  position: relative;
+  flex: 1 1 52%;
+  overflow: hidden;
+  background: var(--surface-page);
+  border-right: 1px solid var(--border-hairline);
+}
+
+.grid {
   position: absolute;
   inset: 0;
-  background-image:
-    linear-gradient(var(--line-soft) 1px, transparent 1px),
-    linear-gradient(90deg, var(--line-soft) 1px, transparent 1px);
-  background-size: 44px 44px;
-  mask-image: radial-gradient(circle at 50% 42%, #000 0%, transparent 62%);
-  opacity: 0.5;
-  pointer-events: none;
+  background-image: var(--bg-grid);
+  background-size: var(--bg-grid-size);
+  opacity: 0.9;
 }
 
-.card {
-  position: relative;
-  width: 100%;
-  max-width: 392px;
-  padding: var(--space-8) var(--space-8) var(--space-6);
-  border-radius: var(--r-lg);
-  background: var(--ink-800);
-  border: 1px solid var(--line);
-  box-shadow: inset 0 1px 0 var(--edge-highlight), var(--elev-2);
-}
-
-/* signal hairline at the top */
-.card::before {
-  content: "";
+.vignette {
   position: absolute;
-  left: var(--space-8);
-  right: var(--space-8);
-  top: 0;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, var(--signal-500), transparent);
-  opacity: 0.7;
+  inset: 0;
+  background:
+    radial-gradient(120% 90% at 18% 12%, rgba(255, 255, 255, 0.05) 0%, transparent 42%),
+    radial-gradient(140% 120% at 90% 100%, rgba(0, 0, 0, 0.85) 0%, transparent 55%);
 }
 
-.brand {
+.streak {
+  position: absolute;
+  top: -20%;
+  left: 0;
+  width: 38%;
+  height: 140%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.06), transparent);
+  filter: blur(8px);
+  animation: streak 7s var(--ease-out) infinite;
+}
+
+.brandInner {
+  position: relative;
+  height: 100%;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: var(--space-4);
+  justify-content: space-between;
+  padding: 56px 64px;
 }
 
-.mark {
-  width: 52px;
-  height: 52px;
-  display: grid;
-  place-items: center;
-  border: 1px solid var(--line);
-  border-radius: var(--r-md);
-  background: var(--ink-750);
-  box-shadow: inset 0 1px 0 var(--edge-highlight);
+.brandTop {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.logo {
+  height: 44px;
+  width: 44px;
+  object-fit: contain;
 }
 
 .wordmark {
   font-family: var(--font-display);
+  font-weight: var(--fw-display);
+  letter-spacing: var(--ls-display);
+  font-size: var(--fs-display-s);
+  color: var(--text-strong);
+}
+
+.wordmarkMuted {
+  color: var(--text-muted);
+}
+
+.brandHero {
+  max-width: 560px;
+}
+
+.eyebrow {
+  font-size: var(--fs-label);
+  font-weight: var(--fw-semi);
+  letter-spacing: var(--ls-eyebrow);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  font-weight: 800;
-  font-size: 30px;
-  line-height: 1;
-  text-align: center;
+  color: var(--text-muted);
+  margin-bottom: var(--sp-6);
 }
 
-.wordmark b { color: var(--text-100); font-weight: 800; }
-.wordmark span { color: var(--text-500); font-weight: 600; }
-
-.sub {
-  text-align: center;
-  color: var(--text-500);
-  font-size: 13px;
-  line-height: 18px;
+.heroTitle {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: var(--fw-display-heavy);
+  text-transform: uppercase;
+  line-height: var(--lh-display);
+  letter-spacing: var(--ls-display);
+  font-size: var(--fs-display-l);
+  color: var(--text-strong);
 }
 
-.divider {
-  height: 1px;
-  background: var(--line);
-  margin: var(--space-6) 0;
+.heroText {
+  margin: 28px 0 0;
+  font-size: var(--fs-body-l);
+  line-height: var(--lh-body);
+  color: var(--text-body);
+  max-width: 440px;
+}
+
+.brandBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-3);
+}
+
+.badgeDot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-pill);
+  background: var(--accent-cyan);
+  box-shadow: var(--glow-cyan);
+}
+
+.badgeText {
+  font-size: var(--fs-label);
+  font-weight: var(--fw-semi);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* ============ Form panel ============ */
+.formPanel {
+  flex: 1 1 48%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--sp-12) var(--sp-10);
+  background: var(--surface-page);
+}
+
+.formInner {
+  width: 100%;
+  max-width: 392px;
+}
+
+.formTitle {
+  margin: 0 0 var(--sp-3);
+  font-family: var(--font-display);
+  font-weight: var(--fw-display);
+  text-transform: uppercase;
+  letter-spacing: var(--ls-display);
+  font-size: var(--fs-display-m);
+  color: var(--text-strong);
+}
+
+.formSubtitle {
+  margin: 0 0 var(--sp-10);
+  font-size: var(--fs-body-m);
+  line-height: var(--lh-body);
+  color: var(--text-muted);
 }
 
 .foot {
-  margin-top: var(--space-6);
-  text-align: center;
-  font-size: 12px;
-  line-height: 16px;
-  color: var(--text-700);
+  margin-top: 36px;
+  padding-top: var(--sp-6);
+  border-top: 1px solid var(--border-hairline);
+  font-size: var(--fs-label);
+  color: var(--text-faint);
+}
+
+/* ============ Responsive — collapse to single column ============ */
+@media (max-width: 860px) {
+  .auth {
+    flex-direction: column;
+  }
+
+  .brandPanel {
+    flex: none;
+    border-right: none;
+    border-bottom: 1px solid var(--border-hairline);
+  }
+
+  .brandInner {
+    padding: var(--sp-10) var(--sp-6);
+    gap: var(--sp-10);
+  }
+
+  .heroTitle {
+    font-size: var(--fs-display-m);
+  }
 }

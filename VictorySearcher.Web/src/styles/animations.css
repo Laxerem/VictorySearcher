@@ -13,3 +13,10 @@
     transform: translateY(0);
   }
 }
+
+/* metallic light sweep across the brand panel */
+@keyframes streak {
+  0%   { transform: translateX(-30%) rotate(8deg); opacity: 0; }
+  40%  { opacity: 0.5; }
+  100% { transform: translateX(120%) rotate(8deg); opacity: 0; }
+}

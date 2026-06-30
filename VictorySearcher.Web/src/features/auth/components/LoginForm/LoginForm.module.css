@@ -1,71 +1,173 @@
 .form {
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
 }
 
 .field {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
+  gap: var(--sp-3);
+}
+
+.field + .field {
+  margin-top: var(--sp-6);
 }
 
 .label {
+  font-family: var(--font-body);
   font-size: 12px;
-  line-height: 16px;
-  font-weight: 500;
-  color: var(--text-300);
+  font-weight: var(--fw-semi);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-muted);
 }
 
 .input {
-  font-family: var(--font-ui);
-  font-size: 14px;
-  line-height: 20px;
-  color: var(--text-100);
-  background: var(--ink-700);
-  border: 1px solid var(--line);
-  border-radius: var(--r-sm);
-  padding: 9px var(--space-3);
   width: 100%;
+  font-family: var(--font-body);
+  font-size: var(--fs-body-l);
+  font-weight: var(--fw-med);
+  color: var(--text-strong);
+  background: var(--surface-card);
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-sm);
+  padding: 15px 18px;
   outline: none;
-  transition: border-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+  transition: border-color var(--dur-med) var(--ease-out);
 }
 
 .input:focus {
-  border-color: var(--line-strong);
-  box-shadow: 0 0 0 2px var(--signal-900);
+  border-color: var(--text-strong);
 }
 
 .input::placeholder {
-  color: var(--text-700);
+  color: var(--text-faint);
+}
+
+.passwordField {
+  position: relative;
+}
+
+.passwordInput {
+  padding-right: 86px;
+}
+
+.toggle {
+  position: absolute;
+  top: 50%;
+  right: 14px;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: var(--fw-semi);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding: var(--sp-2);
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+.toggle:hover {
+  color: var(--text-strong);
+}
+
+/* remember-me — native checkbox, square light-fill box */
+.remember {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin: var(--sp-6) 0 var(--sp-8);
+  cursor: pointer;
+  user-select: none;
+}
+
+.checkboxInput {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.checkboxBox {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  margin-top: 1px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-xs);
+  background: transparent;
+  transition: background var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out);
+}
+
+.checkboxBox svg {
+  opacity: 0;
+  transition: opacity var(--dur-fast) var(--ease-out);
+}
+
+.checkboxInput:checked + .checkboxBox {
+  background: var(--action-fill);
+  border-color: var(--text-strong);
+}
+
+.checkboxInput:checked + .checkboxBox svg {
+  opacity: 1;
+}
+
+.checkboxInput:focus-visible + .checkboxBox {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.checkboxLabel {
+  font-family: var(--font-body);
+  font-size: var(--fs-body-m);
+  line-height: var(--lh-snug);
+  color: var(--text-body);
 }
 
 .errorText {
-  color: var(--alert);
-  font-size: 13px;
-  line-height: 18px;
+  color: var(--accent);
+  font-size: var(--fs-body-s);
+  line-height: var(--lh-snug);
+  margin-bottom: var(--sp-4);
 }
 
 .submitButton {
-  font-family: var(--font-ui);
-  font-size: 14px;
-  font-weight: 500;
-  height: 40px;
   width: 100%;
-  background: var(--signal-700);
-  color: var(--text-100);
-  border: 1px solid transparent;
-  border-radius: var(--r-md);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 58px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--ls-button);
+  text-transform: uppercase;
+  color: var(--text-on-light);
+  background: var(--action-fill);
+  border: 1px solid var(--action-fill);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-btn);
   cursor: pointer;
-  transition: background var(--dur) var(--ease);
-  margin-top: var(--space-2);
+  transition: background var(--dur-med) var(--ease-out), transform var(--dur-fast) var(--ease-out);
 }
 
 .submitButton:hover:not(:disabled) {
-  background: var(--signal-500);
+  background: var(--action-fill-hover);
+}
+
+.submitButton:active:not(:disabled) {
+  transform: translateY(1px);
 }
 
 .submitButton:disabled {
-  opacity: 0.5;
+  opacity: 0.45;
   cursor: not-allowed;
 }
