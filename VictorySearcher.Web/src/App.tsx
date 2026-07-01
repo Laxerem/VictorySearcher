@@ -6,7 +6,6 @@ import { LoginPage } from '@/pages/LoginPage/LoginPage';
 import { NotFoundPage } from '@/pages/NotFoundPage/NotFoundPage';
 import { ScoringPage } from '@/pages/ScoringPage/ScoringPage';
 import { VacancyPage } from '@/pages/VacancyPage/VacancyPage';
-import { ScoringResultsPage } from '@/pages/ScoringResultsPage/ScoringResultsPage';
 import { ProfilePage } from '@/pages/ProfilePage/ProfilePage';
 
 interface ProtectedRouteProps {
@@ -23,14 +22,13 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route path="/" element={<Navigate to="/scoring" replace />} />
+
         <Route
           path="/scoring"
           element={
             <ProtectedRoute>
-              <AppLayout context="Вакансии">
-                <ScoringPage />
-              </AppLayout>
+              <ScoringPage />
             </ProtectedRoute>
           }
         />
@@ -38,19 +36,7 @@ export default function App() {
           path="/scoring/vacancies/:id"
           element={
             <ProtectedRoute>
-              <AppLayout context="Вакансии">
-                <VacancyPage />
-              </AppLayout>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/scoring/vacancies/:id/results"
-          element={
-            <ProtectedRoute>
-              <AppLayout context="Результаты">
-                <ScoringResultsPage />
-              </AppLayout>
+              <VacancyPage />
             </ProtectedRoute>
           }
         />
@@ -58,9 +44,9 @@ export default function App() {
           path="/market"
           element={
             <ProtectedRoute>
-              <AppLayout context="Дашборд ролей">
-                <div style={{ padding: 'var(--space-8)', color: 'var(--text-500)' }}>
-                  Market Analytics — coming soon
+              <AppLayout breadcrumb={<span>Аналитика рынка</span>}>
+                <div style={{ maxWidth: 1200, margin: '0 auto', padding: '42px 32px', color: 'var(--text-muted)' }}>
+                  Аналитика рынка — в разработке
                 </div>
               </AppLayout>
             </ProtectedRoute>
@@ -70,9 +56,7 @@ export default function App() {
           path="/profile"
           element={
             <ProtectedRoute>
-              <AppLayout context="Профиль">
-                <ProfilePage />
-              </AppLayout>
+              <ProfilePage />
             </ProtectedRoute>
           }
         />

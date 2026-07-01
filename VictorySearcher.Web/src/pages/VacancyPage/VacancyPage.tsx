@@ -1,204 +1,140 @@
 import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import * as Tabs from '@radix-ui/react-tabs';
-import { cn } from '@/utils/cn';
+import { AppLayout } from '@/components/layout/AppLayout/AppLayout';
 import {
-  VacancyList,
-  VacancyDetail,
-  ResumeUploadPanel,
-  ScoringStatusBar,
-  NewVacancyDialog,
-  ScoringCounter,
-  ResumeListPanel,
-  ScoringResultList,
-  ScoringProgress,
+  VacancyHeader,
+  VacancyDetailsPanel,
+  ResumeUploadDropzone,
+  ScoringRunPanel,
+  ResumeFilesTable,
+  ScoringResultsPanel,
   useVacancy,
   useResumeUpload,
   useScoring,
   useResumes,
-  useScoringResults,
-  useVacancyCreate,
 } from '@/features/scoring';
-import type { ApiError } from '@/types/api';
+import type { ScoringPhase } from '@/features/scoring';
 import styles from './VacancyPage.module.css';
 
 export function VacancyPage() {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
+  const vacancyId = id!;
   const queryClient = useQueryClient();
 
-  const {
-    vacancies,
-    isLoading: isListLoading,
-    dialogOpen,
-    openDialog,
-    closeDialog,
-    handleCreate,
-    isCreating,
-    createError,
-  } = useVacancyCreate();
-  const { vacancy, isLoading: isDetailLoading, isPlaceholderData: isVacancyStale } = useVacancy(id!);
-  const { entries, upload, clear } = useResumeUpload();
-  const { status, isStatusLoading, statusError, start, isStarting, progressEvent } = useScoring(id!);
-  const { ranked, flagged, isLoading: isResultsLoading } = useScoringResults(id!, true);
+  const [tab, setTab] = useState('scoring');
   const [resumesPage, setResumesPage] = useState(1);
-  const { data: resumesData, isLoading: isResumesLoading } = useResumes(id!, resumesPage);
 
-  const apiError = statusError && 'status' in statusError ? (statusError as ApiError) : null;
-  const streamError = apiError && apiError.status !== 404;
-  const notStarted = apiError?.status === 404;
+  const { vacancy, isLoading: isVacancyLoading } = useVacancy(vacancyId);
+  const { entries, upload, clear, remove } = useResumeUpload();
+  const { status, start, isStarting, progressEvent } = useScoring(vacancyId);
+  const { data: resumesData, isLoading: isResumesLoading } = useResumes(vacancyId, resumesPage);
+
   const isActive = status?.status === 'pending' || status?.status === 'inProcess';
-  const isFailed = status?.status === 'failed';
   const isFinished = status?.status === 'finished';
+  const isFailed = status?.status === 'failed';
 
-  const scoredCount = progressEvent?.checked ?? resumesData?.scoredCount ?? 0;
-  const totalCount = progressEvent?.total ?? resumesData?.totalCount ?? 0;
-  const unscoredCount = resumesData?.unscoredCount ?? 0;
+  const scoredResumes = resumesData?.scoredCount ?? vacancy?.scoredResumes ?? 0;
+  const totalResumes = resumesData?.totalCount ?? vacancy?.totalResumes ?? 0;
+  const unscoredCount = resumesData?.unscoredCount ?? vacancy?.unscoredResumes ?? 0;
+
+  // Prioritise actionable states: if there are still unscored resumes the user
+  // should be able to (re)run scoring rather than see a stale "done" panel.
+  let phase: ScoringPhase;
+  if (isActive) phase = 'running';
+  else if (isFailed) phase = 'failed';
+  else if (unscoredCount > 0) phase = 'idle';
+  else if (isFinished || scoredResumes > 0) phase = 'done';
+  else phase = 'idle';
+
+  const checked = progressEvent?.checked ?? scoredResumes;
+  const total = progressEvent?.total ?? totalResumes;
 
   useEffect(() => {
-    if (isFinished && id) {
-      queryClient.invalidateQueries({ queryKey: ['resumes', id], exact: false });
-      queryClient.invalidateQueries({ queryKey: ['scoring', 'results', id] });
+    if (isFinished) {
+      queryClient.invalidateQueries({ queryKey: ['resumes', vacancyId], exact: false });
+      queryClient.invalidateQueries({ queryKey: ['scoring', 'results', vacancyId] });
+      queryClient.invalidateQueries({ queryKey: ['vacancies', vacancyId] });
     }
-  }, [isFinished, id, queryClient]);
+  }, [isFinished, vacancyId, queryClient]);
 
-  function handleSelectVacancy(selectedId: string) {
-    if (selectedId !== id) {
-      clear();
-      setResumesPage(1);
-      navigate(`/scoring/vacancies/${selectedId}`);
-    }
-  }
+  const breadcrumb = (
+    <>
+      <Link to="/scoring" className={styles.crumbLink}>Вакансии</Link>
+      <span className={styles.crumbSep}>/</span>
+      <span className={styles.crumbCurrent}>{vacancy?.title ?? '…'}</span>
+    </>
+  );
 
   return (
-    <div className={styles.content}>
-      <VacancyList
-        vacancies={vacancies}
-        isLoading={isListLoading}
-        selectedId={id ?? null}
-        onSelect={handleSelectVacancy}
-        onCreateClick={openDialog}
-      />
-
-      <main className={styles.main}>
-        {!vacancy && isDetailLoading && <div className={styles.skeleton} />}
+    <AppLayout breadcrumb={breadcrumb}>
+      <div className={styles.page}>
+        {!vacancy && isVacancyLoading && <div className={styles.skeleton} />}
 
         {vacancy && (
-          <article className={cn(styles.detail, isVacancyStale && styles.detailFetching)}>
-            <VacancyDetail vacancy={vacancy} />
+          <>
+            <VacancyHeader vacancy={vacancy} />
+            <VacancyDetailsPanel vacancy={vacancy} />
 
-            <div className={styles.divider} />
-
-            <Tabs.Root defaultValue="scoring" className={styles.tabs}>
+            <Tabs.Root value={tab} onValueChange={setTab} className={styles.tabs}>
               <Tabs.List className={styles.tabList}>
-                <Tabs.Trigger value="scoring" className={styles.tabTrigger}>
-                  Скоринг
+                <Tabs.Trigger value="scoring" className={styles.tab}>
+                  Скоринг резюме
                 </Tabs.Trigger>
-                <Tabs.Trigger value="files" className={styles.tabTrigger}>
+                <Tabs.Trigger value="files" className={styles.tab}>
                   Файлы резюме
-                  {totalCount > 0 && (
-                    <span className={styles.tabBadge}>{totalCount}</span>
-                  )}
+                  {totalResumes > 0 && <span className={styles.tabBadge}>{totalResumes}</span>}
                 </Tabs.Trigger>
-                <Tabs.Trigger value="results" className={styles.tabTrigger}>
+                <Tabs.Trigger value="results" className={styles.tab}>
                   Результаты
-                  {(ranked.length + flagged.length) > 0 && (
-                    <span className={styles.tabBadge}>{ranked.length + flagged.length}</span>
-                  )}
+                  {scoredResumes > 0 && <span className={styles.tabBadge}>{scoredResumes}</span>}
                 </Tabs.Trigger>
               </Tabs.List>
 
               <Tabs.Content value="scoring" className={styles.tabContent}>
-                <ScoringCounter
-                  scoredCount={scoredCount}
-                  totalCount={totalCount}
-                  unscoredCount={unscoredCount}
+                <ResumeUploadDropzone
+                  entries={entries}
+                  onUpload={(files) => upload(vacancyId, files)}
+                  onClear={clear}
+                  onRemove={remove}
                 />
-
-                {isActive && progressEvent && (
-                  <ScoringProgress
-                    checked={progressEvent.checked}
-                    total={progressEvent.total}
-                  />
-                )}
-
-                {isStatusLoading && !isActive && <div className={styles.statusSkeleton} />}
-
-                {streamError && !isStatusLoading && (
-                  <div className={styles.errorPanel}>
-                    <p className={styles.errorText}>Ошибка при подключении к стриму скоринга (возможно скоринг уже запущен). Попробуйте позже.</p>
-                    <button
-                      type="button"
-                      className={styles.retryBtn}
-                      onClick={() => start()}
-                      disabled={isStarting}
-                    >
-                      Повторить
-                    </button>
-                  </div>
-                )}
-
-                {!isStatusLoading && !isActive && (
-                  <ResumeUploadPanel
-                    entries={entries}
-                    onUpload={(files) => upload(id!, files)}
-                    onStart={() => start()}
-                    isStarting={isStarting}
-                    disabled={isActive}
-                    unscoredCount={unscoredCount}
-                  />
-                )}
-
-                {!isStatusLoading && !notStarted && status && !isActive && (
-                  <ScoringStatusBar status={status.status} errorMessage={status.errorMessage} />
-                )}
-
-                {isFailed && (
-                  <button
-                    type="button"
-                    className={styles.retryBtn}
-                    onClick={() => start()}
-                    disabled={isStarting}
-                  >
-                    {isStarting ? 'Запуск…' : 'Запустить повторно'}
-                  </button>
-                )}
+                <ScoringRunPanel
+                  phase={phase}
+                  unscoredCount={unscoredCount}
+                  checked={checked}
+                  total={total}
+                  currentTargetName={progressEvent?.currentTargetName ?? null}
+                  isStarting={isStarting}
+                  errorMessage={status?.errorMessage ?? null}
+                  onStart={() => start()}
+                  onGoToResults={() => setTab('results')}
+                />
               </Tabs.Content>
 
               <Tabs.Content value="files" className={styles.tabContent}>
-                <ResumeListPanel
+                <ResumeFilesTable
                   data={resumesData}
                   isLoading={isResumesLoading}
                   page={resumesPage}
                   onPageChange={setResumesPage}
-                  vacancyId={id!}
+                  vacancyId={vacancyId}
                 />
               </Tabs.Content>
 
               <Tabs.Content value="results" className={styles.tabContent}>
-                {isResultsLoading && <div className={styles.statusSkeleton} />}
-                {!isResultsLoading && (ranked.length + flagged.length) === 0 && (
+                {scoredResumes > 0 ? (
+                  <ScoringResultsPanel vacancyId={vacancyId} enabled={tab === 'results'} />
+                ) : (
                   <div className={styles.placeholder}>
-                    <p className={styles.placeholderText}>Результаты скоринга не найдены</p>
+                    Результаты появятся после завершения скоринга.
                   </div>
-                )}
-                {!isResultsLoading && (ranked.length + flagged.length) > 0 && (
-                  <ScoringResultList ranked={ranked} flagged={flagged} />
                 )}
               </Tabs.Content>
             </Tabs.Root>
-          </article>
+          </>
         )}
-      </main>
-
-      <NewVacancyDialog
-        open={dialogOpen}
-        onClose={closeDialog}
-        onSubmit={handleCreate}
-        isLoading={isCreating}
-        error={createError}
-      />
-    </div>
+      </div>
+    </AppLayout>
   );
 }

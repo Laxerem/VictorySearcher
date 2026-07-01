@@ -5,17 +5,25 @@ import type { CreateVacancyRequestDto } from '@/types/api';
 export function useVacancies() {
   const queryClient = useQueryClient();
 
-  const { data: vacancies = [], isLoading } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ['vacancies'],
     queryFn: getVacancies,
   });
 
   const { mutate: create, isPending: isCreating, error: createError } = useMutation({
-    mutationFn: (data: CreateVacancyRequestDto) => createVacancy(data),
+    mutationFn: (payload: CreateVacancyRequestDto) => createVacancy(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['vacancies'] });
     },
   });
 
-  return { vacancies, isLoading, create, isCreating, createError };
+  return {
+    items: data?.items ?? [],
+    total: data?.total ?? 0,
+    totalResumes: data?.total_resumes ?? 0,
+    isLoading,
+    create,
+    isCreating,
+    createError,
+  };
 }

@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/providers/AuthProvider';
+import { AppLayout } from '@/components/layout/AppLayout/AppLayout';
 import styles from './ProfilePage.module.css';
 
 const USERNAME = 'recruiter';
@@ -14,7 +15,8 @@ export function ProfilePage() {
   }
 
   return (
-    <main className={styles.main}>
+    <AppLayout breadcrumb={<span>Профиль</span>}>
+      <main className={styles.main}>
       <section className={styles.card}>
         <header className={styles.identity}>
           <span className={styles.avatar}>{USERNAME.slice(0, 2).toUpperCase()}</span>
@@ -28,6 +30,7 @@ export function ProfilePage() {
           Выйти из аккаунта
         </button>
       </section>
-    </main>
+      </main>
+    </AppLayout>
   );
 }

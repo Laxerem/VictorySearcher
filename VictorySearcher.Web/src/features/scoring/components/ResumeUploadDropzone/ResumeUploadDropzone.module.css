@@ -1,0 +1,177 @@
+.dropzone {
+  border: 1.5px dashed var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--surface-section);
+  padding: 44px 32px;
+  text-align: center;
+  transition: border-color var(--dur-med) var(--ease-out), background var(--dur-med) var(--ease-out);
+}
+
+.dropzone:hover,
+.dropzoneActive {
+  border-color: var(--text-muted);
+  background: var(--surface-card);
+}
+
+.dropIcon {
+  width: 52px;
+  height: 52px;
+  margin: 0 auto 18px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--surface-card);
+  border: 1px solid var(--border-hairline);
+  color: var(--text-body);
+}
+
+.dropTitle {
+  font-size: 17px;
+  font-weight: var(--fw-semi);
+  color: var(--text-strong);
+}
+
+.dropHint {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: 7px;
+}
+
+.selectBtn {
+  margin-top: 20px;
+  min-width: 160px;
+  height: 46px;
+  padding: 0 20px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--ls-button);
+  text-transform: uppercase;
+  color: var(--text-strong);
+  background: var(--surface-card);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: border-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+}
+
+.selectBtn:hover {
+  border-color: var(--text-muted);
+  color: var(--text-strong);
+}
+
+.hiddenInput {
+  display: none;
+}
+
+/* ---- staged list ---- */
+.stagedHead {
+  margin-top: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.stagedTitle {
+  font-size: 13px;
+  font-weight: var(--fw-semi);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.clearBtn {
+  font-size: 13px;
+  color: var(--text-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+.clearBtn:hover {
+  color: var(--text-strong);
+}
+
+.stagedList {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.stagedItem {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 16px;
+  background: var(--surface-card);
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-sm);
+}
+
+.extBadge {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-xs);
+  background: var(--surface-section);
+  color: var(--text-muted);
+  font-size: 9px;
+  font-weight: var(--fw-display-heavy);
+  letter-spacing: 0.06em;
+}
+
+.stagedInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.stagedName {
+  font-size: 14px;
+  font-weight: var(--fw-semi);
+  color: var(--text-strong);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.stagedSize {
+  font-size: 12px;
+  color: var(--text-faint);
+  margin-top: 2px;
+}
+
+.stagedStatus {
+  font-size: 12px;
+  color: var(--text-faint);
+}
+
+.statusLoaded {
+  color: var(--vg-green);
+}
+
+.statusError {
+  color: var(--accent);
+}
+
+.removeBtn {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-faint);
+  border-radius: var(--radius-xs);
+  transition: color var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out);
+}
+
+.removeBtn:hover {
+  color: var(--text-strong);
+  background: var(--surface-section);
+}
