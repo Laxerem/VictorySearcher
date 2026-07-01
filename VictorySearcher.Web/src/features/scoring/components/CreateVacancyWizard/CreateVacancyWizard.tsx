@@ -104,7 +104,7 @@ export function CreateVacancyWizard({ open, onClose, onSubmit, isLoading, error 
                   <div className={styles.stepCounter}>Шаг {step} из {TOTAL}</div>
                   <Dialog.Title className={styles.headerTitle}>Новая вакансия</Dialog.Title>
                 </div>
-                <Dialog.Close className={styles.closeBtn} aria-label="Закрыть">
+                <Dialog.Close type="button" className={styles.closeBtn} aria-label="Закрыть">
                   <CloseIcon />
                 </Dialog.Close>
               </div>
@@ -237,7 +237,12 @@ export function CreateVacancyWizard({ open, onClose, onSubmit, isLoading, error 
                   Далее
                 </button>
               ) : (
-                <button type="submit" className={styles.primaryBtn} disabled={isLoading}>
+                <button
+                  type="button"
+                  className={styles.primaryBtn}
+                  disabled={isLoading}
+                  onClick={handleSubmit(submit)}
+                >
                   {isLoading ? 'Создание…' : 'Создать вакансию'}
                 </button>
               )}
