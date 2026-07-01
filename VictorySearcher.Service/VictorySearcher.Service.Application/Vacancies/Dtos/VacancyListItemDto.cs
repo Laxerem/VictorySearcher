@@ -4,6 +4,8 @@ namespace VictorySearcher.Service.Application.Vacancies.Dtos;
 
 public record VacancyItemDto(
     Guid Id,
+    string Title,
+    string? Trend,
     [property: JsonPropertyName("resume_count")]
     int ResumeCount,
     [property: JsonPropertyName("checked_resume_count")]

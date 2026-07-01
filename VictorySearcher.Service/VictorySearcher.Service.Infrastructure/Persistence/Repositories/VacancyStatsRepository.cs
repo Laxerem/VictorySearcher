@@ -10,6 +10,8 @@ public class VacancyStatsRepository(AppDbContext db) : IVacancyStatsRepository {
             .OrderByDescending(v => v.CreatedAt)
             .Select(v => new VacancyStats(
                 v.Id,
+                v.Title,
+                v.Trend,
                 v.Resumes.Count(),
                 v.Resumes.Count(r => r.ScoringResults.Any()),
                 v.Resumes.SelectMany(r => r.ScoringResults).Max(sr => (int?)sr.OverallScore) ?? 0
@@ -24,6 +26,8 @@ public class VacancyStatsRepository(AppDbContext db) : IVacancyStatsRepository {
             .Where(v => v.Id == vacancyId)
             .Select(v => new VacancyStats(
                 v.Id,
+                v.Title,
+                v.Trend,
                 v.Resumes.Count(),
                 v.Resumes.Count(r => r.ScoringResults.Any()),
                 v.Resumes.SelectMany(r => r.ScoringResults).Max(sr => (int?)sr.OverallScore) ?? 0

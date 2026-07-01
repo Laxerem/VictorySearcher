@@ -95,6 +95,8 @@ HTTP REST API для управления вакансиями, загрузки
   "items": [
     {
       "id": "uuid",
+      "title": "string",
+      "trend": "string | null",
       "resume_count": 3,
       "checked_resume_count": 2,
       "best_score": 87
