@@ -15,6 +15,16 @@ export interface ApiError {
 export interface VacancyListItemDto {
   id: string;
   title: string;
+  trend: string | null;
+  resume_count: number;
+  checked_resume_count: number;
+  best_score: number;
+}
+
+export interface VacancyListResponseDto {
+  total: number;
+  total_resumes: number;
+  items: VacancyListItemDto[];
 }
 
 export interface VacancyDto {
@@ -23,14 +33,19 @@ export interface VacancyDto {
   description: string;
   requirements: string;
   extraRequirements: string | null;
+  trend: string | null;
   createdAt: string;
+  totalResumes: number;
+  scoredResumes: number;
+  unscoredResumes: number;
 }
 
 export interface CreateVacancyRequestDto {
   title: string;
   description: string;
   requirements: string;
-  extraRequirements?: string;
+  extraRequirements?: string | null;
+  trend?: string | null;
 }
 
 export type ScoringStatus = 'pending' | 'inProcess' | 'finished' | 'failed';
@@ -51,6 +66,7 @@ export interface ScoringProgressEvent {
   status: ScoringStatus;
   checked: number;
   total: number;
+  currentTargetName: string | null;
   errorMessage: string | null;
 }
 
@@ -77,6 +93,7 @@ export interface ResumeListItemDto {
   id: string;
   fileName: string;
   format: string;
+  fileSizeBytes: number;
   loadedAt: string;
   isScored: boolean;
 }

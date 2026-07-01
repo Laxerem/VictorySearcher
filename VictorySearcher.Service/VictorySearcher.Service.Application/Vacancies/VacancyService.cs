@@ -1,4 +1,5 @@
 using VictorySearcher.Service.Application.Common;
+using VictorySearcher.Service.Application.Extensions;
 using VictorySearcher.Service.Application.Interfaces;
 using VictorySearcher.Service.Application.Vacancies.Dtos;
 using VictorySearcher.Service.Domain.Entities;
@@ -6,16 +7,17 @@ using VictorySearcher.Service.Domain.Repositories;
 
 namespace VictorySearcher.Service.Application.Vacancies;
 
-public class VacancyService(IVacancyRepository vacancyRepository, IUnitOfWork unitOfWork) : IVacancyService {
+public class VacancyService(IVacancyRepository vacancyRepository, IVacancyStatsRepository vacancyStatsRepository, IUnitOfWork unitOfWork) : IVacancyService {
     public async Task<Result<VacancyDto>> CreateAsync(
         string title, string description, string requirements, string? extraRequirements,
-        Guid createdById, CancellationToken ct = default) {
+        string? trend, Guid createdById, CancellationToken ct = default) {
         var vacancy = new Vacancy {
             Id = Guid.NewGuid(),
             Title = title,
             Description = description,
             Requirements = requirements,
             ExtraRequirements = extraRequirements,
+            Trend = trend,
             CreatedById = createdById,
             CreatedAt = DateTime.UtcNow
         };
@@ -23,13 +25,13 @@ public class VacancyService(IVacancyRepository vacancyRepository, IUnitOfWork un
         await vacancyRepository.AddAsync(vacancy, ct);
         await unitOfWork.SaveChangesAsync(ct);
 
-        return Result<VacancyDto>.Success(MapToDto(vacancy));
+        return Result<VacancyDto>.Success(MapToDto(vacancy, null));
     }
 
-    public async Task<Result<IReadOnlyList<VacancyListItemDto>>> GetAllAsync(CancellationToken ct = default) {
-        var vacancies = await vacancyRepository.GetAllAsync(ct);
-        var dtos = vacancies.Select(v => new VacancyListItemDto(v.Id, v.Title)).ToList();
-        return Result<IReadOnlyList<VacancyListItemDto>>.Success(dtos);
+    public async Task<Result<VacancyListItemDto>> GetAllAsync(CancellationToken ct = default) {
+        var stats = await vacancyStatsRepository.GetAllAsync(ct);
+        var totalResumes = await vacancyStatsRepository.GetTotalResumeCountAsync(ct);
+        return Result<VacancyListItemDto>.Success(stats.ToDto(totalResumes));
     }
 
     public async Task<Result<VacancyDto>> GetByIdAsync(Guid id, CancellationToken ct = default) {
@@ -37,7 +39,9 @@ public class VacancyService(IVacancyRepository vacancyRepository, IUnitOfWork un
         if (vacancy is null)
             return Result<VacancyDto>.Failure(AppError.NotFound());
 
-        return Result<VacancyDto>.Success(MapToDto(vacancy));
+        var stats = await vacancyStatsRepository.GetByVacancyIdAsync(id, ct);
+
+        return Result<VacancyDto>.Success(MapToDto(vacancy, stats));
     }
 
     public async Task<Result<bool>> DeleteAsync(Guid id, CancellationToken ct = default) {
@@ -51,6 +55,10 @@ public class VacancyService(IVacancyRepository vacancyRepository, IUnitOfWork un
         return Result<bool>.Success(true);
     }
 
-    private static VacancyDto MapToDto(Vacancy v) =>
-        new(v.Id, v.Title, v.Description, v.Requirements, v.ExtraRequirements, v.CreatedAt);
+    private static VacancyDto MapToDto(Vacancy v, VacancyStats? stats) {
+        var total = stats?.ResumeCount ?? 0;
+        var scored = stats?.CheckedResumeCount ?? 0;
+        return new(v.Id, v.Title, v.Description, v.Requirements, v.ExtraRequirements, v.Trend, v.CreatedAt,
+            total, scored, total - scored);
+    }
 }

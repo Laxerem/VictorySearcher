@@ -1,32 +1,56 @@
 import { LoginForm } from '@/features/auth';
+import logoUrl from '@/assets/victorysearcher-logo.png';
 import styles from './LoginPage.module.css';
-
-const BrandMark = () => (
-  <svg width="30" height="30" viewBox="0 0 32 32" fill="none">
-    <path d="M5 9 L16 23 L27 9" stroke="#F3F5F8" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
-    <path d="M11 9 L16 16" stroke="#46A6C4" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
 
 export function LoginPage() {
   return (
     <main className={styles.auth}>
-      <section className={styles.card} aria-labelledby="brand">
-        <div className={styles.brand}>
-          <span className={styles.mark} aria-hidden="true">
-            <BrandMark />
-          </span>
-          <h1 id="brand" className={styles.wordmark}>
-            <b>Victory</b><span>Searcher</span>
-          </h1>
-          <p className={styles.sub}>Внутренний инструмент скоринга резюме и аналитики рынка</p>
+      {/* ============ Brand panel ============ */}
+      <section className={styles.brandPanel} aria-hidden="true">
+        <div className={styles.grid} />
+        <div className={styles.vignette} />
+        <div className={styles.streak} />
+
+        <div className={styles.brandInner}>
+          <div className={styles.brandTop}>
+            <img src={logoUrl} alt="" className={styles.logo} />
+            <span className={styles.wordmark}>
+              Victory<span className={styles.wordmarkMuted}>Searcher</span>
+            </span>
+          </div>
+
+          <div className={styles.brandHero}>
+            <p className={styles.eyebrow}>Личный кабинет</p>
+            <h1 className={styles.heroTitle}>
+              Вход<br />в&nbsp;систему
+            </h1>
+            <p className={styles.heroText}>
+              Скоринг резюме и аналитика рынка труда в едином рабочем
+              пространстве.
+            </p>
+          </div>
+
+          <div className={styles.brandBadge}>
+            <span className={styles.badgeDot} />
+            <span className={styles.badgeText}>Внутренний инструмент · HR</span>
+          </div>
         </div>
+      </section>
 
-        <div className={styles.divider} />
+      {/* ============ Form panel ============ */}
+      <section className={styles.formPanel}>
+        <div className={styles.formInner}>
+          <h2 className={styles.formTitle}>Вход</h2>
+          <p className={styles.formSubtitle}>
+            Введите данные учётной записи, чтобы продолжить.
+          </p>
 
-        <LoginForm />
+          <LoginForm />
 
-        <p className={styles.foot}>Доступ только для сотрудников Victory Group</p>
+          <p className={styles.foot}>
+            VictorySearcher — внутренний сервис. Доступ выдаёт администратор.
+          </p>
+        </div>
       </section>
     </main>
   );

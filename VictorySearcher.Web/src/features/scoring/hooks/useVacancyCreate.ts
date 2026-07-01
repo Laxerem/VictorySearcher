@@ -5,7 +5,7 @@ import type { CreateVacancyRequestDto } from '@/types/api';
 
 export function useVacancyCreate() {
   const navigate = useNavigate();
-  const { vacancies, isLoading, create, isCreating, createError } = useVacancies();
+  const { create, isCreating, createError } = useVacancies();
   const [dialogOpen, setDialogOpen] = useState(false);
 
   function handleCreate(data: CreateVacancyRequestDto) {
@@ -18,8 +18,6 @@ export function useVacancyCreate() {
   }
 
   return {
-    vacancies,
-    isLoading,
     dialogOpen,
     openDialog: () => setDialogOpen(true),
     closeDialog: () => setDialogOpen(false),

@@ -20,5 +20,9 @@ public class CreateVacancyRequestValidator : AbstractValidator<CreateVacancyRequ
         RuleFor(x => x.ExtraRequirements)
             .MaximumLength(3_000)
             .When(x => x.ExtraRequirements is not null);
+
+        RuleFor(x => x.Trend)
+            .MaximumLength(40)
+            .When(x => x.Trend is not null);
     }
 }

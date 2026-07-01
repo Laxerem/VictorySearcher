@@ -4,4 +4,5 @@ public record CreateVacancyRequest(
     string Title,
     string Description,
     string Requirements,
-    string? ExtraRequirements);
+    string? ExtraRequirements,
+    string? Trend);

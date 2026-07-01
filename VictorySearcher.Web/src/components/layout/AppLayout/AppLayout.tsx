@@ -1,43 +1,29 @@
 import type { ReactNode } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { useAuth } from '@/providers/AuthProvider';
 import { cn } from '@/utils/cn';
+import logoUrl from '@/assets/victorysearcher-logo.png';
 import styles from './AppLayout.module.css';
-
-
-const BrandMark = () => (
-  <svg width="24" height="24" viewBox="0 0 32 32" fill="none">
-    <path d="M5 9 L16 23 L27 9" stroke="#F3F5F8" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
-    <path d="M11 9 L16 16" stroke="#46A6C4" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
-
-const ListIcon = () => (
-  <svg className={styles.ic} viewBox="0 0 24 24">
-    <path d="M4 6h16M4 12h16M4 18h10" />
-  </svg>
-);
-
-const ChartIcon = () => (
-  <svg className={styles.ic} viewBox="0 0 24 24">
-    <path d="M4 19V5M4 19h16M8 16v-4M13 16V8M18 16v-6" />
-  </svg>
-);
 
 interface Props {
   children: ReactNode;
-  context?: string;
+  /** Breadcrumb rendered in the top bar after the brand mark. */
+  breadcrumb?: ReactNode;
+  /** Hide the primary "New vacancy" action (e.g. on secondary pages). */
+  hideNewVacancy?: boolean;
   username?: string;
 }
 
-export function AppLayout({ children, context = 'Вакансии', username = 'recruiter' }: Props) {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const { logout } = useAuth();
+const PlusIcon = () => (
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
+    <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="1.8" strokeLinecap="square" />
+  </svg>
+);
 
-  const isScoringActive = location.pathname.startsWith('/scoring');
-  const isMarketActive = location.pathname.startsWith('/market');
+export function AppLayout({ children, breadcrumb, hideNewVacancy = false, username = 'recruiter' }: Props) {
+  const navigate = useNavigate();
+  const { logout } = useAuth();
 
   function handleLogout(): void {
     logout();
@@ -47,79 +33,61 @@ export function AppLayout({ children, context = 'Вакансии', username = '
   return (
     <div className={styles.shell}>
       <header className={styles.topbar}>
-        <span className={styles.brand}>
-          <span className={styles.brandMark} aria-hidden="true">
-            <BrandMark />
-          </span>
-          <span className={styles.brandName}>
-            <b>Victory</b><span>Searcher</span>
-          </span>
-        </span>
-
-        <span className={styles.context}>
-          <span>Скоринг</span>
-          <span className={styles.contextSep}>/</span>
-          <span className={styles.contextActive}>{context}</span>
-        </span>
-
-        <span className={styles.spacer} />
-
-        <DropdownMenu.Root>
-          <DropdownMenu.Trigger className={styles.account}>
-            <span className={styles.avatar}>{username.slice(0, 2).toUpperCase()}</span>
-            <span>{username}</span>
-          </DropdownMenu.Trigger>
-          <DropdownMenu.Portal>
-            <DropdownMenu.Content
-              className={styles.menuContent}
-              align="end"
-              sideOffset={8}
-            >
-              <DropdownMenu.Item
-                className={styles.menuItem}
-                onSelect={() => navigate('/profile')}
-              >
-                Профиль
-              </DropdownMenu.Item>
-              <DropdownMenu.Separator className={styles.menuSeparator} />
-              <DropdownMenu.Item
-                className={cn(styles.menuItem, styles.menuItemDanger)}
-                onSelect={handleLogout}
-              >
-                Выйти
-              </DropdownMenu.Item>
-            </DropdownMenu.Content>
-          </DropdownMenu.Portal>
-        </DropdownMenu.Root>
-      </header>
-
-      <div className={styles.body}>
-        <nav className={styles.rail} aria-label="Разделы">
-          <p className={styles.eyebrow}>Скоринг</p>
+        <div className={styles.left}>
           <button
             type="button"
-            className={cn(styles.railItem, isScoringActive && styles.railItemActive)}
+            className={styles.brand}
             onClick={() => navigate('/scoring')}
+            aria-label="К списку вакансий"
           >
-            <ListIcon />
-            Вакансии
+            <img src={logoUrl} alt="" className={styles.logo} />
+            <span className={styles.wordmark}>
+              Victory<span className={styles.wordmarkMuted}>Searcher</span>
+            </span>
           </button>
+          {breadcrumb && (
+            <>
+              <span className={styles.divider} aria-hidden="true" />
+              <div className={styles.breadcrumb}>{breadcrumb}</div>
+            </>
+          )}
+        </div>
 
-          <div className={styles.railGroup}>
-            <p className={styles.eyebrow}>Аналитика</p>
+        <div className={styles.right}>
+          {!hideNewVacancy && (
             <button
               type="button"
-              className={cn(styles.railItem, isMarketActive && styles.railItemActive)}
-              onClick={() => navigate('/market')}
+              className={styles.newVacancy}
+              onClick={() => navigate('/scoring?create=1')}
             >
-              <ChartIcon />
-              Дашборд ролей
+              <PlusIcon />
+              Новая вакансия
             </button>
-          </div>
-        </nav>
+          )}
 
-        {children}
-      </div>
+          <DropdownMenu.Root>
+            <DropdownMenu.Trigger className={styles.avatar} aria-label="Меню аккаунта">
+              {username.slice(0, 2).toUpperCase()}
+            </DropdownMenu.Trigger>
+            <DropdownMenu.Portal>
+              <DropdownMenu.Content className={styles.menuContent} align="end" sideOffset={8}>
+                <DropdownMenu.Item className={styles.menuItem} onSelect={() => navigate('/profile')}>
+                  Профиль
+                </DropdownMenu.Item>
+                <DropdownMenu.Separator className={styles.menuSeparator} />
+                <DropdownMenu.Item
+                  className={cn(styles.menuItem, styles.menuItemDanger)}
+                  onSelect={handleLogout}
+                >
+                  Выйти
+                </DropdownMenu.Item>
+              </DropdownMenu.Content>
+            </DropdownMenu.Portal>
+          </DropdownMenu.Root>
+        </div>
+      </header>
+
+      <div className={styles.body}>{children}</div>
     </div>
   );
 }

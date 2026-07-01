@@ -1,0 +1,86 @@
+.header {
+  margin-bottom: 4px;
+}
+
+.eyebrowRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.eyebrow {
+  font-size: 12px;
+  font-weight: var(--fw-semi);
+  letter-spacing: var(--ls-eyebrow);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.trend {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 11px;
+  font-size: 11px;
+  font-weight: var(--fw-bold);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-body);
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-pill);
+}
+
+.titleRow {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 28px;
+  flex-wrap: wrap;
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: var(--fw-display-heavy);
+  text-transform: uppercase;
+  line-height: 1.04;
+  letter-spacing: var(--ls-display);
+  font-size: 40px;
+  max-width: 720px;
+  color: var(--text-strong);
+}
+
+.stats {
+  display: flex;
+  gap: 28px;
+  padding-bottom: 4px;
+}
+
+.stat {
+  text-align: left;
+}
+
+.statValue {
+  font-family: var(--font-display);
+  font-weight: var(--fw-bold);
+  font-size: 26px;
+  line-height: 1;
+  color: var(--text-strong);
+}
+
+.statScored {
+  color: var(--vg-green);
+}
+
+.statLabel {
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-top: 6px;
+}
+
+.statSep {
+  width: 1px;
+  background: var(--border-hairline);
+}

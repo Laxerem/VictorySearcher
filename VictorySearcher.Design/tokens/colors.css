@@ -1,0 +1,53 @@
+:root {
+  /* ---- Base neutrals (near-black premium dark) ---- */
+  --vg-black:        #000000;
+  --vg-ink-900:      #050506;  /* page background */
+  --vg-ink-800:      #0c0c0e;  /* raised section */
+  --vg-ink-700:      #141417;  /* card base */
+  --vg-ink-600:      #1c1c20;  /* card top of gradient / hover */
+  --vg-ink-500:      #26262b;  /* borders, hairlines */
+  --vg-ink-400:      #3a3a41;  /* strong border / disabled fill */
+  --vg-ink-300:      #5c5c64;  /* muted icon */
+
+  /* ---- Text ---- */
+  --vg-white:        #f4f4f5;
+  --vg-gray-200:     #c9c9ce;  /* secondary text */
+  --vg-gray-400:     #8c8c93;  /* tertiary / captions */
+  --vg-gray-500:     #6a6a71;  /* faint labels */
+
+  /* ---- Neon accents (used sparingly, glow only) ---- */
+  --vg-orange:       #ff6a1a;  /* Реклама */
+  --vg-cyan:         #1e9cff;  /* Лидогенерация */
+  --vg-magenta:      #c026d3;  /* Digital */
+  --vg-green:        #3bdc6b;  /* Репутация */
+
+  /* ---- Light action surface (primary button) ---- */
+  --vg-light:        #e9e9ea;
+  --vg-light-hover:  #ffffff;
+
+  /* =================================================== */
+  /* Semantic aliases                                    */
+  /* =================================================== */
+  --surface-page:        var(--vg-ink-900);
+  --surface-section:     var(--vg-ink-800);
+  --surface-card:        var(--vg-ink-700);
+  --surface-card-hover:  var(--vg-ink-600);
+  --surface-overlay:     rgba(5,5,6,0.72);
+
+  --text-strong:    var(--vg-white);
+  --text-body:      var(--vg-gray-200);
+  --text-muted:     var(--vg-gray-400);
+  --text-faint:     var(--vg-gray-500);
+  --text-on-light:  #0c0c0e;
+
+  --border-hairline: var(--vg-ink-500);
+  --border-strong:   var(--vg-ink-400);
+
+  --accent:          var(--vg-orange);
+  --accent-cyan:     var(--vg-cyan);
+  --accent-magenta:  var(--vg-magenta);
+  --accent-green:    var(--vg-green);
+
+  --action-fill:        var(--vg-light);
+  --action-fill-hover:  var(--vg-light-hover);
+}

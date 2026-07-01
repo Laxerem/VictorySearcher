@@ -7,6 +7,7 @@ public interface IResumeService {
     Task<Result<Guid>> UploadAsync(
         Guid vacancyId,
         string fileName,
+        long fileSizeBytes,
         Stream content,
         CancellationToken ct = default);
 

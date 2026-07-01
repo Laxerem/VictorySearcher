@@ -41,7 +41,7 @@ public class ScoringController(IScoringService scoringService) : ControllerBase 
     }
 
     [HttpGet("stream")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType<ScoringProgressEvent>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]

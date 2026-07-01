@@ -6,4 +6,6 @@ public record ScoringProgressEvent(
     ScoringStatus Status,
     int Checked,
     int Total,
-    string? ErrorMessage = null);
+    string? CurrentTargetName = null,
+    string? ErrorMessage = null
+);

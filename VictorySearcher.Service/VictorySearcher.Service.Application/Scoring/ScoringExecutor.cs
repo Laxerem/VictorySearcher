@@ -60,6 +60,8 @@ public class ScoringExecutor(
                 vacancy.ExtraRequirements);
 
             foreach (var resume in resumes) {
+                progressChannel.TryWrite(requestId,
+                    new ScoringProgressEvent(ScoringStatus.InProcess, scoredCount, total, resume.FileName));
                 var content = await parserDispatcher.ParseAsync(resume, ct);
                 var analysis = await analyserService.AnalyseAsync(content, vacancyContext, ct);
 
@@ -70,7 +72,7 @@ public class ScoringExecutor(
 
                 scoredCount++;
                 progressChannel.TryWrite(requestId,
-                    new ScoringProgressEvent(ScoringStatus.InProcess, scoredCount, total));
+                    new ScoringProgressEvent(ScoringStatus.InProcess, scoredCount, total, resume.FileName));
 
                 logger.LogInformation(
                     "Scored resume \"{FileName}\": overall={OverallScore}, uncertain={IsUncertain}",
@@ -93,7 +95,7 @@ public class ScoringExecutor(
             request.ErrorMessage = ex.Message;
             await unitOfWork.SaveChangesAsync(ct);
             progressChannel.TryWrite(requestId,
-                new ScoringProgressEvent(ScoringStatus.Failed, scoredCount, total, ex.Message));
+                new ScoringProgressEvent(ScoringStatus.Failed, scoredCount, total, null, ex.Message));
             throw;
         } finally {
             progressChannel.Complete(requestId);

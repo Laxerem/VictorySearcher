@@ -17,7 +17,7 @@ public class ResumesController(IResumeService resumeService) : ControllerBase {
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> UploadAsync(Guid vacancyId, [FromForm] UploadResumeRequest request, CancellationToken ct) {
-        var result = await resumeService.UploadAsync(vacancyId, request.File.FileName, request.File.OpenReadStream(), ct);
+        var result = await resumeService.UploadAsync(vacancyId, request.File.FileName, request.File.Length, request.File.OpenReadStream(), ct);
         if (!result.IsSuccess) return StatusCode(result.Error!.StatusCode, result.Error);
         return StatusCode(StatusCodes.Status201Created);
     }

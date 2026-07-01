@@ -1,0 +1,20 @@
+<!-- @dsCard group="Spacing" viewport="700x160" name="Radii + card" subtitle="Sharp corners · card anatomy" -->
+<!DOCTYPE html><html><head><meta charset="utf-8"/><link rel="stylesheet" href="../styles.css"/>
+<style>
+  html,body{margin:0;background:var(--surface-page);font-family:var(--font-body);}
+  .wrap{display:flex;align-items:center;gap:28px;padding:28px 32px;}
+  .r{display:flex;flex-direction:column;align-items:center;gap:8px;}
+  .box{width:60px;height:60px;background:var(--vg-ink-600);border:1px solid var(--border-hairline);}
+  .t{font-size:10px;color:var(--text-faint);font-family:var(--font-mono);}
+  .card{flex:1;background:var(--grad-card);border:1px solid var(--border-hairline);border-radius:var(--radius-sm);box-shadow:var(--shadow-card);padding:18px 20px;height:60px;display:flex;flex-direction:column;justify-content:center;}
+  .ct{color:var(--text-strong);font-weight:600;font-size:14px;}
+  .cs{color:var(--text-muted);font-size:12px;}
+</style></head><body>
+<div class="wrap">
+  <div class="r"><div class="box" style="border-radius:0"></div><span class="t">none</span></div>
+  <div class="r"><div class="box" style="border-radius:2px"></div><span class="t">xs 2</span></div>
+  <div class="r"><div class="box" style="border-radius:4px"></div><span class="t">sm 4</span></div>
+  <div class="r"><div class="box" style="border-radius:8px"></div><span class="t">md 8</span></div>
+  <div class="card"><span class="ct">Card surface</span><span class="cs">gradient · hairline · deep shadow</span></div>
+</div>
+</body></html>

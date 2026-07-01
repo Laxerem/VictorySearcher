@@ -6,5 +6,6 @@ public record ResumeListItemDto(
     Guid Id,
     string FileName,
     FileFormat Format,
+    long FileSizeBytes,
     DateTime LoadedAt,
     bool IsScored);

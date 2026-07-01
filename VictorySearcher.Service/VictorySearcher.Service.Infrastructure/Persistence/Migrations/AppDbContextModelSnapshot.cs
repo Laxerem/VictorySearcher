@@ -38,6 +38,9 @@ namespace VictorySearcher.Service.Infrastructure.Persistence.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("character varying(1000)");
 
+                    b.Property<long>("FileSizeBytes")
+                        .HasColumnType("bigint");
+
                     b.Property<int>("Format")
                         .HasColumnType("integer");
 
@@ -179,6 +182,10 @@ namespace VictorySearcher.Service.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
+
+                    b.Property<string>("Trend")
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)");
 
                     b.HasKey("Id");
 

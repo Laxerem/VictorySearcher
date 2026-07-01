@@ -3,7 +3,7 @@ import { getToken, setToken, clearToken, registerUnauthorizedHandler } from '@/a
 
 interface AuthContextValue {
   token: string | null;
-  login: (token: string) => void;
+  login: (token: string, remember?: boolean) => void;
   logout: () => void;
   isAuthenticated: boolean;
 }
@@ -25,8 +25,8 @@ interface AuthProviderProps {
 export function AuthProvider({ children }: AuthProviderProps) {
   const [token, setTokenState] = useState<string | null>(() => getToken());
 
-  function login(newToken: string): void {
-    setToken(newToken);
+  function login(newToken: string, remember = true): void {
+    setToken(newToken, remember);
     setTokenState(newToken);
   }
 

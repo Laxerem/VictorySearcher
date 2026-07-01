@@ -11,6 +11,7 @@ public class VacancyConfiguration : IEntityTypeConfiguration<Vacancy> {
         builder.Property(v => v.Description).HasMaxLength(5_000).IsRequired();
         builder.Property(v => v.Requirements).HasMaxLength(5_000).IsRequired();
         builder.Property(v => v.ExtraRequirements).HasMaxLength(3_000).IsRequired(false);
+        builder.Property(v => v.Trend).HasMaxLength(40).IsRequired(false);
 
         builder.HasOne(v => v.CreatedBy)
             .WithMany(u => u.Vacancies)

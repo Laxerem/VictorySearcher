@@ -64,5 +64,9 @@ export function useResumeUpload() {
     setEntries([]);
   }
 
-  return { entries, upload, clear };
+  function remove(id: string) {
+    setEntries((prev) => prev.filter((e) => e.id !== id));
+  }
+
+  return { entries, upload, clear, remove };
 }

@@ -1,9 +1,10 @@
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(10, 11, 13, 0.75);
-  z-index: 50;
-  animation: fadeIn var(--dur) var(--ease);
+  background: rgba(2, 2, 3, 0.7);
+  backdrop-filter: blur(4px);
+  z-index: 80;
+  animation: fadeIn var(--dur-med) var(--ease-out);
 }
 
 .content {
@@ -11,32 +12,33 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  z-index: 51;
-  width: min(780px, calc(100vw - var(--space-8)));
-  max-height: 80vh;
+  z-index: 81;
+  width: min(760px, calc(100vw - var(--sp-8)));
+  max-height: 82vh;
   display: flex;
   flex-direction: column;
-  background: var(--ink-800);
-  border: 1px solid var(--line-strong);
-  border-radius: var(--r-lg);
-  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
-  animation: slideIn var(--dur) var(--ease);
+  background: var(--surface-section);
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-raised);
+  animation: fadeUp var(--dur-med) var(--ease-out);
 }
 
 .header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--space-4) var(--space-5);
-  border-bottom: 1px solid var(--line);
+  gap: 16px;
+  padding: 18px 22px;
+  border-bottom: 1px solid var(--border-hairline);
   flex-shrink: 0;
 }
 
 .title {
-  font-family: var(--font-ui);
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--text-200);
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: var(--fw-bold);
+  color: var(--text-strong);
   margin: 0;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -44,60 +46,54 @@
 }
 
 .closeBtn {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
   font-size: 14px;
-  color: var(--text-500);
-  background: transparent;
-  border: none;
+  color: var(--text-body);
+  background: var(--surface-card);
+  border: 1px solid var(--border-hairline);
   cursor: pointer;
-  padding: var(--space-1) var(--space-2);
-  border-radius: var(--r-sm);
+  border-radius: var(--radius-xs);
   line-height: 1;
   flex-shrink: 0;
-  transition: color var(--dur) var(--ease);
+  transition: color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out);
 }
 
 .closeBtn:hover {
-  color: var(--text-100);
+  color: var(--text-strong);
+  border-color: var(--text-muted);
 }
 
 .body {
   overflow-y: auto;
-  padding: var(--space-5);
+  padding: 26px 30px 34px;
   flex: 1;
   min-height: 0;
 }
 
 .pre {
-  font-family: var(--font-data);
-  font-size: 13px;
-  color: var(--text-300);
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--text-body);
   white-space: pre-wrap;
   word-break: break-word;
   margin: 0;
-  line-height: 1.6;
+  line-height: 1.7;
 }
 
 .skeleton {
   height: 200px;
-  border-radius: var(--r-md);
-  background: var(--ink-850);
+  border-radius: var(--radius-sm);
+  background: var(--surface-card);
   animation: pulse 1.5s ease-in-out infinite;
 }
 
 .error {
   font-size: 13px;
-  color: var(--alert);
+  color: var(--accent);
   margin: 0;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes slideIn {
-  from { opacity: 0; transform: translate(-50%, -48%); }
-  to { opacity: 1; transform: translate(-50%, -50%); }
 }
 
 @keyframes pulse {

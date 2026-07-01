@@ -1,0 +1,186 @@
+.panel {
+  margin-top: 26px;
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-sm);
+  background: var(--grad-card);
+  box-shadow: var(--shadow-card);
+  padding: 26px 28px;
+}
+
+.resultRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+/* ---- idle ---- */
+.idleTitle {
+  font-family: var(--font-display);
+  font-weight: var(--fw-bold);
+  text-transform: uppercase;
+  font-size: 18px;
+  letter-spacing: var(--ls-display);
+  color: var(--text-strong);
+}
+
+.idleText {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: 7px;
+  max-width: 520px;
+  line-height: 1.5;
+}
+
+.idleNote {
+  font-size: 12px;
+  color: var(--text-faint);
+  margin-top: 10px;
+}
+
+.errorText {
+  font-size: 13px;
+  color: var(--accent);
+  margin-top: 10px;
+}
+
+/* ---- running ---- */
+.runHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.runTitleRow {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.spinner {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid var(--vg-ink-500);
+  border-top-color: var(--vg-cyan);
+  animation: spin 0.8s linear infinite;
+  display: inline-block;
+}
+
+/* loading state is essential info, not decoration — keep it moving even
+   when the global reduced-motion rule zeroes out animations site-wide */
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation: spin 0.8s linear infinite !important;
+  }
+
+  .barFill {
+    animation: barStripes 0.7s linear infinite !important;
+  }
+}
+
+.runTitle {
+  font-family: var(--font-display);
+  font-weight: var(--fw-bold);
+  text-transform: uppercase;
+  font-size: 16px;
+  letter-spacing: var(--ls-display);
+  color: var(--text-strong);
+}
+
+.runCount {
+  font-size: 14px;
+  color: var(--text-body);
+}
+
+.runCountDone {
+  font-weight: var(--fw-bold);
+  color: var(--text-strong);
+}
+
+.bar {
+  height: 10px;
+  border-radius: var(--radius-pill);
+  background: var(--vg-ink-700);
+  overflow: hidden;
+  border: 1px solid var(--border-hairline);
+}
+
+.barFill {
+  height: 100%;
+  border-radius: var(--radius-pill);
+  background-image:
+    repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.16) 0 8px, transparent 8px 16px),
+    linear-gradient(90deg, var(--vg-cyan), var(--vg-green));
+  background-size: 28px 28px, 100% 100%;
+  animation: barStripes 0.7s linear infinite;
+  transition: width var(--dur-slow) var(--ease-out);
+}
+
+.runCurrent {
+  margin-top: 11px;
+  font-size: 12px;
+  color: var(--text-faint);
+}
+
+/* ---- done ---- */
+.doneInfo {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.doneIcon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(59, 220, 107, 0.12);
+  border: 1px solid rgba(59, 220, 107, 0.4);
+  color: var(--vg-green);
+}
+
+.doneTitle {
+  font-family: var(--font-display);
+  font-weight: var(--fw-bold);
+  text-transform: uppercase;
+  font-size: 17px;
+  letter-spacing: var(--ls-display);
+  color: var(--text-strong);
+}
+
+.doneText {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: 5px;
+}
+
+.primaryBtn {
+  min-width: 200px;
+  height: 52px;
+  padding: 0 24px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--ls-button);
+  text-transform: uppercase;
+  color: var(--text-on-light);
+  background: var(--action-fill);
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background var(--dur-med) var(--ease-out);
+}
+
+.primaryBtn:hover:not(:disabled) {
+  background: var(--action-fill-hover);
+}
+
+.primaryBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

@@ -1,70 +1,152 @@
+/*
+ * Design tokens — mirrors VictorySearcher.Design/tokens/* so screens migrate 1:1.
+ * Premium near-black "instrument panel": sharp corners, faint grid, sparing neon.
+ */
 :root {
-  /* neutrals — corpus */
-  --ink-900: #0A0B0D;
-  --ink-850: #0F1114;
-  --ink-800: #141619;
-  --ink-750: #1A1D22;
-  --ink-700: #22262D;
-  --line-soft: #1E2228;
-  --line: #262A31;
-  --line-strong: #333842;
-  --text-100: #F3F5F8;
-  --text-300: #B6BDC7;
-  --text-500: #868E9A;
-  --text-700: #5A616B;
-  --edge-highlight: rgba(255, 255, 255, 0.04);
+  /* ---- Base neutrals ---- */
+  --vg-black: #000000;
+  --vg-ink-900: #050506; /* page background */
+  --vg-ink-800: #0c0c0e; /* raised section */
+  --vg-ink-700: #141417; /* card base */
+  --vg-ink-600: #1c1c20; /* card top of gradient / hover */
+  --vg-ink-500: #26262b; /* borders, hairlines */
+  --vg-ink-400: #3a3a41; /* strong border / disabled fill */
+  --vg-ink-300: #5c5c64; /* muted icon */
 
-  /* signal blue — single chromatic identity */
-  --signal-100: #BFE6F2;
-  --signal-300: #7FCDE0;
-  --signal-500: #46A6C4;
-  --signal-700: #2C6E85;
-  --signal-900: #16323D;
-  --focus-ring: var(--signal-500);
+  /* ---- Text ---- */
+  --vg-white: #f4f4f5;
+  --vg-gray-200: #c9c9ce; /* secondary text */
+  --vg-gray-400: #8c8c93; /* tertiary / captions */
+  --vg-gray-500: #6a6a71; /* faint labels */
 
-  /* score ramp — magnitude (low -> high) */
-  --score-0: #4A5159;
-  --score-1: #557083;
-  --score-2: #4D8CA8;
-  --score-3: #46A6C4;
-  --score-4: #6FC9DD;
+  /* ---- Neon accents (glow only, used sparingly) ---- */
+  --vg-orange: #ff6a1a;
+  --vg-cyan: #1e9cff;
+  --vg-magenta: #c026d3;
+  --vg-green: #3bdc6b;
 
-  /* status — alarms / system */
-  --warn: #D9A441;
-  --warn-bg: #2A2415;
-  --alert: #CC5B4E;
-  --alert-bg: #2A1816;
-  --ok: #5FB39A;
-  --ok-bg: #15241F;
+  /* ---- Light action surface (primary button) ---- */
+  --vg-light: #e9e9ea;
+  --vg-light-hover: #ffffff;
 
-  /* typography */
-  --font-display: "Saira Condensed", "Oswald", system-ui, sans-serif;
-  --font-ui: "IBM Plex Sans", system-ui, sans-serif;
-  --font-data: "IBM Plex Mono", ui-monospace, monospace;
+  /* ---- Semantic surfaces ---- */
+  --surface-page: var(--vg-ink-900);
+  --surface-section: var(--vg-ink-800);
+  --surface-card: var(--vg-ink-700);
+  --surface-card-hover: var(--vg-ink-600);
+  --surface-overlay: rgba(5, 5, 6, 0.72);
 
-  /* spacing */
-  --space-1: 4px;
-  --space-2: 8px;
-  --space-3: 12px;
-  --space-4: 16px;
-  --space-5: 20px;
-  --space-6: 24px;
-  --space-8: 32px;
-  --space-10: 40px;
-  --space-12: 48px;
-  --space-16: 64px;
+  /* ---- Semantic text ---- */
+  --text-strong: var(--vg-white);
+  --text-body: var(--vg-gray-200);
+  --text-muted: var(--vg-gray-400);
+  --text-faint: var(--vg-gray-500);
+  --text-on-light: #0c0c0e;
 
-  /* border radius */
-  --r-sm: 4px;
-  --r-md: 6px;
-  --r-lg: 10px;
+  /* ---- Borders ---- */
+  --border-hairline: var(--vg-ink-500);
+  --border-strong: var(--vg-ink-400);
 
-  /* elevation */
-  --elev-1: 0 1px 2px rgba(0, 0, 0, 0.4);
-  --elev-2: 0 8px 24px rgba(0, 0, 0, 0.5);
+  /* ---- Accents ---- */
+  --accent: var(--vg-orange);
+  --accent-cyan: var(--vg-cyan);
+  --accent-magenta: var(--vg-magenta);
+  --accent-green: var(--vg-green);
 
-  /* motion */
-  --dur-fast: 120ms;
-  --dur: 180ms;
-  --ease: cubic-bezier(0.2, 0.6, 0.2, 1);
+  /* ---- Action fills ---- */
+  --action-fill: var(--vg-light);
+  --action-fill-hover: var(--vg-light-hover);
+
+  /* ---- Type families ---- */
+  --font-display: "Unbounded", "Arial Narrow", system-ui, sans-serif;
+  --font-body: "Manrope", system-ui, -apple-system, sans-serif;
+  --font-mono: "Manrope", ui-monospace, monospace;
+
+  /* ---- Display scale (uppercase headings) ---- */
+  --fs-display-xl: 76px;
+  --fs-display-l: 52px;
+  --fs-display-m: 34px;
+  --fs-display-s: 22px;
+
+  /* ---- Body scale ---- */
+  --fs-body-l: 19px;
+  --fs-body-m: 16px;
+  --fs-body-s: 14px;
+  --fs-label: 13px;
+
+  /* ---- Weights ---- */
+  --fw-display: 700;
+  --fw-display-heavy: 800;
+  --fw-bold: 700;
+  --fw-semi: 600;
+  --fw-med: 500;
+  --fw-reg: 400;
+
+  /* ---- Line heights ---- */
+  --lh-tight: 1.02;
+  --lh-display: 1.06;
+  --lh-snug: 1.3;
+  --lh-body: 1.55;
+
+  /* ---- Letter spacing ---- */
+  --ls-display: -0.01em;
+  --ls-eyebrow: 0.22em;
+  --ls-button: 0.12em;
+
+  /* ---- Spacing (4px grid) ---- */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 20px;
+  --sp-6: 24px;
+  --sp-8: 32px;
+  --sp-10: 40px;
+  --sp-12: 48px;
+  --sp-16: 64px;
+  --sp-20: 80px;
+  --sp-28: 112px;
+
+  /* ---- Layout ---- */
+  --container-max: 1280px;
+  --gutter: 40px;
+  --section-y: 112px;
+
+  /* ---- Radii (Victory is mostly SHARP) ---- */
+  --radius-none: 0px;
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-pill: 999px;
+
+  /* ---- Card gradients ---- */
+  --grad-card: linear-gradient(160deg, var(--vg-ink-600) 0%, var(--vg-ink-700) 48%, var(--vg-ink-800) 100%);
+  --grad-card-hover: linear-gradient(160deg, #232329 0%, #18181c 50%, var(--vg-ink-700) 100%);
+
+  /* ---- Shadows ---- */
+  --shadow-card: 0 1px 0 rgba(255, 255, 255, 0.03) inset, 0 24px 60px -24px rgba(0, 0, 0, 0.9);
+  --shadow-raised: 0 40px 90px -30px rgba(0, 0, 0, 0.95);
+  --shadow-btn: 0 12px 28px -12px rgba(0, 0, 0, 0.85);
+
+  /* ---- Neon glows ---- */
+  --glow-orange: 0 0 24px rgba(255, 106, 26, 0.55);
+  --glow-cyan: 0 0 24px rgba(30, 156, 255, 0.55);
+  --glow-magenta: 0 0 24px rgba(192, 38, 211, 0.55);
+  --glow-green: 0 0 24px rgba(59, 220, 107, 0.55);
+
+  /* ---- Textures (faint grid over dark) ---- */
+  --grid-line: rgba(255, 255, 255, 0.035);
+  --bg-grid:
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  --bg-grid-size: 64px 64px;
+
+  /* ---- Motion ---- */
+  --ease-out: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-inout: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-fast: 140ms;
+  --dur-med: 240ms;
+  --dur-slow: 420ms;
+
+  --focus-ring: var(--accent-cyan);
 }

@@ -13,3 +13,33 @@
     transform: translateY(0);
   }
 }
+
+/* metallic light sweep across the brand panel */
+@keyframes streak {
+  0%   { transform: translateX(-30%) rotate(8deg); opacity: 0; }
+  40%  { opacity: 0.5; }
+  100% { transform: translateX(120%) rotate(8deg); opacity: 0; }
+}
+
+/* fade + rise: cards, panels, modals */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* right-side drawer slide-in */
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(40px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* spinner */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* diagonal stripes drifting across the progress bar */
+@keyframes barStripes {
+  from { background-position: 0 0, 0 0; }
+  to   { background-position: 0 0, 28px 0; }
+}
