@@ -75,15 +75,33 @@
 }
 
 .summary {
+  display: -webkit-box;
+  width: 100%;
+  font-family: var(--font-body);
   font-size: 13px;
   line-height: 1.45;
+  text-align: left;
   color: var(--text-muted);
+  background: none;
+  border: none;
+  padding: 0;
   margin-top: 4px;
-  display: -webkit-box;
+  cursor: pointer;
   -webkit-line-clamp: 1;
   line-clamp: 1;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+.summary:hover {
+  color: var(--text-body);
+}
+
+.summaryExpanded {
+  -webkit-line-clamp: unset;
+  line-clamp: unset;
+  overflow: visible;
 }
 
 .scores {

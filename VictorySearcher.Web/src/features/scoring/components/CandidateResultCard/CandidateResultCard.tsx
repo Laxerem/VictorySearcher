@@ -71,6 +71,7 @@ function Metric({ label, value, max }: { label: string; value: number; max: numb
 
 export function CandidateResultCard({ result, rank, onView, onDownload }: Props) {
   const [expanded, setExpanded] = useState(false);
+  const [summaryExpanded, setSummaryExpanded] = useState(false);
   const extra = result.extraScore ?? 0;
 
   return (
@@ -85,7 +86,13 @@ export function CandidateResultCard({ result, rank, onView, onDownload }: Props)
             <span className={styles.name}>{result.fileName}</span>
             {result.isUncertain && <span className={styles.uncertain}>требует внимания</span>}
           </div>
-          <div className={styles.summary}>{result.reasoning}</div>
+          <button
+            type="button"
+            className={cn(styles.summary, summaryExpanded && styles.summaryExpanded)}
+            onClick={() => setSummaryExpanded((v) => !v)}
+          >
+            {result.reasoning}
+          </button>
         </div>
 
         <div className={styles.scores}>
