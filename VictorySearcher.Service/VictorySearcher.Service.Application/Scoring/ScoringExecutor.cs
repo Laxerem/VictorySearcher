@@ -60,6 +60,8 @@ public class ScoringExecutor(
                 vacancy.ExtraRequirements);
 
             foreach (var resume in resumes) {
+                progressChannel.TryWrite(requestId,
+                    new ScoringProgressEvent(ScoringStatus.InProcess, scoredCount, total, resume.FileName));
                 var content = await parserDispatcher.ParseAsync(resume, ct);
                 var analysis = await analyserService.AnalyseAsync(content, vacancyContext, ct);
 
